@@ -1,6 +1,6 @@
 package TFG.GameVault.config;
 
-import java.util.Base64;
+import java.security.Key;
 import java.util.Collections;
 import java.util.Date;
 
@@ -10,15 +10,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
+
 
 import TFG.GameVault.DTOs.UserDto;
-import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserService;
-import jakarta.annotation.PostConstruct;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,30 +29,31 @@ public class UserAuthenticationProvider {
     @Autowired
     UserService us;
     
-    @Value("${security.jwt.token.secret-key:secret-value}")
+    @Value("${jwt.token.secret:defaultValue}")
     private String secretKey;
 
-    @PostConstruct
-    protected void init(){
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String createToken(String username){
         Date now = new Date();
         Date validity = new Date(now.getTime() + 3600000*4);
-        return JWT.create()
-                .withSubject(username)
-                .withIssuedAt(now)
-                .withExpiresAt(validity)
-                .sign(Algorithm.HMAC256(secretKey));
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(getSigningKey()).compact();
     }
 
+
     public Authentication validateToken(String token){
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
+        Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+        String username = claims.getBody().getSubject();
 
-        DecodedJWT decoded = verifier.verify(token);
-
-        UserDto user = us.toUserDto(us.findByUsername(decoded.getIssuer()));
+        UserDto user = us.toUserDto(us.findByUsername(username));
 
         return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
     }

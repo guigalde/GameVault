@@ -2,6 +2,8 @@ package TFG.GameVault.user;
 
 import TFG.GameVault.model.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -13,6 +15,7 @@ import lombok.Data;
 public class Role extends BaseEntity{
 
     @NotBlank
-    public String roleName;
+    @Enumerated(EnumType.STRING)
+    public ERole roleName;
     
 }

@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class WebConfig {
 
     @Bean
-    public CorsFilter corsFilter(){
+    public FilterRegistrationBean corsFilterRegistration(){
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
@@ -37,7 +37,11 @@ public class WebConfig {
         ));
         config.setMaxAge(3600L);
         source.registerCorsConfiguration("/**", config);
-        CorsFilter bean = new CorsFilter(source);
+        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+
+        // should be set order to -100 because we need to CorsFilter before SpringSecurityFilter
+        bean.setOrder(-102);
+
         return bean;
 
     }
