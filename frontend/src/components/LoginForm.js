@@ -4,15 +4,15 @@ import { request, setAuthHeader } from '../helpers/axios_helper';
 import { Link, useNavigate} from 'react-router-dom';
 import { UserContext } from '../helpers/user_context';
 
-export default function  LoginForm({setUser}) {
+export default function  LoginForm() {
     const [loginUser, setLoginUser] = useState({ username: "", password: "" });
     const navigate = useNavigate();
-    const user = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
     function onLogin(e, username, password){
         e.preventDefault();
         request(
             "POST",
-            "/login",
+            "/api/login",
             {
                 username: username,
                 password: password
@@ -21,6 +21,7 @@ export default function  LoginForm({setUser}) {
                 setAuthHeader(response.data.token);
                 setUser({
                     isLogged: true,
+                    id: response.data.id,
                     username: response.data.username,
                     email: response.data.email,
                     role: response.data.role

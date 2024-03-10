@@ -7,6 +7,7 @@ import { UserContext } from './helpers/user_context';
 import { WelcomeContent } from './components/WelcomeContent';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import EditForm from './components/EditProfile';
 
 function App() {
   const [user, setUser] = useState({
@@ -26,7 +27,7 @@ function App() {
   }
 
   return (
-    <UserContext.Provider value={user}>
+    <UserContext.Provider value={{user, setUser}}>
       <div className="App">
         <Header 
           pageTitle= "GameVault" 
@@ -35,9 +36,10 @@ function App() {
         />
         <div className="AppContent">
           <Routes>
-            <Route path="/login" exact element={<LoginForm  setUser={setUser}/>}/>          
-            <Route path="/register" exact element={<RegisterForm  setUser={setUser}/>}/>
+            <Route path="/login" exact element={<LoginForm/>}/>          
+            <Route path="/register" exact element={<RegisterForm/>}/>
             <Route path="/" exact element={<WelcomeContent/>}/>
+            <Route path="/editAccount" exact element={<EditForm/>}/>
           </Routes>
         </div>
       </div>

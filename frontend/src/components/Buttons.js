@@ -1,17 +1,14 @@
-import * as React from 'react';
-import { useContext } from 'react';
-import { UserContext } from '../helpers/user_context';
+
+
 import { Link } from 'react-router-dom';
+import { UserContext } from '../helpers/user_context';
+import { useContext, useState } from 'react';
+import { request } from '../helpers/axios_helper';
 
-export default function Buttons({ onLogInClick, onLogOutClick }) {
+export default function Buttons({ onLogOutClick }) {
 
-  const user = useContext(UserContext);
-
-  const handleLogInClick = () => {
-    if (typeof onLogInClick === 'function') {
-      onLogInClick();
-    }
-  };
+  const {user, setUser} = useContext(UserContext);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogOutClick = () => {
     if (typeof onLogOutClick === 'function') {
@@ -19,20 +16,54 @@ export default function Buttons({ onLogInClick, onLogOutClick }) {
     }
   };
 
+  function handleDeleteAccount() {
+    request(
+      'DELETE',
+      'api/users/' + user.id
+      ).then((response) => {
+        alert(response.data);
+        window.localStorage.removeItem("auth_token");
+        setUser({
+          isLogged: false,
+          username: "",
+          email: "",
+          role: ""
+        });
+      }).catch((error) => {alert(error)});
+  }
+
   return (
     <div className="row">
-      <div className="col-md-12 text-center" style={{ marginTop: '30px' }}> 
-        {user.username === "" ?
-        (<Link to="/login">
-          <div className="SignInHeader">
-            Sign in
-          </div>
-        </Link>):
-        <button className="btn btn-dark" style={{ margin: '10px' }} onClick={handleLogOutClick}>
-          Sign Out
-        </button>
-      }  
+      <div className="col-md-12 text-center" style={{ marginTop: '30px' }}>
+        {!user.isLogged ? (
+          <Link to="/login">
+            <div className="SignInHeader">
+              Sign in
+            </div>
+          </Link>
+        ) : (
+          <>
+            <div className="SignInHeader" onClick={()=>{setShowDropdown(!showDropdown);console.log(showDropdown)}}>{user.username}</div>
+              {showDropdown && 
+                  <>
+                  <Link to="/editAccount">
+                    <DropdownItem text = {"Edit profile"}/>
+                  </Link>
+                  <DropdownItem onClick = {handleDeleteAccount} text = {"Delete account"}/>
+                  <DropdownItem onClick={handleLogOutClick} text = {"Log out"}/>
+                  </>
+                }
+          </>
+        )}
       </div>
     </div>
+ );
+};
+
+function DropdownItem({onClick, text}){
+  return(
+      <b onClick = {onClick}> {text} </b>
   );
 }
+  
+
