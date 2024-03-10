@@ -56,7 +56,7 @@ public class UserService {
 
     public UserDto toUserDto(User user){
 
-        UserDto userDto = new UserDto(user.getId(),user.getUsername(),user.getEmail(), user.getRole().getRoleName(), null);
+        UserDto userDto = new UserDto(user.getId(),user.getUsername(),user.getEmail(), user.getRole().getRoleName().toString(), null);
         return userDto;
     }
 
