@@ -1,38 +1,71 @@
-import * as React from 'react';
-import { useContext } from 'react';
-import { UserContext } from '../helpers/user_context';
+
+
 import { Link } from 'react-router-dom';
+import { UserContext } from '../helpers/user_context';
+import { useContext, useState } from 'react';
+import { request } from '../helpers/axios_helper';
+import { useNavigate } from 'react-router-dom';
+import '../App.css';
 
-export default function Buttons({ onLogInClick, onLogOutClick }) {
+export default function Buttons() {
 
-  const user = useContext(UserContext);
+  const {user, setUser} = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const handleLogInClick = () => {
-    if (typeof onLogInClick === 'function') {
-      onLogInClick();
-    }
-  };
+  function onLogOutClick(){
+    setUser({
+      isLogged: false,
+      username: "",
+      email: "",
+      role: ""
+    });
+    window.localStorage.removeItem("auth_token");
+    navigate("/");
+  }
 
-  const handleLogOutClick = () => {
-    if (typeof onLogOutClick === 'function') {
-      onLogOutClick();
-    }
-  };
+  function handleDeleteAccount() {
+    request(
+      'DELETE',
+      'api/users/' + user.id
+      ).then((response) => {
+        alert(response.data);
+        window.localStorage.removeItem("auth_token");
+        setUser({
+          isLogged: false,
+          username: "",
+          email: "",
+          role: ""
+        });
+        navigate("/");
+      }).catch((error) => {alert(error)});
+  }
 
   return (
-    <div className="row">
-      <div className="col-md-12 text-center" style={{ marginTop: '30px' }}> 
-        {user.username === "" ?
-        (<Link to="/login">
-          <div className="SignInHeader">
-            Sign in
-          </div>
-        </Link>):
-        <button className="btn btn-dark" style={{ margin: '10px' }} onClick={handleLogOutClick}>
-          Sign Out
-        </button>
-      }  
+    
+      <div>
+        {!user.isLogged ? (
+          <Link to="/login">
+            <button className="btn btn-secondary" type="button"  style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black' }}>
+                <b>Sign in</b>
+            </button>
+          </Link>
+        ) : (
+          
+            <div className="dropdown">
+              <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black' }}>
+                <b>{user.username}</b>
+              </button>
+              <div className="dropdown-menu" aria-labelledby="dropdownMenuButton" style={{ color: 'black', backgroundColor: '#C8F4F9', borderColor: 'black' }}>
+                    <Link to="/editAccount" style={{ textDecoration: 'none' }}>
+                      <b class="dropdown-item">Edit profile</b>
+                    </Link>
+                    <b class="dropdown-item" onClick = {handleDeleteAccount}>Delete account</b>
+                    <b class="dropdown-item" onClick={onLogOutClick}>Log out</b>
+              </div>
+              </div>
+        )}
       </div>
-    </div>
-  );
-}
+ );
+};
+  
+

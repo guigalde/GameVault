@@ -1,11 +1,7 @@
 import Buttons from './Buttons';
-import { useContext } from 'react';
-import { UserContext } from '../helpers/user_context';
 import { Link } from 'react-router-dom';
 
-export default function Header({logoSrc, pageTitle, onLogOutClick}) {
-
-    const user = useContext(UserContext);
+export default function Header({logoSrc, pageTitle}) {
     return (
       <nav className="d-flex justify-content-between align-items-center App-header">
         <div className="d-flex align-items-center">
@@ -14,7 +10,7 @@ export default function Header({logoSrc, pageTitle, onLogOutClick}) {
           </Link>
           <h1 className="App-title">{pageTitle}</h1>
         </div>
-          <Buttons onLogOutClick={onLogOutClick} />
+          <Buttons  />
       </nav>
     );
   }

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { UserContext } from '../helpers/user_context';
 
 export function WelcomeContent(){
-    const user = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
     return (
         <div className="row justify-content-md-center">
             <div className="jumbotron jumbotron-fluid">

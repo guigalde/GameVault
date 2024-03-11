@@ -28,12 +28,11 @@ public class WebSecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
-      http
-              .addFilterBefore(new JwtAuthFilter(userAuthProvider), BasicAuthenticationFilter.class)
+      http.addFilterBefore(new JwtAuthFilter(userAuthProvider), BasicAuthenticationFilter.class)
               .csrf(csrf -> csrf.disable())
               .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
               .authorizeHttpRequests((requests) -> requests
-              .requestMatchers(HttpMethod.POST, "/login", "/register", "/").permitAll()
+              .requestMatchers("/api/**").permitAll()
               .anyRequest().authenticated());
     
     return http.build();

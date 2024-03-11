@@ -1,31 +1,33 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { request, setAuthHeader } from '../helpers/axios_helper';
 import classNames from 'classnames';
 import {useNavigate, Link} from 'react-router-dom';
 import { UserContext } from '../helpers/user_context';
+import { useContext } from 'react';
 
-export default function RegisterForm(){
+export default function EditForm(){
+    const {user, setUser} = useContext(UserContext);
     const navigate = useNavigate();
-    const {user,setUser} = useContext(UserContext);
-    const [registerUser, setRegisterUser] = useState({
+    const [editUser, setEditUser] = useState({
         username: "",
         email: "",
         password: "",
     });
 
     function handleChange(e) {
-        setRegisterUser({ ...registerUser, [e.target.name]: e.target.value });
+        setEditUser({ ...editUser, [e.target.name]: e.target.value });
     }
 
-    function onRegister(event, username, email, password) {
+    function onEdit(event, username, email, password) {
         event.preventDefault();
         request(
-            "POST",
-            "/api/register",
+            "PUT",
+            "/api/users/" + user.id,
             {
                 username: username,
                 email: email,
-                password: password
+                password: password,
+                role: user.role
             }).then(
             (response) => {
                 setAuthHeader(response.data.token);
@@ -44,15 +46,15 @@ export default function RegisterForm(){
             
         );
     }
-    function onSubmitRegister(e) {
-        onRegister(e, registerUser.username, registerUser.email, registerUser.password);
+    function onSubmitEdit(e) {
+        onEdit(e, editUser.username, editUser.email, editUser.password);
     };
 
     return (
         <div className={classNames("tab-pane", "fade", "show active")} id="pills-register">
             <h1 className="text-center">Register</h1>
             <div className="d-flex justify-content-center" style={{ height: '100vh' }}>
-                <form onSubmit={onSubmitRegister} className="w-25">
+                <form onSubmit={onSubmitEdit} className="w-25">
                 <div className="form-outline mb-4">
                     <label className="form-label" htmlFor="username"><b>Username</b></label>
                     <input type="text" id="registerUsername" name="username" className="form-control col-md-6" onChange={handleChange}/>
@@ -69,9 +71,11 @@ export default function RegisterForm(){
                     <input type="password" id="registerPassword" name="password" className="form-control" onChange={handleChange}/>
                 </div>
                 <div className="d-flex flex-column align-items-center">
-                    <button type="submit" className="btn btn-primary btn-block mb-4" style={{ color: 'black', backgroundColor: '#3CACAE', borderColor: 'black' }}><b>Sign up</b></button>
-                    <Link to="/login" className="text-center">
-                        <b>Already have an account? Sign in</b>
+                    <button type="submit" className="btn btn-primary btn-block mb-4" style={{ color: 'black', backgroundColor: '#3CACAE', borderColor: 'black' }}><b>Save changes</b></button>
+                </div>
+                <div className="d-flex flex-column align-items-center">
+                    <Link to="/">
+                        <button className="btn btn-primary btn-block mb-4" style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black' }}><b>Cancel edit</b></button>
                     </Link>
                 </div>
                 </form>

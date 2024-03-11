@@ -38,7 +38,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(User user){
+    public void deleteUser(Integer id){
+        User user = ur.findById(id).orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
         ur.delete(user);
     }
 
@@ -75,6 +76,14 @@ public class UserService {
         }
 
         throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
+    }
+
+    public UserDto updateUser(Integer id, UserDto userDto){
+        User user = ur.findById(id).orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        ur.save(user);
+        return toUserDto(user);
     }
 
     public UserDto register(SignUpDto signup){
