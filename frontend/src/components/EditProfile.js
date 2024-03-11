@@ -75,7 +75,7 @@ export default function EditForm(){
                 </div>
                 <div className="d-flex flex-column align-items-center">
                     <Link to="/">
-                        <button className="btn btn-primary btn-block mb-4" style={{ color: 'white', backgroundColor: '#AE3C', borderColor: 'black' }}><b>Cancel edit</b></button>
+                        <button className="btn btn-primary btn-block mb-4" style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black' }}><b>Cancel edit</b></button>
                     </Link>
                 </div>
                 </form>

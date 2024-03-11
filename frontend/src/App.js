@@ -8,23 +8,17 @@ import { WelcomeContent } from './components/WelcomeContent';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import EditForm from './components/EditProfile';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     username: "",
     email: "",
     password: "",
     role: ""
   });
-  function onLogOutClick(){
-    setUser({
-      isLogged: false,
-      username: "",
-      email: "",
-      role: ""
-    });
-    window.localStorage.removeItem("auth_token");
-  }
+  
 
   return (
     <UserContext.Provider value={{user, setUser}}>
@@ -32,7 +26,6 @@ function App() {
         <Header 
           pageTitle= "GameVault" 
           logoSrc= {logo}
-          onLogOutClick= {onLogOutClick}
         />
         <div className="AppContent">
           <Routes>

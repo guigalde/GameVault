@@ -4,17 +4,24 @@ import { Link } from 'react-router-dom';
 import { UserContext } from '../helpers/user_context';
 import { useContext, useState } from 'react';
 import { request } from '../helpers/axios_helper';
+import { useNavigate } from 'react-router-dom';
+import '../App.css';
 
-export default function Buttons({ onLogOutClick }) {
+export default function Buttons() {
 
   const {user, setUser} = useContext(UserContext);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogOutClick = () => {
-    if (typeof onLogOutClick === 'function') {
-      onLogOutClick();
-    }
-  };
+  function onLogOutClick(){
+    setUser({
+      isLogged: false,
+      username: "",
+      email: "",
+      role: ""
+    });
+    window.localStorage.removeItem("auth_token");
+    navigate("/");
+  }
 
   function handleDeleteAccount() {
     request(
@@ -29,41 +36,36 @@ export default function Buttons({ onLogOutClick }) {
           email: "",
           role: ""
         });
+        navigate("/");
       }).catch((error) => {alert(error)});
   }
 
   return (
-    <div className="row">
-      <div className="col-md-12 text-center" style={{ marginTop: '30px' }}>
+    
+      <div>
         {!user.isLogged ? (
           <Link to="/login">
-            <div className="SignInHeader">
-              Sign in
-            </div>
+            <button className="btn btn-secondary" type="button"  style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black' }}>
+                <b>Sign in</b>
+            </button>
           </Link>
         ) : (
-          <>
-            <div className="SignInHeader" onClick={()=>{setShowDropdown(!showDropdown);console.log(showDropdown)}}>{user.username}</div>
-              {showDropdown && 
-                  <>
-                  <Link to="/editAccount">
-                    <DropdownItem text = {"Edit profile"}/>
-                  </Link>
-                  <DropdownItem onClick = {handleDeleteAccount} text = {"Delete account"}/>
-                  <DropdownItem onClick={handleLogOutClick} text = {"Log out"}/>
-                  </>
-                }
-          </>
+          
+            <div className="dropdown">
+              <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black' }}>
+                <b>{user.username}</b>
+              </button>
+              <div className="dropdown-menu" aria-labelledby="dropdownMenuButton" style={{ color: 'black', backgroundColor: '#C8F4F9', borderColor: 'black' }}>
+                    <Link to="/editAccount" style={{ textDecoration: 'none' }}>
+                      <b class="dropdown-item">Edit profile</b>
+                    </Link>
+                    <b class="dropdown-item" onClick = {handleDeleteAccount}>Delete account</b>
+                    <b class="dropdown-item" onClick={onLogOutClick}>Log out</b>
+              </div>
+              </div>
         )}
       </div>
-    </div>
  );
 };
-
-function DropdownItem({onClick, text}){
-  return(
-      <b onClick = {onClick}> {text} </b>
-  );
-}
   
 
