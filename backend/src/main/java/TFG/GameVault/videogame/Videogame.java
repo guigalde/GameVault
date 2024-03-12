@@ -1,7 +1,10 @@
-package TFG.GameVault.game;
-import org.springframework.format.annotation.DateTimeFormat;
+package TFG.GameVault.videogame;
+import java.time.LocalDate;
+import java.util.List;
+
 
 import TFG.GameVault.model.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -12,12 +15,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Game extends BaseEntity{
+public class Videogame extends BaseEntity{
 
     @NotEmpty
     public String name;
 
     @NotEmpty
+    @Column(length = 3000)
     public String description;
 
     @NotEmpty
@@ -36,7 +40,6 @@ public class Game extends BaseEntity{
     public String publisher;
 
     @NotEmpty
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    public String releaseDate;
+    public LocalDate releaseDate;
     
 }

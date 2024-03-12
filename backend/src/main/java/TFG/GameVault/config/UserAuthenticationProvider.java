@@ -24,9 +24,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Component
-@PropertySource("classpath:application.properties")
 public class UserAuthenticationProvider {
 
 
@@ -42,7 +40,7 @@ public class UserAuthenticationProvider {
 	}
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode("swi6+wiYHsvc2gvIQl/K/hBtZXMverSDur9wQ6bAAGM1H5MvVXINcz+U52L1bJgZ}");
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

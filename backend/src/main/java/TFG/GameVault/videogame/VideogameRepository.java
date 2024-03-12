@@ -1,9 +1,9 @@
-package TFG.GameVault.game;
+package TFG.GameVault.videogame;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GameRepository extends JpaRepository<Game, Integer>{
+public interface VideogameRepository extends JpaRepository<Videogame, Integer>{
     
 }
