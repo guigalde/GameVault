@@ -78,6 +78,7 @@ public class UserService {
         throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
     }
 
+    @Transactional
     public UserDto updateUser(Integer id, UserDto userDto){
         User user = ur.findById(id).orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
         user.setUsername(userDto.getUsername());
@@ -86,6 +87,7 @@ public class UserService {
         return toUserDto(user);
     }
 
+    @Transactional
     public UserDto register(SignUpDto signup){
         
         Optional<User> optionalUser = ur.findByUsername(signup.getUsername());
@@ -98,5 +100,15 @@ public class UserService {
         User savedUser = ur.save(user);
 
         return toUserDto(savedUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> findUsernames(){
+        return ur.findUsernames();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> findEmails(){
+        return ur.findEmails();
     }
 }
