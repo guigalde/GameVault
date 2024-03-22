@@ -3,6 +3,9 @@ import { request, setAuthHeader } from '../helpers/axios_helper';
 import classNames from 'classnames';
 import {useNavigate, Link} from 'react-router-dom';
 import { UserContext } from '../helpers/user_context';
+import { userValidation} from '../helpers/user_validation';
+import FormError from './FormError';
+
 
 export default function RegisterForm(){
     const navigate = useNavigate();
@@ -12,40 +15,43 @@ export default function RegisterForm(){
         email: "",
         password: "",
     });
+    const [errors, setErrors] = useState({})
 
     function handleChange(e) {
         setRegisterUser({ ...registerUser, [e.target.name]: e.target.value });
     }
 
-    function onRegister(event, username, email, password) {
-        event.preventDefault();
-        request(
-            "POST",
-            "/api/register",
-            {
-                username: username,
-                email: email,
-                password: password
-            }).then(
-            (response) => {
-                setAuthHeader(response.data.token);
-                setUser({
-                    isLogged: true,
-                    id: response.data.id,
-                    username: response.data.username,
-                    email: response.data.email,
-                    role: response.data.role
-                });
-                navigate('/');
-            }).catch(
-            (error) => {
-                setAuthHeader(null);
+    async function onRegister(username, email, password) {
+        const validationErrors = await userValidation(registerUser);
+        setErrors(validationErrors);
+        if(errors.usernameError === "" && errors.emailError === "" && errors.passwordError === "" ){
+            request(
+                "POST",
+                "/api/register",
+                {
+                    username: username,
+                    email: email,
+                    password: password
+                }).then(
+                (response) => {
+                    setAuthHeader(response.data.token);
+                    setUser({
+                        isLogged: true,
+                        id: response.data.id,
+                        username: response.data.username,
+                        email: response.data.email,
+                        role: response.data.role
+                    });
+                    navigate('/');
+                }).catch(
+                (error) => {
+                    setAuthHeader(null);
             }
-            
-        );
+        );}
     }
-    function onSubmitRegister(e) {
-        onRegister(e, registerUser.username, registerUser.email, registerUser.password);
+    async function onSubmitRegister(e) {
+        e.preventDefault();
+        await onRegister(registerUser.username, registerUser.email, registerUser.password);
     };
 
     return (
@@ -55,17 +61,20 @@ export default function RegisterForm(){
                 <form onSubmit={onSubmitRegister} className="w-25">
                 <div className="form-outline mb-4">
                     <label className="form-label" htmlFor="username"><b>Username</b></label>
+                    <FormError error={errors.usernameError}/>
                     <input type="text" id="registerUsername" name="username" className="form-control col-md-6" onChange={handleChange}/>
 
                 </div>
 
                 <div className="form-outline mb-4">
                     <label className="form-label" htmlFor="email"><b>Email</b></label>
+                    <FormError error={errors.emailError}/>
                     <input type="text" id="email" name="email" className="form-control col-md-6" onChange={handleChange}/>
                 </div>
 
                 <div className="form-outline mb-4">
                     <label className="form-label" htmlFor="registerPassword"><b>Password</b></label>
+                    <FormError error={errors.passwordError}/>
                     <input type="password" id="registerPassword" name="password" className="form-control" onChange={handleChange}/>
                 </div>
                 <div className="d-flex flex-column align-items-center">
