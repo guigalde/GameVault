@@ -40,7 +40,7 @@ public class UserAuthenticationProvider {
 	}
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = Decoders.BASE64.decode("swi6+wiYHsvc2gvIQl/K/hBtZXMverSDur9wQ6bAAGM1H5MvVXINcz+U52L1bJgZ}");
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

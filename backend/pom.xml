@@ -102,15 +102,14 @@
             <version>1.5.5.Final</version>
         </dependency>
 		<dependency>
-			<groupId>io.github.husnjak</groupId>
-			<artifactId>igdb-api-jvm</artifactId>
-			<version>1.1.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.github.kittinunf.fuel</groupId>
-					<artifactId>fuel-android</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mashape.unirest</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>1.4.9</version>
 		</dependency>
 		
 	</dependencies>

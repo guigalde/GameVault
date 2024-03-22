@@ -39,7 +39,15 @@ export default function Buttons() {
         navigate("/");
       }).catch((error) => {alert(error)});
   }
-
+  function handleVideogameLoad() {
+    alert("This procedure may take a few minutes. Please wait.");
+    request(
+      'GET',
+      '/api/populateVideogames'
+      ).then((response) => {
+        alert(response.data);
+      }).catch((error) => {alert(error)});
+  }
   return (
     
       <div>
@@ -50,7 +58,10 @@ export default function Buttons() {
             </button>
           </Link>
         ) : (
-          
+          <>
+              {user.role==="ADMIN" &&
+              <button className="btn btn-primary btn-block mb-4"  onClick = {handleVideogameLoad}style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black' }}><b>Load database</b></button>
+             }
             <div className="dropdown">
               <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black' }}>
                 <b>{user.username}</b>
@@ -63,6 +74,7 @@ export default function Buttons() {
                     <b class="dropdown-item" onClick={onLogOutClick}>Log out</b>
               </div>
               </div>
+              </>
         )}
       </div>
  );

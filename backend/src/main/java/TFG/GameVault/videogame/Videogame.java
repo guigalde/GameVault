@@ -21,7 +21,7 @@ public class Videogame extends BaseEntity{
     public String name;
 
     @NotEmpty
-    @Column(length = 3000)
+    @Column(length = 6000)
     public String description;
 
     @NotEmpty

@@ -1,26 +1,22 @@
 package TFG.GameVault.API_Consumers;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.checkerframework.checker.units.qual.A;
+import org.json.JSONArray;
 import org.springframework.stereotype.Component;
 
-import com.api.igdb.apicalypse.APICalypse;
-import com.api.igdb.apicalypse.Sort;
-import com.api.igdb.exceptions.RequestException;
-import com.api.igdb.request.IGDBWrapper;
-import com.api.igdb.request.ProtoRequestKt;
-import com.api.igdb.request.TwitchAuthenticator;
-import com.api.igdb.utils.Endpoints;
-import com.api.igdb.utils.TwitchToken;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
-import proto.Company;
-import proto.Game;
-import proto.GameResult;
-import proto.InvolvedCompany;
+import TFG.GameVault.videogame.Videogame;
 
 @Component
 public class IGDB_consumer {
@@ -28,116 +24,119 @@ public class IGDB_consumer {
     String userId = "tc0ofgmcuu0urgnudg7g3bgpyj1yzg";
     String userKey= "6as0obusv47dli8cd7yslwkq70a9bc";
 
-     public  Map<Game, Map<String,List<String>>> getGames(){
-        TwitchAuthenticator tAuth = TwitchAuthenticator.INSTANCE;
-        TwitchToken token = tAuth.requestTwitchToken(userId, userKey);
-        IGDBWrapper wrapper = IGDBWrapper.INSTANCE;
-        Map<Game, Map<String, List<String>>> res = new HashMap<>();
-        List<Game> games = new ArrayList<>();
-        wrapper.setCredentials(userId, token.getAccess_token());
-        
-        APICalypse apicalypse = new APICalypse()
-            .fields("name, genres, platforms, summary, first_release_date, involved_companies, cover;");
+    public HttpResponse<JsonNode> getAuthentication(){
         try{
-            games = ProtoRequestKt.games(wrapper, apicalypse);
-        }catch(RequestException e){
-            throw new RuntimeException("Error getting games from IGDB");
+            HttpResponse<JsonNode> response = Unirest.post("https://id.twitch.tv/oauth2/token")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .field("client_id", userId)
+            .field("client_secret", userKey)
+            .field("grant_type", "client_credentials")
+            .asJson();
+            return response;
+        }catch (UnirestException e){
+            throw new RuntimeException("Error getting authentication from Twitch");
         }
-        for(Game game: games){
-            Map<String, List<String>> gameDetails = new HashMap<>();
-            gameDetails = getGameDetails(game, wrapper, "all");
-            res.put(game, gameDetails);
+        
+    }
+
+    public  List<Videogame> getGames(String offset){
+        HttpResponse<JsonNode> authentication = getAuthentication();
+        String access_token = authentication.getBody().getObject().get("access_token").toString();
+        List<Videogame> res = new ArrayList<>();
+        try{
+            HttpResponse<JsonNode> games1 = Unirest.post("https://api.igdb.com/v4/games")
+            .header("Client-ID", userId)
+            .header("Authorization", "Bearer "+access_token)
+            .header("Accept", "application/json")
+            .body("fields name, genres, platforms, summary, first_release_date, involved_companies, cover; sort total_rating_count desc; limit 500; offset "+ offset +";")
+            .asJson();
+            
+            JSONArray gamesArray = games1.getBody().getArray();
+            for(int i = 0; i<gamesArray.length(); i++){
+                try{
+                    Videogame game = new Videogame();
+                    game.setName(gamesArray.getJSONObject(i).getString("name"));
+                    game.setDescription(gamesArray.getJSONObject(i).getString("summary"));
+                    long unixTimestamp = gamesArray.getJSONObject(i).getLong("first_release_date");
+                    LocalDate releaseDate = Instant.ofEpochSecond(unixTimestamp).atZone(ZoneId.systemDefault()).toLocalDate();
+                    game.setReleaseDate(releaseDate);
+
+                    JSONArray genres = gamesArray.getJSONObject(i).getJSONArray("genres");
+                    String genreString = "";
+                    for(int j = 0; j<genres.length(); j++){
+                        HttpResponse<JsonNode> genreNames = Unirest.post("https://api.igdb.com/v4/genres")
+                        .header("Client-ID", userId)
+                        .header("Authorization", "Bearer "+access_token)
+                        .header("Accept", "application/json")
+                        .body("fields name; where id = "+genres.getLong(j)+"; limit 1;")
+                        .asJson();
+                        genreString = genreString + (genreString.equals("")? "":", ") + (genreNames.getBody().getArray().getJSONObject(0).getString("name"));
+                    }
+                    game.setGenres(genreString);
+
+                    JSONArray platforms = gamesArray.getJSONObject(i).getJSONArray("platforms");
+                    String platformString = "";
+                    for(int j = 0; j<platforms.length(); j++){
+                        HttpResponse<JsonNode> platformNames = Unirest.post("https://api.igdb.com/v4/platforms")
+                        .header("Client-ID", userId)
+                        .header("Authorization", "Bearer "+access_token)
+                        .header("Accept", "application/json")
+                        .body("fields name; where id = "+ platforms.getLong(j)+"; limit 1;")
+                        .asJson();
+                        platformString = platformString + (platformString.equals("")? "":", ") + (platformNames.getBody().getArray().getJSONObject(0).getString("name"));
+                    }
+                    game.setPlatforms(platformString);
+
+                    JSONArray involvedCompanies = gamesArray.getJSONObject(i).getJSONArray("involved_companies");
+                    String publishers = "";
+                    String developers = "";
+                    for(int j = 0; j<involvedCompanies.length(); j++){
+                        HttpResponse<JsonNode> involvedCompany = Unirest.post("https://api.igdb.com/v4/involved_companies")
+                        .header("Client-ID", userId)
+                        .header("Authorization", "Bearer "+access_token)
+                        .header("Accept", "application/json")
+                        .body("fields company, developer, publisher; where id = "+involvedCompanies.getLong(j)+"; limit 1;")
+                        .asJson();
+                        Boolean developer = involvedCompany.getBody().getArray().getJSONObject(0).getBoolean("developer");
+                        Boolean publisher = involvedCompany.getBody().getArray().getJSONObject(0).getBoolean("publisher");
+                        Long id = involvedCompany.getBody().getArray().getJSONObject(0).getLong("company");
+
+                        HttpResponse<JsonNode> companyName = Unirest.post("https://api.igdb.com/v4/companies")
+                        .header("Client-ID", userId)
+                        .header("Authorization", "Bearer "+access_token)
+                        .header("Accept", "application/json")
+                        .body("fields name; where id = "+id+"; limit 1;")
+                        .asJson();
+                        if(developer){
+                            developers = developers + (developers.equals("")? "":", ") + companyName.getBody().getArray().getJSONObject(0).getString("name");
+                        }else if (publisher){
+                            publishers = publishers + (publishers.equals("")? "":", ") + companyName.getBody().getArray().getJSONObject(0).getString("name");
+                        }
+                    }
+
+                    Long cover = gamesArray.getJSONObject(i).getLong("cover");
+                    HttpResponse<JsonNode> coverUrl = Unirest.post("https://api.igdb.com/v4/covers")
+                    .header("Client-ID", userId)
+                    .header("Authorization", "Bearer "+access_token)
+                    .header("Accept", "application/json")
+                    .body("fields url; where id = "+ cover +"; limit 1;")
+                    .asJson();
+                    game.setImage(coverUrl.getBody().getArray().getJSONObject(0).getString("url"));
+
+                    game.setDeveloper(developers);
+                    game.setPublisher(publishers);
+                    res.add(game);
+                }catch(Exception e){
+                    System.out.println("Error getting game: "+i);
+                }
+            }
+        }catch(UnirestException e){
+            throw new RuntimeException("Error getting games from IGDB");
         }
         
         return res;
-     }
-
-
-//TODO: Refactor this method so it adds everything without a switch, returning the Map created a little above
-
-     public Map<String,List<String>> getGameDetails(Game game, IGDBWrapper wrapper, String type){
-        Map<String, List<String>> gameDetails = new HashMap<>();
-
-            List<Long> genresIds = game.getGenresList().stream().map(g->g.getId()).toList();
-            List<String> genreNames = new ArrayList<>();
-            for(Long id: genresIds){
-                APICalypse apicalypseGenres = new APICalypse().fields("name").where("id = "+id);
-                try{
-                    genreNames.add(ProtoRequestKt.genres(wrapper, apicalypseGenres).get(0).getName());
-                }catch(RequestException e){
-                    throw new RuntimeException("Error getting genres from IGDB");
-                }
-            
-            }
-        
-            List<Long> platformsIds = game.getPlatformsList().stream().map(p->p.getId()).toList();
-            List<String> platformNames = new ArrayList<>();
-            for(Long id: platformsIds){
-                APICalypse apicalypsePlatforms = new APICalypse().fields("name").where("id = "+id);
-                try{
-                    platformNames.add(ProtoRequestKt.platforms(wrapper, apicalypsePlatforms).get(0).getName());
-                }catch(RequestException e){
-                    throw new RuntimeException("Error getting platforms from IGDB");
-                }
-            }
-            
-
-            List<Long> involverdCompaniesIDs = game.getInvolvedCompaniesList().stream().map(c->c.getCompany().getId()).toList();
-            List<InvolvedCompany> involvedCompanies = new ArrayList<>();
-            for(Long id: involverdCompaniesIDs){
-                APICalypse apicalypseInvolvedCompanies = new APICalypse().fields("company, developer, publisher;").where("id = "+id);
-                try{
-                    involvedCompanies.add(ProtoRequestKt.involvedCompanies(wrapper, apicalypseInvolvedCompanies).get(0));
-                }catch(RequestException e){
-                    throw new RuntimeException("Error getting companies from IGDB");
-                }
-            }
-            List<String> developers = new ArrayList<>();
-            List<String> publishers = new ArrayList<>();
-
-            for(InvolvedCompany company: involvedCompanies){
-                boolean isDeveloper = company.getDeveloper();
-                boolean isPublisher = company.getPublisher();
-
-                if (isDeveloper || isPublisher) {
-                    APICalypse apicalypseCompany = new APICalypse().fields("name;").where("id = "+company.getId());
-                    if(company.getDeveloper()){
-                        try{
-                            developers.add(ProtoRequestKt.companies(wrapper, apicalypseCompany).get(0).getName());
-                        }catch(RequestException e){
-                            throw new RuntimeException("No developer found for this game");
-                        }
-                    }else if( company.getPublisher()){
-                        try{ 
-                            publishers.add(ProtoRequestKt.companies(wrapper, apicalypseCompany).get(0).getName());
-                        }catch(RequestException e){
-                            throw new RuntimeException("No publisher found for this game");
-                        }
-                    }else{
-                        throw new RuntimeException("Error getting companies from IGDB");
-                    }
-            
-                }
-            }
-
-            Long id = game.getCover().getId();
-            List<String> cover = new ArrayList<>();
-            APICalypse apicalypseCovers = new APICalypse().fields("url;").where("id = "+id);
-            try{
-                cover.add(ProtoRequestKt.covers(wrapper, apicalypseCovers).get(0).getUrl());
-            }catch(RequestException e){
-                cover.add("No cover found for this game");
-            }
-                
-            
-            gameDetails.put("genres", genreNames);
-            gameDetails.put("platforms", platformNames);
-            gameDetails.put("developers", developers);
-            gameDetails.put("publishers", publishers);
-            gameDetails.put("cover", cover);
-
-            return gameDetails;
      }  
 
+     
     
 }

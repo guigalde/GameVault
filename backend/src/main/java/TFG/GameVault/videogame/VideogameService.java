@@ -13,7 +13,12 @@ public class VideogameService {
     private final VideogameRepository videogameRepository;
 
     public Videogame saveGame(Videogame videogame){
-        return videogameRepository.save(videogame);
+        if(!videogameRepository.findByName(videogame.getName()).isPresent()){
+            return videogameRepository.save(videogame);
+        }else{
+            return null;
+        }
+        
     }
 
     public Videogame updateGame(Videogame videogame){
