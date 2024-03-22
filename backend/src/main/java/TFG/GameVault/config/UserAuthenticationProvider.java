@@ -24,9 +24,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Component
-@PropertySource("classpath:application.properties")
 public class UserAuthenticationProvider {
 
 
