@@ -1,6 +1,12 @@
 package TFG.GameVault.videogame;
 
 import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
@@ -10,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import TFG.GameVault.API_Consumers.IGDB_consumer;
+
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -38,5 +47,17 @@ public class VideogameController {
         
         return ResponseEntity.ok(games.size() + " games loaded successfully!");
     }
+    
+    @GetMapping("/videogames")
+
+    public ResponseEntity<List<Videogame>> getGames(@RequestParam GamesFilter filter, Integer pageNumber){
+        try{
+            Pageable pageable = PageRequest.of(pageNumber, 10, Direction.ASC, "release_date");
+            return ResponseEntity.ok(vgService.filterGames(filter, pageable));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+    
     
 }

@@ -2,6 +2,8 @@ package TFG.GameVault.videogame;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -33,7 +35,22 @@ public class VideogameService {
         return videogameRepository.findById(id).orElse(null);
     }
 
-    public List<Videogame> getGames(){
-        return videogameRepository.findAll();
+    public List<Videogame> filterGames(GamesFilter filter, Pageable pageable) {
+        Specification<Videogame> spec = Specification.where(null);
+
+        if (filter.getPlatform() != null && !filter.getPlatform().isEmpty()) {
+            spec = spec.and(VideogameSpecifications.hasPlatform(filter.getPlatform()));
+        }
+        if (filter.getPublisher() != null && !filter.getPublisher().isEmpty()) {
+            spec = spec.and(VideogameSpecifications.hasPublisher(filter.getPublisher()));
+        }
+        if (filter.getMinReleaseDate() != null) {
+            spec = spec.and(VideogameSpecifications.filterByDate(filter.getMinReleaseDate(), filter.getMaxReleaseDate()));
+        }
+        if (filter.getSearchTerms() != null && !filter.getSearchTerms().isEmpty()) {
+            spec = spec.and(VideogameSpecifications.search(filter.getSearchTerms()));
+        }
+
+        return videogameRepository.findAll(spec, pageable).toList();
     }
 }

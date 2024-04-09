@@ -2,6 +2,7 @@ package TFG.GameVault.videogame;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 
 import TFG.GameVault.model.BaseEntity;
 import jakarta.persistence.Column;
@@ -40,6 +41,7 @@ public class Videogame extends BaseEntity{
     public String publisher;
 
     @NotEmpty
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     public LocalDate releaseDate;
     
 }
