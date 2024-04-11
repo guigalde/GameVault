@@ -11,7 +11,7 @@ public class VideogameSpecifications {
             if (platform == null || platform.isEmpty()) {
                 return cb.conjunction();
             }
-            return cb.like(videogame.get("platforms"), "%"+platform+"%");
+            return cb.like(cb.lower(videogame.get("platforms")), "%"+platform.toLowerCase()+"%");
         };
     }
 
@@ -20,7 +20,7 @@ public class VideogameSpecifications {
             if (publisher == null || publisher.isEmpty()) {
                 return cb.conjunction();
             }
-            return cb.like(videogame.get("publisher"), "%"+publisher+"%");
+            return cb.like(cb.lower(videogame.get("publisher")), "%"+publisher.toLowerCase()+"%");
         };
     }
 
@@ -38,12 +38,22 @@ public class VideogameSpecifications {
         };
     }
 
+    public static Specification<Videogame> hasGenre(String genre){
+        return (videogame, cq, cb) ->{
+            if (genre == null || genre.isEmpty()) {
+                return cb.conjunction();
+            }
+            return cb.like(cb.lower(videogame.get("genres")), "%"+genre.toLowerCase()+"%");
+        };
+    }
+    
     public static Specification<Videogame> search(String searchTerms){
         return (videogame, cq, cb) ->{
             if (searchTerms == null || searchTerms.isEmpty()) {
                 return cb.conjunction();
             }
-            return cb.like(videogame.get("name"), "%"+searchTerms+"%");
+            return cb.like(cb.lower(videogame.get("name")), "%" + searchTerms.toLowerCase() + "%");
         };
     }
+    
 }

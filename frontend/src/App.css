@@ -36,7 +36,28 @@
 .dropdown-item:hover {
     background-color: #83cccd !important;
     color: white !important;
-   }
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    height: 10vh;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+   
+.nav-link {
+    color: black !important;
+    text-decoration: none;
+    margin: 30px;
+}
+   
+.nav-item:hover {
+    background-color: #EEB5EB;
+}
 
 
   

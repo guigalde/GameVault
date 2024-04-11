@@ -16,6 +16,8 @@ public class GamesFilter {
 
     public String publisher;
     
+    public String genre;
+    
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     public LocalDate minReleaseDate;
     

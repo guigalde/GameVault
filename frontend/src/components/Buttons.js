@@ -68,10 +68,10 @@ export default function Buttons() {
               </button>
               <div className="dropdown-menu" aria-labelledby="dropdownMenuButton" style={{ color: 'black', backgroundColor: '#C8F4F9', borderColor: 'black' }}>
                     <Link to="/editAccount" style={{ textDecoration: 'none' }}>
-                      <b class="dropdown-item">Edit profile</b>
+                      <b className="dropdown-item">Edit profile</b>
                     </Link>
-                    <b class="dropdown-item" onClick = {handleDeleteAccount}>Delete account</b>
-                    <b class="dropdown-item" onClick={onLogOutClick}>Log out</b>
+                    <b className="dropdown-item" onClick = {handleDeleteAccount}>Delete account</b>
+                    <b className="dropdown-item" onClick={onLogOutClick}>Log out</b>
               </div>
               </div>
               </>
