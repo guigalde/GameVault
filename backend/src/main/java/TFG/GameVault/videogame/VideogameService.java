@@ -32,11 +32,6 @@ public class VideogameService {
     }
 
     @Transactional
-    public Videogame updateGame(Videogame videogame){
-        return videogameRepository.save(videogame);
-    }
-
-    @Transactional
     public void deleteGame(Integer id){
         videogameRepository.deleteById(id);
     }

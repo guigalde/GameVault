@@ -1,11 +1,16 @@
 package TFG.GameVault.user;
 
+import java.util.List;
+
 import org.checkerframework.common.aliasing.qual.Unique;
 
 import TFG.GameVault.model.BaseEntity;
+import TFG.GameVault.personal_videogame.PersonalVideogame;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,5 +43,8 @@ public class User extends BaseEntity{
     @ManyToOne
     @NotNull
     public Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    public List<PersonalVideogame> personalVideogames;
     
 }

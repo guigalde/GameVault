@@ -64,7 +64,7 @@ public class UserService {
     public User fromRegisterToUser(SignUpDto signup){
 
         Optional<Role> role = rr.findById(2);
-        User user = new User(signup.getUsername(), passwordEncoder.encode(CharBuffer.wrap(signup.getPassword())), signup.getEmail(), role.get());
+        User user = new User(signup.getUsername(), passwordEncoder.encode(CharBuffer.wrap(signup.getPassword())), signup.getEmail(), role.get(), null);
         return user;
     }
 
@@ -110,5 +110,9 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<String> findEmails(){
         return ur.findEmails();
+    }
+
+    public User findByUsername(Integer user_id) {
+        return ur.findById(user_id).orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
     }
 }
