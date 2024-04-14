@@ -12,7 +12,7 @@ public class PersonalVideogameDto{
 
     Float mark;
 
-    LocalDate aquiredOn;
+    LocalDate acquiredOn;
 
     LocalDate completedOn;
 

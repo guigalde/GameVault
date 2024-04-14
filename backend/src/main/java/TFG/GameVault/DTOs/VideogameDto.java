@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VideogameDto {
+
+    public Integer id;
     
     public String name;
 

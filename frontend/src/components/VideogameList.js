@@ -1,6 +1,7 @@
 
 import { request } from '../helpers/axios_helper';
 import { useState, useEffect } from 'react';
+import AddToMyGamesForm from './AddToMyGamesForm.js';
 
 export default function VideogameList(){
     const [filters, setFilters] = useState({});
@@ -28,6 +29,10 @@ export default function VideogameList(){
     const [showPlatforms, setShowPlatforms] = useState(false);
     const [showGenres, setShowGenres] = useState(false);
     const [showPublishers, setShowPublishers] = useState(false);
+
+    const [showForm, setShowForm] = useState(false);
+    const [gameId, setGameId] = useState(null);
+    const [gameName, setGameName] = useState(null);
     
 
     async function retrieveGames(){
@@ -63,6 +68,7 @@ export default function VideogameList(){
         }
     
     }
+
     useEffect(() => {
         retrieveGames();
         retrieveGenres();
@@ -167,13 +173,16 @@ export default function VideogameList(){
                                     <td>{game.name}</td>
                                     <td>{game.platforms}</td>
                                     <td>{game.genres}</td>
-                                    <td></td>
+                                    <td>
+                                        <button className="btn btn-primary btn-block mb-4"  onClick = {()=>{setShowForm(true);setGameId(game.id); setGameName(game.name)}}style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}><b>Add to my games</b></button>
+                                    </td>
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
             </div>
+            {showForm && <AddToMyGamesForm gameId={gameId} setShowForm={setShowForm} gameName={gameName}/> }
         </div>
     );
 }

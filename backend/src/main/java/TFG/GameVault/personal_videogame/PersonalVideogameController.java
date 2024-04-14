@@ -19,12 +19,9 @@ public class PersonalVideogameController {
 
     @PostMapping("/addPersonalVideogame/{user_id}")
     public ResponseEntity<String> addPersonalVideogame(@PathVariable Integer user_id, @RequestBody PersonalVideogameDto personalVideogame){
-        try{
             pvService.savePersonalVideogame(pvService.fromDTO(personalVideogame, user_id));
             return ResponseEntity.ok("Game added successfully");
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body("Error adding game");
-        }
+        
     }
 
     

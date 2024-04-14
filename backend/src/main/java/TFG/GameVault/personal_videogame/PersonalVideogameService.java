@@ -54,7 +54,7 @@ public class PersonalVideogameService {
         PersonalVideogame personalVideogame = new PersonalVideogame();
         personalVideogame.setUser(user);
         personalVideogame.setVideogame(videogame);
-        personalVideogame.setAquiredOn(dto.getAquiredOn());
+        personalVideogame.setAcquiredOn(dto.getAcquiredOn());
         personalVideogame.setCompletedOn(dto.getCompletedOn());
         personalVideogame.setCompletionTime(dto.getCompletionTime());
         personalVideogame.setMark(dto.getMark());

@@ -36,7 +36,7 @@ public class PersonalVideogame extends BaseEntity{
 
     Float mark;
 
-    LocalDate aquiredOn;
+    LocalDate acquiredOn;
 
     LocalDate completedOn;
 

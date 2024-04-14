@@ -43,7 +43,7 @@ public class VideogameService {
 
     @Transactional
     public VideogameDto transformToDTO(Videogame videogame){
-        return new VideogameDto(videogame.getName(), videogame.getDescription(), videogame.getImage(), videogame.getPlatforms(), videogame.getGenres(), videogame.getDeveloper(), videogame.getPublisher(), videogame.getReleaseDate());
+        return new VideogameDto(videogame.getId(), videogame.getName(), videogame.getDescription(), videogame.getImage(), videogame.getPlatforms(), videogame.getGenres(), videogame.getDeveloper(), videogame.getPublisher(), videogame.getReleaseDate());
     }
 
     @Transactional
