@@ -82,6 +82,10 @@ export default function VideogameList(){
         retrievePublishers();
     }, [filters, page]);
 
+    useEffect(() => {
+        setPage(0);
+    }, [filters]);
+
     const searchedGenres = genres.filter(g => g.toLowerCase().includes(provisionalFilters.genre.toLowerCase()));
     const searchedPlatforms = platforms.filter(p => p.toLowerCase().includes(provisionalFilters.platform.toLowerCase()));
     const searchedPublishers = publishers.filter(p => p.toLowerCase().includes(provisionalFilters.publisher.toLowerCase()));
