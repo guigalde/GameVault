@@ -38,14 +38,14 @@ public class UserController {
         @PostMapping("/login")
         public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {
             UserDto userDto = us.login(credentialsDto);
-            userDto.setToken(userAuthenticationProvider.createToken(userDto.getUsername()));
+            userDto.setToken(userAuthenticationProvider.createToken(userDto));
             return ResponseEntity.ok(userDto);
         }
 
         @PostMapping("/register")
         public ResponseEntity<UserDto> register(@RequestBody @Valid SignUpDto user) {
             UserDto createdUser = us.register(user);
-            createdUser.setToken(userAuthenticationProvider.createToken(user.getUsername()));
+            createdUser.setToken(userAuthenticationProvider.createToken(createdUser));
             return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
         }
 

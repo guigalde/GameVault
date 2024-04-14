@@ -1,5 +1,5 @@
 import {isEmail} from 'validator';
-import { request } from './axios_helper';
+import { request, getUserInfo} from './axios_helper';
 
 export async function userValidation(user){
     let usernames = [];
@@ -26,7 +26,7 @@ export async function userValidation(user){
         errors.usernameError = "Username must contain only letters, numbers and underscores";
     }else if(user.username.includes(" ")){
         errors.usernameError = "Username cannot contain spaces";
-    }else if(usernames.includes(user.username)){
+    }else if((getUserInfo().sub!==user.username) && usernames.includes(user.username)){
         errors.usernameError = "Username already exists";
     }
 
@@ -34,7 +34,7 @@ export async function userValidation(user){
         errors.emailError = "Email cannot be empty";
     }else if(!isEmail(user.email)){
         errors.emailError = "Invalid email";
-    }else if(emails.includes(user.email)){
+    }else if((getUserInfo().email !== user.email) && emails.includes(user.email)){
         errors.emailError = "Email already exists";
     }
 

@@ -10,30 +10,35 @@ export function validateMyGame(personalVideogame){
     };
     if(personalVideogame.timePlayed === null){
         errors.timePlayedError = "Time played cannot be empty";
-    }else if(personalVideogame.timePlayed < 0){
+    }else if(Number(personalVideogame.timePlayed) < 0){
         errors.timePlayedError = "Time played cannot be negative";
     }
 
     if( personalVideogame.mark === null){
         errors.markError = "Mark cannot be empty";
-    }else if(personalVideogame.mark < 0 || personalVideogame.mark > 10){
+    }else if(Number(personalVideogame.mark) < 0 || Number(personalVideogame.mark) > 10){
         errors.markError = "Mark must be between 0 and 10";
-    }else if(typeof personalVideogame.mark === 'string'){
-        errors.markError = "Mark must be a number";
     }
 
     if(personalVideogame.completionTime < 0){
         errors.completionTimeError = "Completion time cannot be negative";
-    }else if(typeof personalVideogame.completionTime === 'string'){
-        errors.completionTimeError = "Completion time must be a number";
+    }else if(Number(personalVideogame.completionTime) > Number(personalVideogame.timePlayed)){
+        errors.completionTimeError = "Completion time cant be greater than time played";
     }
+    
     const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
     if(personalVideogame.completedOn!== null && !dateFormatRegex.test(personalVideogame.completedOn)){
         errors.completedOnError = "Wrong date format";
+    }else if(personalVideogame.completedOn!== null && personalVideogame.completedOn > new Date().toISOString().split('T')[0]){
+        errors.completedOnError = "Date cannot be in the future";
+    }else if(personalVideogame.completedOn!== null && personalVideogame.completedOn < personalVideogame.acquiredOn){
+        errors.completedOnError = "Date cannot be before acquired date";
     }
 
     if(personalVideogame.acquiredOn!== null && !dateFormatRegex.test(personalVideogame.acquiredOn)){
         errors.acquiredOnError = "Wrong date format";
+    }else if(personalVideogame.acquiredOn!== null && personalVideogame.acquiredOn > new Date().toISOString().split('T')[0]){
+        errors.acquiredOnError = "Date cannot be in the future";
     }
 
     if(personalVideogame.platform === ""){

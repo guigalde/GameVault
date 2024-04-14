@@ -1,9 +1,18 @@
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 
 
 export const getAuthToken = () => {
     return window.localStorage.getItem('auth_token');
 };
+
+export const getUserInfo = () => {
+    const auth_token = getAuthToken();
+    if (auth_token === null) {
+        return {id: null, sub: null, email: null, role: null};
+    }
+    return jwtDecode(getAuthToken());
+}
 
 export const setAuthHeader = (token) => {
     if (token !== null) {

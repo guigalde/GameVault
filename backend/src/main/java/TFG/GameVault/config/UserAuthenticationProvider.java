@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +21,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 
 @Component
 public class UserAuthenticationProvider {
@@ -44,11 +42,16 @@ public class UserAuthenticationProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(String username){
+    public String createToken(UserDto user){
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("role", user.getRole());
+        claims.put("id", user.getId());
+        claims.put("email", user.getEmail());
+
         Date now = new Date();
         Date validity = new Date(now.getTime() + 3600000*4);
         return Jwts.builder()
-                .setSubject(username)
+                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(getSigningKey()).compact();

@@ -1,12 +1,16 @@
-import {useState, useContext} from 'react';
-import {UserContext} from '../helpers/user_context';
-import {request} from '../helpers/axios_helper';
+import {useState} from 'react';
+import {request, getUserInfo} from '../helpers/axios_helper';
 import {useNavigate} from 'react-router-dom';
 import { validateMyGame } from '../helpers/mygame_validation';
 import FormError from './FormError';
 
 export default function AddToMyGamesForm({gameName, gameId, setShowForm}) {
-    const {user} = useContext(UserContext);
+    const user = {
+        id: getUserInfo().id,
+        username: getUserInfo().sub,
+        email: getUserInfo().email,
+        role: getUserInfo().role
+    };
     const [error, setError] = useState({});
     const [completed, setCompleted] = useState(false);
     const navigate = useNavigate();
