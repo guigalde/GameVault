@@ -32,11 +32,6 @@ public class VideogameService {
     }
 
     @Transactional
-    public Videogame updateGame(Videogame videogame){
-        return videogameRepository.save(videogame);
-    }
-
-    @Transactional
     public void deleteGame(Integer id){
         videogameRepository.deleteById(id);
     }
@@ -48,7 +43,7 @@ public class VideogameService {
 
     @Transactional
     public VideogameDto transformToDTO(Videogame videogame){
-        return new VideogameDto(videogame.getName(), videogame.getDescription(), videogame.getImage(), videogame.getPlatforms(), videogame.getGenres(), videogame.getDeveloper(), videogame.getPublisher(), videogame.getReleaseDate());
+        return new VideogameDto(videogame.getId(), videogame.getName(), videogame.getDescription(), videogame.getImage(), videogame.getPlatforms(), videogame.getGenres(), videogame.getDeveloper(), videogame.getPublisher(), videogame.getReleaseDate());
     }
 
     @Transactional
