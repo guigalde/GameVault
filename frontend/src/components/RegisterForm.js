@@ -1,15 +1,13 @@
 import { useState, useContext } from "react";
-import { request, setAuthHeader } from '../helpers/axios_helper';
+import { request, setAuthHeader, getUserInfo } from '../helpers/axios_helper';
 import classNames from 'classnames';
 import {useNavigate, Link} from 'react-router-dom';
-import { UserContext } from '../helpers/user_context';
 import { userValidation} from '../helpers/user_validation';
 import FormError from './FormError';
 
 
 export default function RegisterForm(){
     const navigate = useNavigate();
-    const {user,setUser} = useContext(UserContext);
     const [registerUser, setRegisterUser] = useState({
         username: "",
         email: "",
@@ -35,13 +33,6 @@ export default function RegisterForm(){
                 }).then(
                 (response) => {
                     setAuthHeader(response.data.token);
-                    setUser({
-                        isLogged: true,
-                        id: response.data.id,
-                        username: response.data.username,
-                        email: response.data.email,
-                        role: response.data.role
-                    });
                     navigate('/');
                 }).catch(
                 (error) => {

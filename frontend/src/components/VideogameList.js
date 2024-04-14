@@ -1,5 +1,5 @@
 
-import { request } from '../helpers/axios_helper';
+import { request, getUserInfo} from '../helpers/axios_helper';
 import { useState, useEffect } from 'react';
 import AddToMyGamesForm from './AddToMyGamesForm.js';
 
@@ -14,6 +14,12 @@ export default function VideogameList(){
         platform: ""
 
     });
+    const user = {
+        id: getUserInfo().id,
+        username: getUserInfo().sub,
+        email: getUserInfo().email,
+        role: getUserInfo().role
+    };
     const [page,setPage] = useState(0);
     const [games, setGames] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -174,7 +180,7 @@ export default function VideogameList(){
                                     <td>{game.platforms}</td>
                                     <td>{game.genres}</td>
                                     <td>
-                                        <button className="btn btn-primary btn-block mb-4"  onClick = {()=>{setShowForm(true);setGameId(game.id); setGameName(game.name)}}style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}><b>Add to my games</b></button>
+                                        {user.username? <button className="btn btn-primary btn-block mb-4"  onClick = {()=>{setShowForm(true);setGameId(game.id); setGameName(game.name)}}style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}><b>Add to my games</b></button>:null}
                                     </td>
                                 </tr>
                             );

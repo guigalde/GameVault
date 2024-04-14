@@ -1,24 +1,22 @@
 
 
 import { Link } from 'react-router-dom';
-import { UserContext } from '../helpers/user_context';
-import { useContext, useState } from 'react';
-import { request } from '../helpers/axios_helper';
+import {useState } from 'react';
+import { request, getUserInfo} from '../helpers/axios_helper';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
 export default function Buttons() {
 
-  const {user, setUser} = useContext(UserContext);
+  const user = {
+    id: getUserInfo().id,
+    username: getUserInfo().sub,
+    email: getUserInfo().email,
+    role: getUserInfo().role
+};
   const navigate = useNavigate();
 
   function onLogOutClick(){
-    setUser({
-      isLogged: false,
-      username: "",
-      email: "",
-      role: ""
-    });
     window.localStorage.removeItem("auth_token");
     navigate("/");
   }
@@ -30,12 +28,6 @@ export default function Buttons() {
       ).then((response) => {
         alert(response.data);
         window.localStorage.removeItem("auth_token");
-        setUser({
-          isLogged: false,
-          username: "",
-          email: "",
-          role: ""
-        });
         navigate("/");
       }).catch((error) => {alert(error)});
   }
@@ -51,7 +43,7 @@ export default function Buttons() {
   return (
     
       <div>
-        {!user.isLogged ? (
+        {!user.username ? (
           <Link to="/login">
             <button className="btn btn-secondary" type="button"  style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black' }}>
                 <b>Sign in</b>

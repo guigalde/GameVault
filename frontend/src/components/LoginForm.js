@@ -1,13 +1,12 @@
-import  {useContext, useState} from 'react';
+import  { useState} from 'react';
 import classNames from 'classnames';
 import { request, setAuthHeader } from '../helpers/axios_helper';
 import { Link, useNavigate} from 'react-router-dom';
-import { UserContext } from '../helpers/user_context';
 
 export default function  LoginForm() {
     const [loginUser, setLoginUser] = useState({ username: "", password: "" });
     const navigate = useNavigate();
-    const {user, setUser} = useContext(UserContext);
+    const [successLogin, setSuccessLogin] = useState(false);
     function onLogin(e, username, password){
         e.preventDefault();
         request(
@@ -19,13 +18,7 @@ export default function  LoginForm() {
             }).then(
             (response) => {
                 setAuthHeader(response.data.token);
-                setUser({
-                    isLogged: true,
-                    id: response.data.id,
-                    username: response.data.username,
-                    email: response.data.email,
-                    role: response.data.role
-                });
+                setSuccessLogin(true);
                 navigate('/');
             }).catch(
             (error) => {
@@ -40,7 +33,7 @@ export default function  LoginForm() {
 
     function onSubmitLogin(e){
         onLogin(e, loginUser.username, loginUser.password);
-        if (user.isLogged === true) {
+        if (successLogin === true) {
           navigate('/');
       }
     };

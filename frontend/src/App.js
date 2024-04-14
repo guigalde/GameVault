@@ -3,7 +3,6 @@ import './App.css';
 import {Routes, Route} from 'react-router-dom';
 import { useState } from 'react';
 import Header from './components/Header';
-import { UserContext } from './helpers/user_context';
 import { WelcomeContent } from './components/WelcomeContent';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
@@ -22,7 +21,6 @@ function App() {
   
 
   return (
-    <UserContext.Provider value={{user, setUser}}>
       <div className="App">
         <Header 
           pageTitle= "GameVault" 
@@ -38,9 +36,7 @@ function App() {
           </Routes>
         </div>
       </div>
-      
-    </UserContext.Provider>
-  );
+        );
 }
 
 export default App;
