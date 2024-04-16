@@ -8,17 +8,10 @@ import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import EditForm from './components/EditProfile';
 import VideogameList from './components/VideogameList';
+import MyGamesList from './components/MyGamesList';
 import { useNavigate } from 'react-router-dom';
 
 function App() {
-  const navigate = useNavigate();
-  const [user, setUser] = useState({
-    username: "",
-    email: "",
-    password: "",
-    role: ""
-  });
-  
 
   return (
       <div className="App">
@@ -33,6 +26,7 @@ function App() {
             <Route path="/" exact element={<WelcomeContent/>}/>
             <Route path="/editAccount" exact element={<EditForm/>}/>
             <Route path="/videogames" exact element={<VideogameList/>}/>
+            <Route path="/myGames" exact element={<MyGamesList/>}/>
           </Routes>
         </div>
       </div>

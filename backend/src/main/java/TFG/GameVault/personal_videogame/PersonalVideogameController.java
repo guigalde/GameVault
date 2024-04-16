@@ -29,10 +29,17 @@ public class PersonalVideogameController {
         
     }
 
-    @PostMapping("/listPersonalVideogames/{user_id}/{page}")
+    @PostMapping("/listMyGames/{user_id}/{page}")
     public ResponseEntity<List<Object>> listPersonalVideogame(@PathVariable Integer user_id,@PathVariable Integer page, @RequestBody PersonalVideogameFilter filter){
-        Pageable pageable = PageRequest.of(page, 50, Direction.DESC, "timePlayed");
-        return ResponseEntity.ok(pvService.applyFilters(user_id, filter, pageable));
+        try{
+            if(user_id == null || page == null || filter == null){
+                return ResponseEntity.badRequest().body(null);
+            }
+            Pageable pageable = PageRequest.of(page, 50, Direction.DESC, "timePlayed");
+            return ResponseEntity.ok(pvService.applyFilters(user_id, filter, pageable));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     

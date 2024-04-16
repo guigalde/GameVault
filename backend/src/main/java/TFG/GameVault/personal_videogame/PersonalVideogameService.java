@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import TFG.GameVault.DTOs.PersonalVideogameDto;
+import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserService;
 import TFG.GameVault.videogame.Videogame;
@@ -66,8 +67,8 @@ public class PersonalVideogameService {
         return personalVideogame;
     }
 
-    public PersonalVideogameDto toDto(PersonalVideogame personalVideogame){
-        PersonalVideogameDto dto = new PersonalVideogameDto();
+    public PersonalVideogameInfoDto toDto(PersonalVideogame personalVideogame){
+        PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
         dto.setAcquiredOn(personalVideogame.getAcquiredOn());
         dto.setCompletedOn(personalVideogame.getCompletedOn());
         dto.setCompletionTime(personalVideogame.getCompletionTime());
@@ -75,7 +76,7 @@ public class PersonalVideogameService {
         dto.setNotes(personalVideogame.getNotes());
         dto.setPlatform(personalVideogame.getPlatform());
         dto.setTimePlayed(personalVideogame.getTimePlayed());
-        dto.setVideogameId(personalVideogame.getVideogame().getId());
+        dto.setVideogame(videogameService.transformToDTO(personalVideogame.getVideogame()));
 
         return dto;
     }
@@ -92,17 +93,17 @@ public class PersonalVideogameService {
             .and(PersonalVideogameSpecifications.search(filter.getSearchTerms()))
             .and(PersonalVideogameSpecifications.filterByDate(filter.getMinReleaseDate(), filter.getMaxReleaseDate()));
         
-        if(filter.getMarkSort()==true){
+        if(filter.getMarkSort()!=null &&filter.getMarkSort()==true){
             page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "mark");
-        }else if(filter.getMarkSort()==false){
+        }else if(filter.getMarkSort()!=null && filter.getMarkSort()==false){
             page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "mark");
-        }else if(filter.getTimePlayedSort()==true){
+        }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==true){
             page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "timePlayed");
-        }else if(filter.getTimePlayedSort()==false){
+        }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==false){
             page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "timePlayed");
         }
         Page<PersonalVideogame>  personalVideogames = personalVideogameRepository.findAll(spec, page);
-        List<PersonalVideogameDto> personalVideogameDtos = new ArrayList<>();
+        List<PersonalVideogameInfoDto> personalVideogameDtos = new ArrayList<>();
         for (PersonalVideogame personalVideogame : personalVideogames) {
             personalVideogameDtos.add(toDto(personalVideogame));
         }
