@@ -9,8 +9,9 @@ export const getAuthToken = () => {
 export const getUserInfo = () => {
     const auth_token = getAuthToken();
     if (auth_token === null) {
-        return {id: null, sub: null, email: null, role: null};
+        return {id: null, sub: null, email: null, role: null, exp: null};
     }
+    console.log(jwtDecode(getAuthToken()))
     return jwtDecode(getAuthToken());
 }
 

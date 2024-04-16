@@ -10,7 +10,7 @@ export default function Header({logoSrc, pageTitle}) {
     email: getUserInfo().email,
     role: getUserInfo().role
   };
-
+  
     return (
       <nav className= "d-flex justify-content-between align-items-center App-header">
         <div className="d-flex align-items-center">

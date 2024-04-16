@@ -7,6 +7,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Component
+@Configuration
 public class UserAuthenticationProvider {
 
 
@@ -49,7 +51,7 @@ public class UserAuthenticationProvider {
         claims.put("email", user.getEmail());
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 3600000*4);
+        Date validity = new Date(now.getTime() + 3600000*24);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
