@@ -51,7 +51,9 @@ public class UserController {
 
         @PutMapping("/users/{id}")
         public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody @Valid UserDto userDto) {
-            return ResponseEntity.ok(us.updateUser(id, userDto));
+            UserDto updatedUser = us.updateUser(id, userDto);
+            updatedUser.setToken(userAuthenticationProvider.createToken(updatedUser));
+            return ResponseEntity.ok(updatedUser);
         }
 
         @DeleteMapping("/users/{id}")
