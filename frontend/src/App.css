@@ -170,5 +170,52 @@
     cursor: not-allowed;
 }
 
+.sort-arrow {
+    cursor: pointer;
+    margin-left: 10px;
+}
 
+.column-name {
+    width: 40%;
+}
+
+.column-platform {
+    width: 10%;
+}
+
+.column-completed {
+    width: 10%;
+}
+
+.column-time-played {
+    width: 10%;
+}
+
+.column-mark {
+    width: 10%;
+}
+.column-button{
+    width: 20%;
+}
+
+.column-name-vg {
+    width: 30%; 
+}
+
+.column-platforms-vg {
+    width: 30%; 
+}
+
+.column-genres-vg {
+    width: 20%;
+}
+
+.column-action-vg {
+    width: 20%;
+}
+
+.link{
+    text-decoration: none;
+    color: black;
+}
   

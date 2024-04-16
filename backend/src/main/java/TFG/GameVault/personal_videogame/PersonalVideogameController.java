@@ -1,5 +1,10 @@
 package TFG.GameVault.personal_videogame;
 
+import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +27,19 @@ public class PersonalVideogameController {
             pvService.savePersonalVideogame(pvService.fromDTO(personalVideogame, user_id));
             return ResponseEntity.ok("Game added successfully");
         
+    }
+
+    @PostMapping("/listMyGames/{user_id}/{page}")
+    public ResponseEntity<List<Object>> listPersonalVideogame(@PathVariable Integer user_id,@PathVariable Integer page, @RequestBody PersonalVideogameFilter filter){
+        try{
+            if(user_id == null || page == null || filter == null){
+                return ResponseEntity.badRequest().body(null);
+            }
+            Pageable pageable = PageRequest.of(page, 50, Direction.DESC, "timePlayed");
+            return ResponseEntity.ok(pvService.applyFilters(user_id, filter, pageable));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     

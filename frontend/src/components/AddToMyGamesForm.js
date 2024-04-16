@@ -59,7 +59,7 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm}) {
                     <div className="form-group">
                         <label>Mark:</label>
                         <FormError error={error.markError}/>
-                        <input type="number" className="form-control" value={personalVideogame.mark} onChange={(e) => setPersonalVideogame({...personalVideogame,mark: e.target.value})}/>
+                        <input type="number" className="form-control custom-select" value={personalVideogame.mark} onChange={(e) => setPersonalVideogame({...personalVideogame,mark: e.target.value})}/>
                     </div>
                     <div className="form-group">
                         <label>Completed:</label>

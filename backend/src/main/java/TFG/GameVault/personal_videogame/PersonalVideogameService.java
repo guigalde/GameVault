@@ -1,12 +1,19 @@
 package TFG.GameVault.personal_videogame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import TFG.GameVault.DTOs.PersonalVideogameDto;
+import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserService;
 import TFG.GameVault.videogame.Videogame;
@@ -38,11 +45,6 @@ public class PersonalVideogameService {
     }
 
     @Transactional
-    public List<PersonalVideogame> findGamesByUser(User user){
-        return personalVideogameRepository.findByUser(user);
-    }
-
-    @Transactional
     public void deleteGame(Integer id){
         personalVideogameRepository.deleteById(id);
     }
@@ -63,6 +65,52 @@ public class PersonalVideogameService {
         personalVideogame.setTimePlayed(dto.getTimePlayed());
 
         return personalVideogame;
+    }
+
+    public PersonalVideogameInfoDto toDto(PersonalVideogame personalVideogame){
+        PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
+        dto.setAcquiredOn(personalVideogame.getAcquiredOn());
+        dto.setCompletedOn(personalVideogame.getCompletedOn());
+        dto.setCompletionTime(personalVideogame.getCompletionTime());
+        dto.setMark(personalVideogame.getMark());
+        dto.setNotes(personalVideogame.getNotes());
+        dto.setPlatform(personalVideogame.getPlatform());
+        dto.setTimePlayed(personalVideogame.getTimePlayed());
+        dto.setVideogame(videogameService.transformToDTO(personalVideogame.getVideogame()));
+
+        return dto;
+    }
+
+    public List<Object> applyFilters(Integer userId, PersonalVideogameFilter filter, Pageable page){
+        List<Object> res = new ArrayList<>();
+        Specification<PersonalVideogame> spec = Specification.where(PersonalVideogameSpecifications.user(userId));
+        spec = spec.and(PersonalVideogameSpecifications.completed(filter.getCompleted()))
+            .and(PersonalVideogameSpecifications.hasPlatform(filter.getPlatform()))
+            .and(PersonalVideogameSpecifications.markInInterval(filter.getMinMark(), filter.getMaxMark()))
+            .and(PersonalVideogameSpecifications.timePlayedInInterval(filter.getMinTimePlayed(), filter.getMaxTimePlayed()))
+            .and(PersonalVideogameSpecifications.hasGenre(filter.getGenre()))
+            .and(PersonalVideogameSpecifications.hasPublisher(filter.getPublisher()))
+            .and(PersonalVideogameSpecifications.search(filter.getSearchTerms()))
+            .and(PersonalVideogameSpecifications.filterByDate(filter.getMinReleaseDate(), filter.getMaxReleaseDate()));
+        
+        if(filter.getMarkSort()!=null &&filter.getMarkSort()==true){
+            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "mark");
+        }else if(filter.getMarkSort()!=null && filter.getMarkSort()==false){
+            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "mark");
+        }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==true){
+            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "timePlayed");
+        }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==false){
+            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "timePlayed");
+        }
+        Page<PersonalVideogame>  personalVideogames = personalVideogameRepository.findAll(spec, page);
+        List<PersonalVideogameInfoDto> personalVideogameDtos = new ArrayList<>();
+        for (PersonalVideogame personalVideogame : personalVideogames) {
+            personalVideogameDtos.add(toDto(personalVideogame));
+        }
+        res.add(personalVideogameDtos);
+        res.add(personalVideogames.getTotalPages());
+
+        return res;
     }
 
 }

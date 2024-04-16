@@ -20,6 +20,7 @@ export default function  LoginForm() {
                 setAuthHeader(response.data.token);
                 setSuccessLogin(true);
                 navigate('/');
+                window.location.reload();
             }).catch(
             (error) => {
                 setAuthHeader(null); 
@@ -35,6 +36,7 @@ export default function  LoginForm() {
         onLogin(e, loginUser.username, loginUser.password);
         if (successLogin === true) {
           navigate('/');
+          window.location.reload();
       }
     };
 

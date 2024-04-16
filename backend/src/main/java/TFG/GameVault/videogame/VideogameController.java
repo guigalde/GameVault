@@ -71,5 +71,10 @@ public class VideogameController {
     public ResponseEntity<Set<String>> getPublishers(){
         return ResponseEntity.ok(vgService.getPublishers());
     }
+
+    @GetMapping("/videogame/{id}")
+    public ResponseEntity<VideogameDto> getGame(@PathVariable Integer id){
+        return ResponseEntity.ok(vgService.transformToDTO(vgService.getGame(id)));
+    }
     
 }

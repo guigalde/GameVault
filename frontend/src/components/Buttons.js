@@ -1,7 +1,6 @@
 
 
 import { Link } from 'react-router-dom';
-import {useState } from 'react';
 import { request, getUserInfo} from '../helpers/axios_helper';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
@@ -14,11 +13,14 @@ export default function Buttons() {
     email: getUserInfo().email,
     role: getUserInfo().role
 };
+
+
   const navigate = useNavigate();
 
   function onLogOutClick(){
     window.localStorage.removeItem("auth_token");
     navigate("/");
+    window.location.reload();
   }
 
   function handleDeleteAccount() {
@@ -29,6 +31,7 @@ export default function Buttons() {
         alert(response.data);
         window.localStorage.removeItem("auth_token");
         navigate("/");
+        window.location.reload();
       }).catch((error) => {alert(error)});
   }
   function handleVideogameLoad() {
