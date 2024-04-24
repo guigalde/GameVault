@@ -4,6 +4,11 @@ import java.time.LocalDate;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import TFG.GameVault.user.User;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
+
 public class VideogameSpecifications {
     
     public static Specification<Videogame> hasPlatform(String platform){
@@ -53,6 +58,21 @@ public class VideogameSpecifications {
                 return cb.conjunction();
             }
             return cb.like(cb.lower(videogame.get("name")), "%" + searchTerms.toLowerCase() + "%");
+        };
+    }
+
+    public static Specification<Videogame> isWhishlistedBy(Integer userId){
+        return (videogame, cq, cb) ->{
+            if (userId == null) {
+                return cb.conjunction();
+            }
+            Subquery<Integer> subquery = cq.subquery(Integer.class);
+            Root<User> userRoot = subquery.from(User.class);
+            Join<User, Videogame> join = userRoot.join("wishlist");
+            subquery.select(join.get("id"));
+            subquery.where(cb.equal(userRoot.get("id"), userId));
+    
+            return cb.in(videogame.get("id")).value(subquery);
         };
     }
     

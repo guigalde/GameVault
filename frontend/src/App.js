@@ -8,6 +8,7 @@ import RegisterForm from './components/RegisterForm';
 import EditForm from './components/EditProfile';
 import VideogameList from './components/VideogameList';
 import MyGamesList from './components/MyGamesList';
+import Wishlist from './components/Wishlist';
 import { getUserInfo } from './helpers/axios_helper';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <Route path="/editAccount" exact element={<EditForm/>}/>
             <Route path="/videogames" exact element={<VideogameList/>}/>
             <Route path="/myGames" exact element={<MyGamesList/>}/>
+            <Route path="/wishlist" exact element={<Wishlist/>}/>
           </Routes>
         </div>
       </div>

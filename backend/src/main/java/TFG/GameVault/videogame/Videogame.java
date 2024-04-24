@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import TFG.GameVault.model.BaseEntity;
+import TFG.GameVault.user.User;
 import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,4 +48,11 @@ public class Videogame extends BaseEntity{
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     public LocalDate releaseDate;
     
+    @ManyToMany
+    @JoinTable(
+        name = "wishlist",
+        joinColumns= @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "videogame_id")
+    )
+    public List<User> usersWhishlited;    
 }

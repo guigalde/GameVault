@@ -210,8 +210,12 @@
     width: 20%;
 }
 
-.column-action-vg {
-    width: 20%;
+.column-toCollection-vg {
+    width: 15%;
+}
+
+.column-wishlistAction-vg{
+    width: 5%;
 }
 
 .link{

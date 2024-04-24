@@ -1,10 +1,9 @@
-
 import { request, getUserInfo} from '../helpers/axios_helper';
 import { useState, useEffect } from 'react';
 import AddToMyGamesForm from './AddToMyGamesForm.js';
-import { SubwayAdd } from './imported_icons/add.js';
+import { IcomoonFreeBin } from './imported_icons/bin.js';
 
-export default function VideogameList(){
+export default function Wishlist(){
     const [filters, setFilters] = useState({});
     const [provisionalFilters, setProvisionalFilters] = useState({
         searchTerms: "",
@@ -43,8 +42,7 @@ export default function VideogameList(){
     
 
     async function retrieveGames(){
-        const response = await request("POST", "/api/videogames/"+page,
-        filters)
+        const response = await request("POST", "/api/wishlist/"+ page + "/" + user.id, filters)
         if(response.status === 200){
             setGames(response.data[0]);
             setTotalPages(response.data[1]);
@@ -75,12 +73,13 @@ export default function VideogameList(){
     
     }
 
-    async function addToWishlist(gameId){
+    async function removeGame(gameId){
         request(
-            'POST',
-            'api/addToWishlist/'+user.id+'/'+gameId
+            'DELETE',
+            'api/deleteFromWishlist/'+user.id+'/'+gameId
         ).then((response) => {
             alert(response.data);
+            retrieveGames();
         }).catch((error) => {
             alert(error);
         });
@@ -203,7 +202,7 @@ export default function VideogameList(){
                                         ) : null}
                                     </td>
                                     <td className="column-wishlistAction-vg">
-                                        <SubwayAdd style={{cursor: 'pointer'}} onClick={()=>{addToWishlist(game.id)}}/>
+                                        <IcomoonFreeBin style={{cursor: 'pointer'}} onClick={()=>{removeGame(game.id)}} />
                                     </td>
                                 </tr>
                             );
@@ -211,7 +210,7 @@ export default function VideogameList(){
                     </tbody>
                 </table>
             </div>
-            {showForm && <AddToMyGamesForm gameId={gameId} setShowForm={setShowForm} gameName={gameName}/> }
+            {showForm && <AddToMyGamesForm gameId={gameId} setShowForm={setShowForm} gameName={gameName} isFromWishlist={true} retrieveGames={retrieveGames}/> }
         </div>
     );
 }
