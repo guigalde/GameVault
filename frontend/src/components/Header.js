@@ -24,11 +24,19 @@ export default function Header({logoSrc, pageTitle}) {
             </div>
           </Link>
           {user.id!==null && 
+          <>
           <Link to="/myGames" className="link">
             <div className="nav-item" style={{borderRight:'1.5px solid black'}}>
               <b style={{padding:'20px'}}>My Games</b>
             </div>
-          </Link>}
+          </Link>
+          <Link to="/wishlist" className="link">
+            <div className="nav-item" style={{borderRight:'1.5px solid black'}}>
+              <b style={{padding:'20px'}}>Wishlist</b>
+            </div>
+          </Link>
+          </>
+          }
         </div>
         <Buttons/>
       </nav>

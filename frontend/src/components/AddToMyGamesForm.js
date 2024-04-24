@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import { validateMyGame } from '../helpers/mygame_validation';
 import FormError from './FormError';
 
-export default function AddToMyGamesForm({gameName, gameId, setShowForm}) {
+export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromWishlist, retrieveGames}) {
     const user = {
         id: getUserInfo().id,
         username: getUserInfo().sub,
@@ -43,7 +43,18 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm}) {
             }).catch((error) => {
                 alert(error);
             });
+            if(isFromWishlist===true){
+                request(
+                    'DELETE',
+                    'api/deleteFromWishlist/'+user.id+'/'+gameId
+                ).then((response) => {
+                    retrieveGames();
+                }).catch((error) => {
+                    alert(error);
+                });
+            }
         }
+
     }
 
     return (

@@ -6,9 +6,10 @@ import org.checkerframework.common.aliasing.qual.Unique;
 
 import TFG.GameVault.model.BaseEntity;
 import TFG.GameVault.personal_videogame.PersonalVideogame;
+import TFG.GameVault.videogame.Videogame;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -46,5 +47,8 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     public List<PersonalVideogame> personalVideogames;
+
+    @ManyToMany(mappedBy = "usersWhishlited")
+    public List<Videogame> wishlist;
     
 }

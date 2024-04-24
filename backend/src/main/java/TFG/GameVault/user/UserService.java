@@ -64,7 +64,7 @@ public class UserService {
     public User fromRegisterToUser(SignUpDto signup){
 
         Optional<Role> role = rr.findById(2);
-        User user = new User(signup.getUsername(), passwordEncoder.encode(CharBuffer.wrap(signup.getPassword())), signup.getEmail(), role.get(), null);
+        User user = new User(signup.getUsername(), passwordEncoder.encode(CharBuffer.wrap(signup.getPassword())), signup.getEmail(), role.get(), null, null);
         return user;
     }
 

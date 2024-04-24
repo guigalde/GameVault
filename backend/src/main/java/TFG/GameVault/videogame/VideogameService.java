@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,13 +15,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import TFG.GameVault.DTOs.VideogameDto;
+import TFG.GameVault.user.User;
+import TFG.GameVault.user.UserRepository;
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class VideogameService {
     
+    @Autowired
     private final VideogameRepository videogameRepository;
+
+    @Autowired
+    private final UserRepository ur;
 
     @Transactional
     public Videogame saveGame(Videogame videogame){
@@ -70,8 +78,7 @@ public class VideogameService {
             .collect(Collectors.toSet());
     }
 
-    @Transactional
-    public List<Object> filterGames(GamesFilter filter, Pageable pageable) {
+    public Specification<Videogame> getSpec(GamesFilter filter){
         Specification<Videogame> spec = Specification.where(null);
 
         if (filter.getPlatform() != null && !filter.getPlatform().isEmpty()) {
@@ -93,6 +100,16 @@ public class VideogameService {
         if (filter.getGenre() != null && !filter.getGenre().isEmpty()) {
             spec = spec.and(VideogameSpecifications.hasGenre(filter.getGenre()));
         }
+
+        return spec;
+    }
+
+    @Transactional
+    public List<Object> filterGames(GamesFilter filter, Pageable pageable, Integer userId) {
+        Specification<Videogame> spec = getSpec(filter);
+        if(userId != null){
+            spec = spec.and(VideogameSpecifications.isWhishlistedBy(userId));
+        }
         Page<Videogame> page = videogameRepository.findAll(spec, pageable);
         List<VideogameDto> games = page.getContent().stream()
             .map(this::transformToDTO)
@@ -102,5 +119,24 @@ public class VideogameService {
         List<Object> res = Arrays.asList(games, totalPages);
 
         return res;
+    }
+
+    public void deleteFromWishlist(Integer userId, Integer gameId) {
+        Videogame game = videogameRepository.findById(gameId).get();
+        List<User> users = game.getUsersWhishlited();
+        users.removeIf(user->user.getId().equals(userId));
+        game.setUsersWhishlited(users);
+        videogameRepository.save(game);
+    }
+
+    public void addToWishlist(Integer userId, Integer gameId) {
+        User user = ur.findById(userId).get();
+        Videogame game = videogameRepository.findById(gameId).get();
+        if(!game.getUsersWhishlited().contains(user)){
+            List<User> users = game.getUsersWhishlited();
+            users.add(user);
+            game.setUsersWhishlited(users);
+            videogameRepository.save(game);
+        }
     }
 }
