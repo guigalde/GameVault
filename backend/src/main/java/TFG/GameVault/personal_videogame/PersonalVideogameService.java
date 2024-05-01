@@ -50,7 +50,7 @@ public class PersonalVideogameService {
     }
 
     public PersonalVideogame fromDTO(PersonalVideogameDto dto, Integer user_id){
-        User user = userService.findByUsername(user_id);
+        User user = userService.findById(user_id);
         Videogame videogame = videogameService.getGame(dto.getVideogameId());
 
         PersonalVideogame personalVideogame = new PersonalVideogame();
@@ -67,7 +67,7 @@ public class PersonalVideogameService {
         return personalVideogame;
     }
 
-    public PersonalVideogameInfoDto toDto(PersonalVideogame personalVideogame){
+    public PersonalVideogameInfoDto toInfoDto(PersonalVideogame personalVideogame){
         PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
         dto.setAcquiredOn(personalVideogame.getAcquiredOn());
         dto.setCompletedOn(personalVideogame.getCompletedOn());
@@ -77,6 +77,20 @@ public class PersonalVideogameService {
         dto.setPlatform(personalVideogame.getPlatform());
         dto.setTimePlayed(personalVideogame.getTimePlayed());
         dto.setVideogame(videogameService.transformToDTO(personalVideogame.getVideogame()));
+
+        return dto;
+    }
+
+    public PersonalVideogameDto toDto(PersonalVideogame personalVideogame){
+        PersonalVideogameDto dto = new PersonalVideogameDto();
+        dto.setAcquiredOn(personalVideogame.getAcquiredOn());
+        dto.setCompletedOn(personalVideogame.getCompletedOn());
+        dto.setCompletionTime(personalVideogame.getCompletionTime());
+        dto.setMark(personalVideogame.getMark());
+        dto.setNotes(personalVideogame.getNotes());
+        dto.setPlatform(personalVideogame.getPlatform());
+        dto.setTimePlayed(personalVideogame.getTimePlayed());
+        dto.setVideogameId(personalVideogame.getVideogame().getId());
 
         return dto;
     }
@@ -105,7 +119,7 @@ public class PersonalVideogameService {
         Page<PersonalVideogame>  personalVideogames = personalVideogameRepository.findAll(spec, page);
         List<PersonalVideogameInfoDto> personalVideogameDtos = new ArrayList<>();
         for (PersonalVideogame personalVideogame : personalVideogames) {
-            personalVideogameDtos.add(toDto(personalVideogame));
+            personalVideogameDtos.add(toInfoDto(personalVideogame));
         }
         res.add(personalVideogameDtos);
         res.add(personalVideogames.getTotalPages());
