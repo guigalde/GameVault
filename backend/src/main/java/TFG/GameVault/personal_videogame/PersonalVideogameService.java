@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
 import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.user.User;
@@ -48,6 +49,12 @@ public class PersonalVideogameService {
     public void deleteGame(Integer id){
         personalVideogameRepository.deleteById(id);
     }
+
+    @Transactional 
+    public List<PersonalVideogame> findAllByUser(Integer user_id){
+        return personalVideogameRepository.findAllByUser_Id(user_id);
+    }
+
 
     public PersonalVideogame fromDTO(PersonalVideogameDto dto, Integer user_id){
         User user = userService.findById(user_id);
@@ -95,6 +102,11 @@ public class PersonalVideogameService {
         return dto;
     }
 
+    public PersonalVideogameBasicInfo toBasicInfo(PersonalVideogame personalVideogame){
+        return new PersonalVideogameBasicInfo(personalVideogame.getId(), personalVideogame.getVideogame().getName());
+    }
+
+    @Transactional
     public List<Object> applyFilters(Integer userId, PersonalVideogameFilter filter, Pageable page){
         List<Object> res = new ArrayList<>();
         Specification<PersonalVideogame> spec = Specification.where(PersonalVideogameSpecifications.user(userId));

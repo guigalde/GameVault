@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.units.qual.A;
 import org.hibernate.mapping.Join;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import TFG.GameVault.DTOs.CollectionDto;
+import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
 import TFG.GameVault.personal_videogame.PersonalVideogame;
 import TFG.GameVault.personal_videogame.PersonalVideogameService;
@@ -43,15 +45,18 @@ public class CollectionService {
     }
 
     public CollectionDto toCollectionDto(Collection collection){
-        return new CollectionDto(collection.getName(), collection.getDescription(), collection.getCreationDate(), collection.getLastUpdate(),
-             collection.getCollectionGames().stream().map(pvs::toDto).collect(Collectors.toList()));
+        return new CollectionDto(collection.getId(), collection.getName(), collection.getDescription(), collection.getCreationDate(), collection.getLastUpdate(),
+             collection.getCollectionGames().stream().map(pvs::toBasicInfo).collect(Collectors.toList()));
     }
 
     public Collection toCollection(CollectionDto collectionDto, Integer user_id){
         User user = us.findById(user_id);
         List <PersonalVideogame> collectionGames = new ArrayList<>();
-        for(PersonalVideogameDto pvgDto : collectionDto.getCollectionGames()){
-            collectionGames.add(pvs.fromDTO(pvgDto, user_id));
+        for(PersonalVideogameBasicInfo pvgDto : collectionDto.getCollectionGames()){
+            PersonalVideogame pvg = pvs.findGameById(pvgDto.getId());
+            if(pvg != null){
+                collectionGames.add(pvg);
+            }
         }
         return new Collection(collectionDto.getName(), collectionDto.getDescription(), collectionDto.getCreationDate(), collectionDto.getLastUpdate(),
              collectionGames, user);
@@ -71,7 +76,7 @@ public class CollectionService {
     }
 
     @Transactional
-    public List<Collection> findAllByUserIdAndSearchTerm(Integer userId, String searchTerm, Integer pageNumber, String orderBy){
+    public Page<Collection> findAllByUserIdAndSearchTerm(Integer userId, String searchTerm, Integer pageNumber, String orderBy){
         
         Specification<Collection> spec = (root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(
@@ -108,7 +113,8 @@ public class CollectionService {
                 break;
         }
 
-        return cr.findAll(spec, pageable).getContent();
+        Page<Collection> collections = cr.findAll(spec, pageable);
+        return collections;
     }
 
 

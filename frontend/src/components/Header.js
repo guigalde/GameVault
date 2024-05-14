@@ -35,6 +35,11 @@ export default function Header({logoSrc, pageTitle}) {
               <b style={{padding:'20px'}}>Wishlist</b>
             </div>
           </Link>
+          <Link to="/collections" className="link">
+            <div className="nav-item" style={{borderRight:'1.5px solid black'}}>
+              <b style={{padding:'20px'}}>Collections</b>
+            </div>
+          </Link>
           </>
           }
         </div>

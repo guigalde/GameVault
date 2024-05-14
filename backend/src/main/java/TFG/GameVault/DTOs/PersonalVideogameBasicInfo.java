@@ -1,0 +1,13 @@
+package TFG.GameVault.DTOs;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PersonalVideogameBasicInfo {
+    Integer id;
+    String name;
+}

@@ -11,7 +11,6 @@ export const getUserInfo = () => {
     if (auth_token === null) {
         return {id: null, sub: null, email: null, role: null, exp: null};
     }
-    console.log(jwtDecode(getAuthToken()))
     return jwtDecode(getAuthToken());
 }
 
@@ -24,11 +23,13 @@ export const setAuthHeader = (token) => {
 };
 
 axios.defaults.baseURL = 'http://localhost:8080';
-axios.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
 
 export const request = (method, url, data) => {
-
     let headers = {};
+    if (!(data instanceof FormData)) {
+        headers['Content-Type'] = 'application/json; charset=UTF-8';
+    }
+
     if (getAuthToken() !== null && getAuthToken() !== "null") {
         headers = {'Authorization': `Bearer ${getAuthToken()}`};
     }
@@ -39,3 +40,4 @@ export const request = (method, url, data) => {
         headers: headers,
         data: data});
 };
+
