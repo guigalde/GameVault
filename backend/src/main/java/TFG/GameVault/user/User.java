@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.checkerframework.common.aliasing.qual.Unique;
 
+import TFG.GameVault.collections.Collection;
 import TFG.GameVault.model.BaseEntity;
 import TFG.GameVault.personal_videogame.PersonalVideogame;
 import TFG.GameVault.videogame.Videogame;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -45,10 +47,13 @@ public class User extends BaseEntity{
     @NotNull
     public Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     public List<PersonalVideogame> personalVideogames;
 
-    @ManyToMany(mappedBy = "usersWhishlited")
+    @ManyToMany(mappedBy = "usersWhishlited", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     public List<Videogame> wishlist;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    public List<Collection> collections;
     
 }

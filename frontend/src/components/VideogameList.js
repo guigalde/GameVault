@@ -185,7 +185,7 @@ export default function VideogameList(){
                             <th>Platforms</th>
                             <th>Genres</th>
                             <th></th>
-                            <th></th>
+                            <th>Wishlist</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -203,7 +203,9 @@ export default function VideogameList(){
                                         ) : null}
                                     </td>
                                     <td className="column-wishlistAction-vg">
-                                        <SubwayAdd style={{cursor: 'pointer'}} onClick={()=>{addToWishlist(game.id)}}/>
+                                        <div className="d-flex" style={{flexDirection:'column', alignItems:'center'}}>
+                                            <SubwayAdd style={{cursor: 'pointer'}} onClick={()=>{addToWishlist(game.id)}}/>
+                                        </div>
                                     </td>
                                 </tr>
                             );

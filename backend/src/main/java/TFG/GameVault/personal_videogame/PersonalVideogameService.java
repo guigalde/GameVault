@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
 import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.user.User;
@@ -49,8 +50,14 @@ public class PersonalVideogameService {
         personalVideogameRepository.deleteById(id);
     }
 
+    @Transactional 
+    public List<PersonalVideogame> findAllByUser(Integer user_id){
+        return personalVideogameRepository.findAllByUser_Id(user_id);
+    }
+
+
     public PersonalVideogame fromDTO(PersonalVideogameDto dto, Integer user_id){
-        User user = userService.findByUsername(user_id);
+        User user = userService.findById(user_id);
         Videogame videogame = videogameService.getGame(dto.getVideogameId());
 
         PersonalVideogame personalVideogame = new PersonalVideogame();
@@ -67,8 +74,9 @@ public class PersonalVideogameService {
         return personalVideogame;
     }
 
-    public PersonalVideogameInfoDto toDto(PersonalVideogame personalVideogame){
+    public PersonalVideogameInfoDto toInfoDto(PersonalVideogame personalVideogame){
         PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
+        dto.setId(personalVideogame.getId());
         dto.setAcquiredOn(personalVideogame.getAcquiredOn());
         dto.setCompletedOn(personalVideogame.getCompletedOn());
         dto.setCompletionTime(personalVideogame.getCompletionTime());
@@ -81,6 +89,25 @@ public class PersonalVideogameService {
         return dto;
     }
 
+    public PersonalVideogameDto toDto(PersonalVideogame personalVideogame){
+        PersonalVideogameDto dto = new PersonalVideogameDto();
+        dto.setAcquiredOn(personalVideogame.getAcquiredOn());
+        dto.setCompletedOn(personalVideogame.getCompletedOn());
+        dto.setCompletionTime(personalVideogame.getCompletionTime());
+        dto.setMark(personalVideogame.getMark());
+        dto.setNotes(personalVideogame.getNotes());
+        dto.setPlatform(personalVideogame.getPlatform());
+        dto.setTimePlayed(personalVideogame.getTimePlayed());
+        dto.setVideogameId(personalVideogame.getVideogame().getId());
+
+        return dto;
+    }
+
+    public PersonalVideogameBasicInfo toBasicInfo(PersonalVideogame personalVideogame){
+        return new PersonalVideogameBasicInfo(personalVideogame.getId(), personalVideogame.getVideogame().getName());
+    }
+
+    @Transactional
     public List<Object> applyFilters(Integer userId, PersonalVideogameFilter filter, Pageable page){
         List<Object> res = new ArrayList<>();
         Specification<PersonalVideogame> spec = Specification.where(PersonalVideogameSpecifications.user(userId));
@@ -105,7 +132,7 @@ public class PersonalVideogameService {
         Page<PersonalVideogame>  personalVideogames = personalVideogameRepository.findAll(spec, page);
         List<PersonalVideogameInfoDto> personalVideogameDtos = new ArrayList<>();
         for (PersonalVideogame personalVideogame : personalVideogames) {
-            personalVideogameDtos.add(toDto(personalVideogame));
+            personalVideogameDtos.add(toInfoDto(personalVideogame));
         }
         res.add(personalVideogameDtos);
         res.add(personalVideogames.getTotalPages());

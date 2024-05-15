@@ -7,8 +7,9 @@ import lombok.Data;
 
 @Data
 public class PersonalVideogameInfoDto {
-
-    VideogameDto videogame;;
+    Integer id;
+    
+    VideogameDto videogame;
 
     Float timePlayed;
 
