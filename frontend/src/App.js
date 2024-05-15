@@ -11,6 +11,7 @@ import MyGamesList from './components/my_games/MyGamesList';
 import Wishlist from './components/Wishlist';
 import { getUserInfo } from './helpers/axios_helper';
 import ListMyCollections from './components/collections/ListMyCollections';
+import VideogameDetails from './components/videogames/VideogameDetails';
 
 function App() {
   const JWTExpirationDate = new Date(getUserInfo().exp*1000);
@@ -34,6 +35,7 @@ function App() {
             <Route path="/myGames" exact element={<MyGamesList/>}/>
             <Route path="/wishlist" exact element={<Wishlist/>}/>
             <Route path="/collections" exact element={<ListMyCollections/>}/>
+            <Route path="/videogameDetails/:gameId" element={<VideogameDetails/>}/>
           </Routes>
         </div>
       </div>

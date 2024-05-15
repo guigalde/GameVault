@@ -1,10 +1,13 @@
 
 import { request, getUserInfo} from '../../helpers/axios_helper.js';
 import { useState, useEffect } from 'react';
+import {useNavigate } from 'react-router-dom';
 import AddToMyGamesForm from '../my_games/AddToMyGamesForm.js';
 import { SubwayAdd } from '../imported_icons/add.js';
 
 export default function VideogameList(){
+    const navigate = useNavigate();
+
     const [filters, setFilters] = useState({});
     const [provisionalFilters, setProvisionalFilters] = useState({
         searchTerms: "",
@@ -84,6 +87,10 @@ export default function VideogameList(){
         }).catch((error) => {
             alert(error);
         });
+    }
+
+    function onClickRow(gameId){
+        navigate('/videogameDetails/'+gameId);
     }
 
     useEffect(() => {
@@ -191,23 +198,24 @@ export default function VideogameList(){
                     <tbody>
                         {games.map((game) => {
                             return (
-                                <tr key={game.id}>
-                                    <td className="column-name-vg">{game.name}</td>
-                                    <td className="column-platforms-vg">{game.platforms}</td>
-                                    <td className="column-genres-vg">{game.genres}</td>
-                                    <td className="column-action-vg">
-                                        {user.username ? (
-                                            <button className="btn btn-primary btn-block mb-4" onClick={() => {setShowForm(true); setGameId(game.id); setGameName(game.name)}} style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
-                                                <b>Add to my games</b>
-                                            </button>
-                                        ) : null}
-                                    </td>
-                                    <td className="column-wishlistAction-vg">
-                                        <div className="d-flex" style={{flexDirection:'column', alignItems:'center'}}>
-                                            <SubwayAdd style={{cursor: 'pointer'}} onClick={()=>{addToWishlist(game.id)}}/>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr key={game.id} onClick={()=>onClickRow(game.id)}>
+                                            <td className="column-name-vg">{game.name}</td>
+                                            <td className="column-platforms-vg">{game.platforms}</td>
+                                            <td className="column-genres-vg">{game.genres}</td>
+                                        
+                                        <td className="column-action-vg">
+                                            {user.username ? (
+                                                <button className="btn btn-primary btn-block mb-4" onClick={(e) => {e.stopPropagation();setShowForm(true); setGameId(game.id); setGameName(game.name)}} style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
+                                                    <b>Add to my games</b>
+                                                </button>
+                                            ) : null}
+                                        </td>
+                                        <td className="column-wishlistAction-vg">
+                                            <div className="d-flex" style={{flexDirection:'column', alignItems:'center'}}>
+                                                <SubwayAdd style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation();addToWishlist(game.id)}}/>
+                                            </div>
+                                        </td>
+                                    </tr>
                             );
                         })}
                     </tbody>
