@@ -1,9 +1,8 @@
 
 
 import { Link } from 'react-router-dom';
-import { request, getUserInfo} from '../helpers/axios_helper';
+import { request, getUserInfo} from '../../helpers/axios_helper';
 import { useNavigate } from 'react-router-dom';
-import '../App.css';
 
 export default function Buttons() {
 

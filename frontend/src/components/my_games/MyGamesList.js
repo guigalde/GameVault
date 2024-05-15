@@ -1,4 +1,4 @@
-import { request, getUserInfo} from '../helpers/axios_helper';
+import { request, getUserInfo} from '../../helpers/axios_helper';
 import { useState, useEffect } from 'react';
 
 export default function MyGamesList(){
@@ -295,7 +295,7 @@ export default function MyGamesList(){
             {showCollectionForm ? 
              <div className='popup'>
              <div className='popup-inner'>
-                 <h2 className="text-center d-flex justify-content-center" style={{alignItems: "center"}}>Add {gameToAdd.videogame.name} to collection</h2>
+                 <h2 className="text-center d-flex justify-content-center" style={{alignItems: "center"}}>Add {gameToAdd.videogame.name} to a collection</h2>
                  <form className = "form-collections"onSubmit={handleAddToCollection}>
                      <div className="form-group">
                          <datalist id="games" className="scrollable-datalist">

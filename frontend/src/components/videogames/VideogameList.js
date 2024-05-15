@@ -1,8 +1,8 @@
 
-import { request, getUserInfo} from '../helpers/axios_helper';
+import { request, getUserInfo} from '../../helpers/axios_helper.js';
 import { useState, useEffect } from 'react';
-import AddToMyGamesForm from './AddToMyGamesForm.js';
-import { SubwayAdd } from './imported_icons/add.js';
+import AddToMyGamesForm from '../my_games/AddToMyGamesForm.js';
+import { SubwayAdd } from '../imported_icons/add.js';
 
 export default function VideogameList(){
     const [filters, setFilters] = useState({});

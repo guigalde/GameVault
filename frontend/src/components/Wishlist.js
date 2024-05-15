@@ -1,6 +1,6 @@
 import { request, getUserInfo} from '../helpers/axios_helper';
 import { useState, useEffect } from 'react';
-import AddToMyGamesForm from './AddToMyGamesForm.js';
+import AddToMyGamesForm from './my_games/AddToMyGamesForm.js';
 import { IcomoonFreeBin } from './imported_icons/bin.js';
 
 export default function Wishlist(){

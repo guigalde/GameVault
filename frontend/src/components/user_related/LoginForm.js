@@ -1,6 +1,6 @@
 import  { useState} from 'react';
 import classNames from 'classnames';
-import { request, setAuthHeader } from '../helpers/axios_helper';
+import { request, setAuthHeader } from '../../helpers/axios_helper';
 import { Link, useNavigate} from 'react-router-dom';
 
 export default function  LoginForm() {

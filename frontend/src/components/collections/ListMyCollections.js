@@ -1,6 +1,6 @@
-import {getUserInfo, request} from '../helpers/axios_helper'
+import {getUserInfo, request} from '../../helpers/axios_helper.js'
 import { useState, useEffect } from 'react';
-import { IcomoonFreeBin } from './imported_icons/bin.js';
+import { IcomoonFreeBin } from '../imported_icons/bin.js';
 import CreateCollectionForm from './CreateCollectionForm.js';
 
 export default function ListMyCollections() {

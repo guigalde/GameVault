@@ -1,16 +1,16 @@
 import logo from './logo.png';
 import './App.css';
 import {Routes, Route} from 'react-router-dom';
-import Header from './components/Header';
+import Header from './components/navbar/Header';
 import { WelcomeContent } from './components/WelcomeContent';
-import LoginForm from './components/LoginForm';
-import RegisterForm from './components/RegisterForm';
-import EditForm from './components/EditProfile';
-import VideogameList from './components/VideogameList';
-import MyGamesList from './components/MyGamesList';
+import LoginForm from './components/user_related/LoginForm';
+import RegisterForm from './components/user_related/RegisterForm';
+import EditForm from './components/user_related/EditProfile';
+import VideogameList from './components/videogames/VideogameList';
+import MyGamesList from './components/my_games/MyGamesList';
 import Wishlist from './components/Wishlist';
 import { getUserInfo } from './helpers/axios_helper';
-import ListMyCollections from './components/ListMyCollections';
+import ListMyCollections from './components/collections/ListMyCollections';
 
 function App() {
   const JWTExpirationDate = new Date(getUserInfo().exp*1000);
