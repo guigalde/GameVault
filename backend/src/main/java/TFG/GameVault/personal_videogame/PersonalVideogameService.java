@@ -76,6 +76,7 @@ public class PersonalVideogameService {
 
     public PersonalVideogameInfoDto toInfoDto(PersonalVideogame personalVideogame){
         PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
+        dto.setId(personalVideogame.getId());
         dto.setAcquiredOn(personalVideogame.getAcquiredOn());
         dto.setCompletedOn(personalVideogame.getCompletedOn());
         dto.setCompletionTime(personalVideogame.getCompletionTime());

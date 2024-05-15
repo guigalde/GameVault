@@ -12,4 +12,6 @@ import TFG.GameVault.user.User;
 public interface CollectionRepository extends JpaRepository<Collection, Integer>, JpaSpecificationExecutor<Collection>{
     
     public List<Collection> findAllByUser(User user);
+
+    public List<Collection> findAllByUser_Id(Integer userId);
 }

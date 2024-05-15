@@ -44,6 +44,10 @@ export default function MyGamesList(){
     const [showGenres, setShowGenres] = useState(false);
     const [showPublishers, setShowPublishers] = useState(false);
     
+    const [collections, setCollections] = useState([]);
+    const [gameToAdd, setGameToAdd] = useState(null);
+    const [showCollectionForm, setShowCollectionForm] = useState(false);
+    const [searchCollection, setSearchCollection] = useState('');
 
     async function retrieveMyGames(){
         const response = await request("POST", "/api/listMyGames/"+user.id+ "/" +page,
@@ -76,6 +80,30 @@ export default function MyGamesList(){
             setPublishers(response.data);
         }
     
+    }
+
+    async function retrieveCollections(){
+        const response = await request("GET", "/api/collections/"+user.id, null);
+        if(response.status === 200){
+            setCollections(response.data);
+        }
+    }
+
+    async function handleAddToCollection(e){
+        e.preventDefault();
+        const matchingCollection = collections.find(collection => collection.name === searchCollection);
+        if(!matchingCollection){
+            alert("Collection not found");
+            return;
+        }
+        const response = await request("POST", "/api/collections/addGame/"+matchingCollection.id+"/"+gameToAdd.id, null);
+        if(response.status === 200){
+            alert(response.data);
+            setShowCollectionForm(false);
+        }else{
+            alert(response.data);
+        }
+        setGameToAdd(null);
     }
 
     useEffect(() => {
@@ -251,7 +279,9 @@ export default function MyGamesList(){
                                         <td className="column-mark">{game.mark}</td>
                                         <td>
                                             {user.username ? (
-                                                <button className="btn btn-primary btn-block mb-4" onClick={null} style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
+                                                <button className="btn btn-primary btn-block mb-4" 
+                                                        onClick={()=>{setShowCollectionForm(true);setGameToAdd(game);retrieveCollections();}}
+                                                             style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
                                                     <b>Add to collection</b>
                                                 </button>
                                             ) : null}
@@ -262,6 +292,26 @@ export default function MyGamesList(){
                     </tbody>
                 </table>
             </div>
+            {showCollectionForm ? 
+             <div className='popup'>
+             <div className='popup-inner'>
+                 <h2 className="text-center d-flex justify-content-center" style={{alignItems: "center"}}>Add {gameToAdd.videogame.name} to collection</h2>
+                 <form className = "form-collections"onSubmit={handleAddToCollection}>
+                     <div className="form-group">
+                         <datalist id="games" className="scrollable-datalist">
+                             {collections.map(collection => 
+                                 <option key={collection.id} value={collection.name} />)}
+                         </datalist>
+                         <input type="text" list="games" className="form-control" value={searchCollection} onChange={(e)=>setSearchCollection(e.target.value)}/>
+                     </div>
+                     <div style={{display: "flex", justifyContent: "center",alignItems: "center"}}>
+                         <button type="submit" className="btn btn-primary">Add</button>
+                         <button type="button" className="btn btn-danger" onClick={()=>setShowCollectionForm(false)}>Cancel</button>
+                     </div>
+                 </form>
+             </div>
+         </div>
+           :null}
         </div>
     );
 }

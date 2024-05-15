@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import TFG.GameVault.DTOs.CollectionBasicInfo;
 import TFG.GameVault.DTOs.CollectionDto;
 import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
@@ -115,6 +116,23 @@ public class CollectionService {
 
         Page<Collection> collections = cr.findAll(spec, pageable);
         return collections;
+    }
+
+    public List<Collection> findAllByUserId(Integer userId) {
+        return cr.findAllByUser_Id(userId);
+    }
+
+    public CollectionBasicInfo toBasicInfo(Collection collection){
+        return new CollectionBasicInfo(collection.getId(), collection.getName());
+    }
+
+    public void addGameToCollection(Integer collectionId, Integer gameId){
+        Collection collection = cr.findById(collectionId).orElse(null);
+        PersonalVideogame pvg = pvs.findGameById(gameId);
+        if(collection != null && pvg != null){
+            collection.getCollectionGames().add(pvg);
+            cr.save(collection);
+        }
     }
 
 

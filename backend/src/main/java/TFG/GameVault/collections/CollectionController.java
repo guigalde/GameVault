@@ -9,12 +9,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 
+import TFG.GameVault.DTOs.CollectionBasicInfo;
 import TFG.GameVault.DTOs.CollectionDto;
+import TFG.GameVault.DTOs.VideogameDto;
 import lombok.AllArgsConstructor;
 
 
@@ -60,5 +63,24 @@ public class CollectionController {
         
     }
 
+    @GetMapping("/collections/{userId}")
+    public ResponseEntity<List<CollectionBasicInfo>> findAllByUserId(@PathVariable Integer userId){
+        List<Collection> collections = cs.findAllByUserId(userId);
+        return ResponseEntity.ok(collections.stream().map(cs::toBasicInfo).collect(Collectors.toList()));
+    }
+
+    @PostMapping("/collections/addGame/{collectionId}/{gameId}")
+    public ResponseEntity<String> addGameToCollection(@PathVariable Integer collectionId, @PathVariable Integer gameId){
+        try{
+            Collection collection = cs.findById(collectionId);
+            if(collection.getCollectionGames().stream().anyMatch(g -> g.getId() == gameId)){
+                return ResponseEntity.badRequest().body("Game already in collection");
+            }
+            cs.addGameToCollection(collectionId, gameId);
+            return ResponseEntity.ok("Game added to collection successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Error adding game to collection");
+        }
+    }
     
 }
