@@ -1,5 +1,7 @@
 package TFG.GameVault.videogame;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +53,12 @@ public class VideogameService {
 
     @Transactional
     public VideogameDto transformToDTO(Videogame videogame){
-        return new VideogameDto(videogame.getId(), videogame.getName(), videogame.getDescription(), videogame.getImage(), videogame.getPlatforms(), videogame.getGenres(), videogame.getDeveloper(), videogame.getPublisher(), videogame.getReleaseDate());
+        LocalDate date = videogame.getReleaseDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String dateString = date.format(formatter);
+        return new VideogameDto(videogame.getId(), videogame.getName(), videogame.getDescription(), videogame.getImage(),
+         videogame.getPlatforms(), videogame.getGenres(), videogame.getDeveloper(), videogame.getPublisher(),
+         dateString);
     }
 
     @Transactional

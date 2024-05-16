@@ -15,9 +15,9 @@ public class PersonalVideogameInfoDto {
 
     Float mark;
 
-    LocalDate acquiredOn;
+    String acquiredOn;
 
-    LocalDate completedOn;
+    String completedOn;
 
     Float completionTime;
 

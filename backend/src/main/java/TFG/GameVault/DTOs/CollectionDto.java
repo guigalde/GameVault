@@ -19,5 +19,9 @@ public class CollectionDto {
 
     LocalDate   lastUpdate;
 
+    String creationDateString;
+
+    String lastUpdateString;
+
     List<PersonalVideogameBasicInfo> collectionGames;
 }

@@ -1,5 +1,6 @@
 package TFG.GameVault.collections;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,8 @@ public class CollectionController {
     //Cambiar
     public ResponseEntity<?> createCollection(@PathVariable Integer userId, @RequestBody CollectionDto collectionDto){
         try{
+            collectionDto.setCreationDate(LocalDate.now());
+            collectionDto.setLastUpdate(LocalDate.now());
             cs.saveCollection(cs.toCollection(collectionDto, userId));
             return ResponseEntity.ok("Collection created successfully");
         }catch(Exception e){

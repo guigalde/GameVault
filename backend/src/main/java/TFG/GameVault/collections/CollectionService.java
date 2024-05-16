@@ -1,5 +1,7 @@
 package TFG.GameVault.collections;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,8 +48,14 @@ public class CollectionService {
     }
 
     public CollectionDto toCollectionDto(Collection collection){
+        LocalDate creationDate = collection.getCreationDate();
+        LocalDate lastUpdate = collection.getLastUpdate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String creationDateString = creationDate.format(formatter);
+        String lastUpdateString = lastUpdate.format(formatter);
+
         return new CollectionDto(collection.getId(), collection.getName(), collection.getDescription(), collection.getCreationDate(), collection.getLastUpdate(),
-             collection.getCollectionGames().stream().map(pvs::toBasicInfo).collect(Collectors.toList()));
+             creationDateString, lastUpdateString,collection.getCollectionGames().stream().map(pvs::toBasicInfo).collect(Collectors.toList()));
     }
 
     public Collection toCollection(CollectionDto collectionDto, Integer user_id){

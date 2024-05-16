@@ -1,9 +1,12 @@
 package TFG.GameVault.personal_videogame;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -75,10 +78,15 @@ public class PersonalVideogameService {
     }
 
     public PersonalVideogameInfoDto toInfoDto(PersonalVideogame personalVideogame){
+        LocalDate acquiredOn = personalVideogame.getAcquiredOn();
+        LocalDate completedOn = personalVideogame.getCompletedOn();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String acquiredOnString = acquiredOn.format(formatter);
+        String completedOnString = completedOn.format(formatter);
         PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
         dto.setId(personalVideogame.getId());
-        dto.setAcquiredOn(personalVideogame.getAcquiredOn());
-        dto.setCompletedOn(personalVideogame.getCompletedOn());
+        dto.setAcquiredOn(acquiredOnString);
+        dto.setCompletedOn(completedOnString);
         dto.setCompletionTime(personalVideogame.getCompletionTime());
         dto.setMark(personalVideogame.getMark());
         dto.setNotes(personalVideogame.getNotes());

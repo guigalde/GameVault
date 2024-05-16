@@ -13,8 +13,6 @@ export default function CreateCollectionForm({setShowForm, getCollections}) {
     const [collection, setCollection] = useState({
         name: "",
         description: "",
-        creationDate: new Date(),
-        lastUpdate: new Date(),
         collectionGames: []
     });
 

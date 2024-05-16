@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { request } from "../../helpers/axios_helper";
+import{ formatDate } from "../../helpers/date_formatter";
 
 export default function VideogameDetails() {
     const { gameId } = useParams();
@@ -18,7 +19,7 @@ export default function VideogameDetails() {
                 const image = data.image? 'https:' + data.image.replace("t_thumb", "t_original") : "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg";
                 setVideogame({
                    ...data,
-                    image: image
+                    image: image,
                 });
             } else {
                 alert('Error getting videogame info');
@@ -28,16 +29,17 @@ export default function VideogameDetails() {
         }
     }
 
-    console.log(videogame.image)
     return (
         <div>
             <h1>{videogame.name}</h1>
             <img src={videogame.image} alt={videogame.name} />
             <p>{videogame.description}</p>
-            <p>Rating: {videogame.rating}</p>
+            <p>Publisher: {videogame.publisher}</p>
+            <p>Developer: {videogame.developer}</p>
             <p>Genres: {videogame.genres}</p>
-            <p>Released: {videogame.released}</p>
+            <p>Release date: {videogame.releaseDate}</p>
             <p>Platforms: {videogame.platforms}</p>
+
         </div>
     );
 }
