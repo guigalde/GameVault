@@ -29,6 +29,5 @@ public class VideogameDto {
 
     public String publisher;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    public LocalDate releaseDate;
+    public String releaseDate;
 }

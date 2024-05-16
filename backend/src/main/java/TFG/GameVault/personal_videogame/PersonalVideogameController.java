@@ -2,6 +2,8 @@ package TFG.GameVault.personal_videogame;
 
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -22,6 +24,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api")
 public class PersonalVideogameController {
 
+    @Autowired
     private final PersonalVideogameService pvService;
 
     @PostMapping("/addPersonalVideogame/{user_id}")
@@ -47,11 +50,12 @@ public class PersonalVideogameController {
     @PostMapping("/listMyGames/{user_id}/{page}")
     public ResponseEntity<List<Object>> listPersonalVideogame(@PathVariable Integer user_id,@PathVariable Integer page, @RequestBody PersonalVideogameFilter filter){
         try{
-            if(user_id == null || page == null || filter == null){
+            if(user_id == null || page == null){
                 return ResponseEntity.badRequest().body(null);
             }
             Pageable pageable = PageRequest.of(page, 50, Direction.DESC, "timePlayed");
-            return ResponseEntity.ok(pvService.applyFilters(user_id, filter, pageable));
+            ResponseEntity<List<Object>> response = ResponseEntity.ok(pvService.applyFilters(user_id, filter, pageable));
+            return response;
         }catch(Exception e){
             return ResponseEntity.badRequest().body(null);
         }

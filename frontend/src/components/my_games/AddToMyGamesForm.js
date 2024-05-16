@@ -1,8 +1,8 @@
 import {useState} from 'react';
-import {request, getUserInfo} from '../helpers/axios_helper';
+import {request, getUserInfo} from '../../helpers/axios_helper';
 import {useNavigate} from 'react-router-dom';
-import { validateMyGame } from '../helpers/mygame_validation';
-import FormError from './FormError';
+import { validateMyGame } from '../../helpers/mygame_validation';
+import FormError from '../FormError';
 
 export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromWishlist, retrieveGames}) {
     const user = {

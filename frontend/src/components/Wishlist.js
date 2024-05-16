@@ -1,9 +1,12 @@
 import { request, getUserInfo} from '../helpers/axios_helper';
 import { useState, useEffect } from 'react';
-import AddToMyGamesForm from './AddToMyGamesForm.js';
+import AddToMyGamesForm from './my_games/AddToMyGamesForm.js';
 import { IcomoonFreeBin } from './imported_icons/bin.js';
+import { useNavigate } from 'react-router-dom';
 
 export default function Wishlist(){
+    const navigate = useNavigate();
+
     const [filters, setFilters] = useState({});
     const [provisionalFilters, setProvisionalFilters] = useState({
         searchTerms: "",
@@ -83,6 +86,10 @@ export default function Wishlist(){
         }).catch((error) => {
             alert(error);
         });
+    }
+
+    function onClickRow(gameId){
+        navigate('/videogameDetails/'+gameId);
     }
 
     useEffect(() => {
@@ -190,19 +197,19 @@ export default function Wishlist(){
                     <tbody>
                         {games.map((game) => {
                             return (
-                                <tr key={game.id}>
+                                <tr key={game.id} onClick={()=>onClickRow(game.id)}>
                                     <td className="column-name-vg">{game.name}</td>
                                     <td className="column-platforms-vg">{game.platforms}</td>
                                     <td className="column-genres-vg">{game.genres}</td>
                                     <td className="column-action-vg">
                                         {user.username ? (
-                                            <button className="btn btn-primary btn-block mb-4" onClick={() => {setShowForm(true); setGameId(game.id); setGameName(game.name)}} style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
+                                            <button className="btn btn-primary btn-block mb-4" onClick={(e) => {e.stopPropagation();setShowForm(true); setGameId(game.id); setGameName(game.name)}} style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
                                                 <b>Add to my games</b>
                                             </button>
                                         ) : null}
                                     </td>
                                     <td className="column-wishlistAction-vg">
-                                        <IcomoonFreeBin style={{cursor: 'pointer'}} onClick={()=>{removeGame(game.id)}} />
+                                        <IcomoonFreeBin style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation();removeGame(game.id)}} />
                                     </td>
                                 </tr>
                             );

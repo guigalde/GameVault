@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
-import {request, getUserInfo} from '../helpers/axios_helper';
-import FormError from './FormError';
+import {request, getUserInfo} from '../../helpers/axios_helper';
+import FormError from '../FormError';
 
 
 export default function CreateCollectionForm({setShowForm, getCollections}) {
@@ -13,8 +13,6 @@ export default function CreateCollectionForm({setShowForm, getCollections}) {
     const [collection, setCollection] = useState({
         name: "",
         description: "",
-        creationDate: new Date(),
-        lastUpdate: new Date(),
         collectionGames: []
     });
 

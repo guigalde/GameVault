@@ -1,4 +1,4 @@
-import { request, getUserInfo} from '../helpers/axios_helper';
+import { request, getUserInfo} from '../../helpers/axios_helper';
 import { useState, useEffect } from 'react';
 
 export default function MyGamesList(){
@@ -50,13 +50,16 @@ export default function MyGamesList(){
     const [searchCollection, setSearchCollection] = useState('');
 
     async function retrieveMyGames(){
-        const response = await request("POST", "/api/listMyGames/"+user.id+ "/" +page,
-        filters)
+        try{
+        const response = await request("POST", "/api/listMyGames/"+user.id+ "/" +page, filters)
         if(response.status === 200){
             setGames(response.data[0]);
             setTotalPages(response.data[1]);
         }else{
-            console.log("Error");
+            alert('Something went wrong: '+response.data);
+        }
+        }catch(error){
+            console.log(error);
         }
     }
 
@@ -295,7 +298,7 @@ export default function MyGamesList(){
             {showCollectionForm ? 
              <div className='popup'>
              <div className='popup-inner'>
-                 <h2 className="text-center d-flex justify-content-center" style={{alignItems: "center"}}>Add {gameToAdd.videogame.name} to collection</h2>
+                 <h2 className="text-center d-flex justify-content-center" style={{alignItems: "center"}}>Add {gameToAdd.videogame.name} to a collection</h2>
                  <form className = "form-collections"onSubmit={handleAddToCollection}>
                      <div className="form-group">
                          <datalist id="games" className="scrollable-datalist">

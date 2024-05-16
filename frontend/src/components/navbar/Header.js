@@ -1,6 +1,6 @@
 import Buttons from './Buttons';
 import { Link } from 'react-router-dom';
-import { getUserInfo } from '../helpers/axios_helper';
+import { getUserInfo } from '../../helpers/axios_helper';
 
 export default function Header({logoSrc, pageTitle}) {
 
