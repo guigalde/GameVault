@@ -81,18 +81,25 @@ public class PersonalVideogameService {
         LocalDate acquiredOn = personalVideogame.getAcquiredOn();
         LocalDate completedOn = personalVideogame.getCompletedOn();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String acquiredOnString = acquiredOn.format(formatter);
-        String completedOnString = completedOn.format(formatter);
+
         PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
         dto.setId(personalVideogame.getId());
-        dto.setAcquiredOn(acquiredOnString);
-        dto.setCompletedOn(completedOnString);
         dto.setCompletionTime(personalVideogame.getCompletionTime());
         dto.setMark(personalVideogame.getMark());
         dto.setNotes(personalVideogame.getNotes());
         dto.setPlatform(personalVideogame.getPlatform());
         dto.setTimePlayed(personalVideogame.getTimePlayed());
         dto.setVideogame(videogameService.transformToDTO(personalVideogame.getVideogame()));
+        
+        if(acquiredOn!=null){
+            String acquiredOnString = acquiredOn.format(formatter);
+            dto.setAcquiredOn(acquiredOnString);
+        }
+        if(completedOn!=null){
+            String completedOnString = completedOn.format(formatter);
+            dto.setCompletedOn(completedOnString);
+
+        }
 
         return dto;
     }
@@ -119,23 +126,25 @@ public class PersonalVideogameService {
     public List<Object> applyFilters(Integer userId, PersonalVideogameFilter filter, Pageable page){
         List<Object> res = new ArrayList<>();
         Specification<PersonalVideogame> spec = Specification.where(PersonalVideogameSpecifications.user(userId));
-        spec = spec.and(PersonalVideogameSpecifications.completed(filter.getCompleted()))
-            .and(PersonalVideogameSpecifications.hasPlatform(filter.getPlatform()))
-            .and(PersonalVideogameSpecifications.markInInterval(filter.getMinMark(), filter.getMaxMark()))
-            .and(PersonalVideogameSpecifications.timePlayedInInterval(filter.getMinTimePlayed(), filter.getMaxTimePlayed()))
-            .and(PersonalVideogameSpecifications.hasGenre(filter.getGenre()))
-            .and(PersonalVideogameSpecifications.hasPublisher(filter.getPublisher()))
-            .and(PersonalVideogameSpecifications.search(filter.getSearchTerms()))
-            .and(PersonalVideogameSpecifications.filterByDate(filter.getMinReleaseDate(), filter.getMaxReleaseDate()));
-        
-        if(filter.getMarkSort()!=null &&filter.getMarkSort()==true){
-            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "mark");
-        }else if(filter.getMarkSort()!=null && filter.getMarkSort()==false){
-            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "mark");
-        }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==true){
-            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "timePlayed");
-        }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==false){
-            page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "timePlayed");
+        if(filter != null){
+            spec = spec.and(PersonalVideogameSpecifications.completed(filter.getCompleted()))
+                .and(PersonalVideogameSpecifications.hasPlatform(filter.getPlatform()))
+                .and(PersonalVideogameSpecifications.markInInterval(filter.getMinMark(), filter.getMaxMark()))
+                .and(PersonalVideogameSpecifications.timePlayedInInterval(filter.getMinTimePlayed(), filter.getMaxTimePlayed()))
+                .and(PersonalVideogameSpecifications.hasGenre(filter.getGenre()))
+                .and(PersonalVideogameSpecifications.hasPublisher(filter.getPublisher()))
+                .and(PersonalVideogameSpecifications.search(filter.getSearchTerms()))
+                .and(PersonalVideogameSpecifications.filterByDate(filter.getMinReleaseDate(), filter.getMaxReleaseDate()));
+            
+            if(filter.getMarkSort()!=null &&filter.getMarkSort()==true){
+                page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "mark");
+            }else if(filter.getMarkSort()!=null && filter.getMarkSort()==false){
+                page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "mark");
+            }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==true){
+                page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "timePlayed");
+            }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==false){
+                page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "timePlayed");
+            }
         }
         Page<PersonalVideogame>  personalVideogames = personalVideogameRepository.findAll(spec, page);
         List<PersonalVideogameInfoDto> personalVideogameDtos = new ArrayList<>();

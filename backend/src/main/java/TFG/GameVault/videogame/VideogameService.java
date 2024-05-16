@@ -53,12 +53,27 @@ public class VideogameService {
 
     @Transactional
     public VideogameDto transformToDTO(Videogame videogame){
+        VideogameDto dto = new VideogameDto();
+
+        dto.setId(videogame.getId());
+        dto.setName(videogame.getName());
+        dto.setDescription(videogame.getDescription());
+        dto.setImage(videogame.getImage());
+
+        dto.setPlatforms(videogame.getPlatforms());
+        dto.setGenres(videogame.getGenres());
+
+        dto.setDeveloper(videogame.getDeveloper());
+        dto.setPublisher(videogame.getPublisher());
+
         LocalDate date = videogame.getReleaseDate();
+        if(date!=null){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String dateString = date.format(formatter);
-        return new VideogameDto(videogame.getId(), videogame.getName(), videogame.getDescription(), videogame.getImage(),
-         videogame.getPlatforms(), videogame.getGenres(), videogame.getDeveloper(), videogame.getPublisher(),
-         dateString);
+        dto.setReleaseDate(dateString);
+        }
+        
+        return dto;
     }
 
     @Transactional

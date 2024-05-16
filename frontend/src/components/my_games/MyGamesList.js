@@ -50,13 +50,16 @@ export default function MyGamesList(){
     const [searchCollection, setSearchCollection] = useState('');
 
     async function retrieveMyGames(){
-        const response = await request("POST", "/api/listMyGames/"+user.id+ "/" +page,
-        filters)
+        try{
+        const response = await request("POST", "/api/listMyGames/"+user.id+ "/" +page, filters)
         if(response.status === 200){
             setGames(response.data[0]);
             setTotalPages(response.data[1]);
         }else{
-            console.log("Error");
+            alert('Something went wrong: '+response.data);
+        }
+        }catch(error){
+            console.log(error);
         }
     }
 
