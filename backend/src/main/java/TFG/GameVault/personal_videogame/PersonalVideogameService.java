@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
 import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
+import TFG.GameVault.DTOs.VideogameDto;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserService;
 import TFG.GameVault.videogame.Videogame;
@@ -83,13 +84,14 @@ public class PersonalVideogameService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         PersonalVideogameInfoDto dto = new PersonalVideogameInfoDto();
+        VideogameDto videogameDto = videogameService.transformToDTO(personalVideogame.getVideogame());
         dto.setId(personalVideogame.getId());
         dto.setCompletionTime(personalVideogame.getCompletionTime());
         dto.setMark(personalVideogame.getMark());
         dto.setNotes(personalVideogame.getNotes());
         dto.setPlatform(personalVideogame.getPlatform());
         dto.setTimePlayed(personalVideogame.getTimePlayed());
-        dto.setVideogame(videogameService.transformToDTO(personalVideogame.getVideogame()));
+        dto.setVideogame(videogameDto);
         
         if(acquiredOn!=null){
             String acquiredOnString = acquiredOn.format(formatter);
@@ -155,6 +157,16 @@ public class PersonalVideogameService {
         res.add(personalVideogames.getTotalPages());
 
         return res;
+    }
+
+    public PersonalVideogame findById(Integer game_id, Integer user_id) {
+
+        PersonalVideogame personalVideogame = personalVideogameRepository.findById(game_id).orElse(null);
+        if(personalVideogame.getUser().getId() == user_id && personalVideogame != null){
+            return personalVideogame;
+        }else{
+            return null;
+        }
     }
 
 }
