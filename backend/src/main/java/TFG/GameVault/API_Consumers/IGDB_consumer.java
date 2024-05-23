@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.mashape.unirest.http.HttpResponse;
@@ -21,8 +22,11 @@ import TFG.GameVault.videogame.Videogame;
 @Component
 public class IGDB_consumer {
     
-    String userId = "tc0ofgmcuu0urgnudg7g3bgpyj1yzg";
-    String userKey= "6as0obusv47dli8cd7yslwkq70a9bc";
+    @Value("${twitch.client_id}")
+    String userId;
+
+    @Value("${twitch.client_secret}")
+    String userKey;
 
     public HttpResponse<JsonNode> getAuthentication(){
         try{
