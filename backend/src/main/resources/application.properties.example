@@ -2,7 +2,7 @@
 spring.datasource.url=jdbc:mariadb://localhost:3306/gamevaultdb?useUnicode=true&characterEncoding=UTF-8
 spring.jpa.defer-datasource-initialization=true
 spring.datasource.username=root
-spring.datasource.password=guille2001
+spring.datasource.password=root
 spring.sql.init.mode = always
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 #Spring
@@ -15,5 +15,6 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-
-jwt.token.secret=wquNnuLLyJnqE2Siy9JY/XoOaVpDc4pw+sLIfoPBmOrdY8aePFJpdfwtEz5W0Hqu
+token.secret=jwtSecretKey
+twitch.client_id=twitch client_id
+twitch.client_secret=twitch secret

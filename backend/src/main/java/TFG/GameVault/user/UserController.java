@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import java.net.URI;
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,8 @@ public class UserController {
     @Autowired
     private UserService us;
     
-    private final UserAuthenticationProvider userAuthenticationProvider = new UserAuthenticationProvider();
+    @Autowired
+    private final UserAuthenticationProvider userAuthenticationProvider;
 
         @PostMapping("/login")
         public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {

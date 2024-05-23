@@ -1,7 +1,11 @@
 import { request, getUserInfo} from '../../helpers/axios_helper';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AddToCollectionDropdown from '../collections/AddToCollectionDropdown';
 
 export default function MyGamesList(){
+    const navigate = useNavigate();
+
     const [filters, setFilters] = useState({
         timePlayedSort: null,
         markSort: null
@@ -47,7 +51,6 @@ export default function MyGamesList(){
     const [collections, setCollections] = useState([]);
     const [gameToAdd, setGameToAdd] = useState(null);
     const [showCollectionForm, setShowCollectionForm] = useState(false);
-    const [searchCollection, setSearchCollection] = useState('');
 
     async function retrieveMyGames(){
         try{
@@ -92,21 +95,8 @@ export default function MyGamesList(){
         }
     }
 
-    async function handleAddToCollection(e){
-        e.preventDefault();
-        const matchingCollection = collections.find(collection => collection.name === searchCollection);
-        if(!matchingCollection){
-            alert("Collection not found");
-            return;
-        }
-        const response = await request("POST", "/api/collections/addGame/"+matchingCollection.id+"/"+gameToAdd.id, null);
-        if(response.status === 200){
-            alert(response.data);
-            setShowCollectionForm(false);
-        }else{
-            alert(response.data);
-        }
-        setGameToAdd(null);
+    function onClickRow(gameId){
+        navigate('/personalVideogameDetails/'+gameId);
     }
 
     useEffect(() => {
@@ -274,8 +264,8 @@ export default function MyGamesList(){
                     <tbody>
                         {games.map((game) => {
                             return (
-                                <tr key={game.id}>
-                                     <td className="column-name">{game.videogame.name}</td>
+                                <tr key={game.id} onClick={()=>onClickRow(game.id)}>
+                                <td className="column-name">{game.videogame.name}</td>
                                         <td className="column-platform">{game.platform}</td>
                                         <td className="column-completed">{game.completionTime === null ? <t>No</t> : <t>Yes</t>}</td>
                                         <td className="column-time-played">{game.timePlayed}</td>
@@ -283,7 +273,7 @@ export default function MyGamesList(){
                                         <td>
                                             {user.username ? (
                                                 <button className="btn btn-primary btn-block mb-4" 
-                                                        onClick={()=>{setShowCollectionForm(true);setGameToAdd(game);retrieveCollections();}}
+                                                        onClick={(e)=>{e.stopPropagation();setShowCollectionForm(true);setGameToAdd(game);retrieveCollections();}}
                                                              style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
                                                     <b>Add to collection</b>
                                                 </button>
@@ -296,24 +286,7 @@ export default function MyGamesList(){
                 </table>
             </div>
             {showCollectionForm ? 
-             <div className='popup'>
-             <div className='popup-inner'>
-                 <h2 className="text-center d-flex justify-content-center" style={{alignItems: "center"}}>Add {gameToAdd.videogame.name} to a collection</h2>
-                 <form className = "form-collections"onSubmit={handleAddToCollection}>
-                     <div className="form-group">
-                         <datalist id="games" className="scrollable-datalist">
-                             {collections.map(collection => 
-                                 <option key={collection.id} value={collection.name} />)}
-                         </datalist>
-                         <input type="text" list="games" className="form-control" value={searchCollection} onChange={(e)=>setSearchCollection(e.target.value)}/>
-                     </div>
-                     <div style={{display: "flex", justifyContent: "center",alignItems: "center"}}>
-                         <button type="submit" className="btn btn-primary">Add</button>
-                         <button type="button" className="btn btn-danger" onClick={()=>setShowCollectionForm(false)}>Cancel</button>
-                     </div>
-                 </form>
-             </div>
-         </div>
+                <AddToCollectionDropdown collections={collections} personalVideogame={gameToAdd} setShowCollectionForm={setShowCollectionForm}/>
            :null}
         </div>
     );

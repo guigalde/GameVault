@@ -1,12 +1,10 @@
 package TFG.GameVault.DTOs;
 
-import java.time.LocalDate;
-
-
 import lombok.Data;
 
 @Data
 public class PersonalVideogameInfoDto {
+    
     Integer id;
     
     VideogameDto videogame;

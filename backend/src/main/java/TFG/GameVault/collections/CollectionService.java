@@ -134,11 +134,21 @@ public class CollectionService {
         return new CollectionBasicInfo(collection.getId(), collection.getName());
     }
 
+    @Transactional
     public void addGameToCollection(Integer collectionId, Integer gameId){
         Collection collection = cr.findById(collectionId).orElse(null);
         PersonalVideogame pvg = pvs.findGameById(gameId);
         if(collection != null && pvg != null){
             collection.getCollectionGames().add(pvg);
+            cr.save(collection);
+        }
+    }
+
+    @Transactional
+    public void removeGameFromCollections(PersonalVideogame pvg, Integer userId){
+        List<Collection> collections = cr.findAllByUser_Id(userId);
+        for(Collection collection : collections){
+            collection.getCollectionGames().remove(pvg);
             cr.save(collection);
         }
     }

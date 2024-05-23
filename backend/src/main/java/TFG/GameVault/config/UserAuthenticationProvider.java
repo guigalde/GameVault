@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 
 
 
@@ -22,8 +21,10 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.Data;
 
-@Component
+
+@Data
 @Configuration
 public class UserAuthenticationProvider {
 
@@ -31,7 +32,7 @@ public class UserAuthenticationProvider {
     @Autowired
     UserService us;
     
-    @Value("${jwt.token.secret: swi6+wiYHsvc2gvIQl/K/hBtZXMverSDur9wQ6bAAGM1H5MvVXINcz+U52L1bJgZ}")
+    @Value("${token.secret: swi6+wiYHsvc2gvIQl/K/hBtZXMverSDur9wQ6bAAGM1H5MvVXINcz+U52L1bJgZ}")
     private String secretKey;
 
     @Bean
@@ -40,7 +41,7 @@ public class UserAuthenticationProvider {
 	}
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode("swi6+wiYHsvc2gvIQl/K/hBtZXMverSDur9wQ6bAAGM1H5MvVXINcz+U52L1bJgZ}");
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
