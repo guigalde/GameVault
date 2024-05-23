@@ -19,6 +19,8 @@ import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
 import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.DTOs.VideogameDto;
+import TFG.GameVault.collections.CollectionRepository;
+import TFG.GameVault.collections.CollectionService;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserService;
 import TFG.GameVault.videogame.Videogame;
@@ -38,6 +40,9 @@ public class PersonalVideogameService {
 
     @Autowired
     private final VideogameService videogameService;
+
+    @Autowired
+    private final CollectionRepository collectionRepository;
 
     @Transactional
     public PersonalVideogame savePersonalVideogame(PersonalVideogame personalVideogame){
@@ -159,6 +164,7 @@ public class PersonalVideogameService {
         return res;
     }
 
+    @Transactional
     public PersonalVideogame findById(Integer game_id, Integer user_id) {
 
         PersonalVideogame personalVideogame = personalVideogameRepository.findById(game_id).orElse(null);
@@ -166,6 +172,18 @@ public class PersonalVideogameService {
             return personalVideogame;
         }else{
             return null;
+        }
+    }
+    
+    @Transactional
+    public void deletePersonalVideogame(Integer game_id, Integer user_id) {
+        PersonalVideogame personalVideogame = personalVideogameRepository.findById(game_id).orElse(null);
+        if(personalVideogame.getUser().getId() == user_id && personalVideogame != null){
+            collectionRepository.findAllByUser_Id(user_id).forEach(collection -> {
+                collection.getCollectionGames().remove(personalVideogame);
+                collectionRepository.save(collection);
+            });
+            personalVideogameRepository.deleteById(game_id);
         }
     }
 

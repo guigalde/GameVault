@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { request, getUserInfo } from "../../helpers/axios_helper";
 import AddToCollectionDropdown from "../collections/AddToCollectionDropdown";
+import ConfirmDelete from "../ConfirmDeleteModal";
 
 export default function PersonalVideogameDetails() {
 
@@ -20,6 +21,9 @@ export default function PersonalVideogameDetails() {
         email: getUserInfo().email,
         role: getUserInfo().role,
     };
+
+    const [showModal, setShowModal] = useState(false);
+
     useEffect(() => {
     getPersonalVideogameInfo(gameId);
     }, [gameId]);
@@ -39,7 +43,7 @@ export default function PersonalVideogameDetails() {
                 const data = response.data;
                 const image = data.videogame.image? 'https:' + data.videogame.image.replace("t_thumb", "t_original") : "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg";
                 setPersonalVideogame(data);
-                setVideogame({name: data.videogame.name, image: image});
+                setVideogame({name: data.videogame.name, image: image, id: data.videogame.id});
             } else {
                 alert(response.data);
             }
@@ -49,7 +53,7 @@ export default function PersonalVideogameDetails() {
     }
 
     async function handleDeletePersonalVideogame(){
-        const response = await request("DELETE", "/api/personalVideogame/"+gameId+"/"+user.id);
+        const response = await request("DELETE", "/api/deletePersonalVideogame/"+gameId+"/"+user.id);
         if(response.status === 200){
             alert(response.data);
             navigate('/myGames');
@@ -74,7 +78,7 @@ export default function PersonalVideogameDetails() {
                     <b>Videogame info</b>
                 </button>
                 <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
-                        onClick={()=>{handleDeletePersonalVideogame()}}
+                        onClick={()=>{setShowModal(true)}}
                         style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
                     <b>Delete</b>
                 </button>
@@ -141,6 +145,7 @@ export default function PersonalVideogameDetails() {
                 </div>
             </div>
             {showCollectionForm && <AddToCollectionDropdown collections={collections} personalVideogame={personalVideogame} setShowCollectionForm={setShowCollectionForm} />}
+            {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeletePersonalVideogame} name={videogame.name} place="my games" />}
         </div>
     );
 }

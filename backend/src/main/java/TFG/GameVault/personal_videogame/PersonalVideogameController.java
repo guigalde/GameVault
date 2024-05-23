@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +72,16 @@ public class PersonalVideogameController {
             }else{
                 return ResponseEntity.ok(pvService.toInfoDto(pv));
             }
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Something went wrong");
+        }
+    }
+
+    @DeleteMapping("/deletePersonalVideogame/{game_id}/{user_id}")
+    public ResponseEntity<String> deletePersonalVideogame(@PathVariable Integer game_id, @PathVariable Integer user_id){
+        try{
+            pvService.deletePersonalVideogame(game_id, user_id);
+            return ResponseEntity.ok("Game deleted successfully");
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Something went wrong");
         }
