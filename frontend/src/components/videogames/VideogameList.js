@@ -3,7 +3,7 @@ import { request, getUserInfo} from '../../helpers/axios_helper.js';
 import { useState, useEffect } from 'react';
 import {useNavigate } from 'react-router-dom';
 import AddToMyGamesForm from '../my_games/AddToMyGamesForm.js';
-import { SubwayAdd } from '../imported_icons/add.js';
+import { Icon } from '@iconify-icon/react';
 
 export default function VideogameList(){
     const navigate = useNavigate();
@@ -212,7 +212,7 @@ export default function VideogameList(){
                                         </td>
                                         <td className="column-wishlistAction-vg">
                                             <div className="d-flex" style={{flexDirection:'column', alignItems:'center'}}>
-                                                <SubwayAdd style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation();addToWishlist(game.id)}}/>
+                                                <Icon icon="subway:add-1"  style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation();addToWishlist(game.id)}}/>
                                             </div>
                                         </td>
                                     </tr>
