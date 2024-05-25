@@ -2,6 +2,8 @@ import {useState, useEffect} from 'react';
 import { request, getUserInfo } from '../../helpers/axios_helper';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify-icon/react';
+import { Link } from 'react-router-dom';
+import ConfirmDelete from "../ConfirmDeleteModal";
 
 
 export default function CollectionDetails(){
@@ -53,6 +55,8 @@ export default function CollectionDetails(){
     const [showPlatforms, setShowPlatforms] = useState(false);
     const [showGenres, setShowGenres] = useState(false);
     const [showPublishers, setShowPublishers] = useState(false);
+
+    const [showModal, setShowModal] = useState(false);
     
 
     async function retrieveCollection(){
@@ -97,8 +101,9 @@ export default function CollectionDetails(){
             const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null);
             if(response.status === 200){
                 retrieveCollection();
+                alert(response.data);
             }
-            alert(response.data);
+            
         }
         catch(error){
             console.log(error);
@@ -107,6 +112,18 @@ export default function CollectionDetails(){
 
     function onClickRow(gameId){
         navigate('/personalVideogameDetails/'+gameId);
+    }
+
+    async function handleDeleteCollection(){
+        try{
+            const response = await request("DELETE", "/api/collections/delete/"+collection.id+"/"+user.id, null);
+            alert(response.data);
+            if(response.status === 200){
+                navigate('/myCollections');
+            }
+        }catch(error){
+            console.log(error);
+        }
     }
 
     useEffect(() => {
@@ -130,6 +147,11 @@ export default function CollectionDetails(){
             <t style={{ marginRight: '10%' }}>{collection.creationDateString}</t>
             <t style={{ marginRight: '10%' }}>{collection.lastUpdateString}</t>
             <p style={{ marginRight: '10%' }}>{collection.description}</p>
+            <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                        onClick={()=>{setShowModal(true)}}
+                        style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
+                    <b>Delete</b>
+            </button>
         </div>
         <div style={{display: 'flex', flexDirection: 'row', height:'85%', width:'100%'}}>
             <div className="filters d-flex justify-content-center" style={{width: '15%', height: '100%', display:'felx', flexDirection:'column'}}>
@@ -213,7 +235,7 @@ export default function CollectionDetails(){
                         platform: "", minMark: null, maxMark: null, minTimePlayed: null, maxTimePlayed: null, completed: null,timePlayedSort: null, makrSort: null})}}>Delete filters</button>
                 </form>
                 <p></p>
-                <nav aria-label="Page navigation example" style={{padding: '10px'}}>
+                {totalPages>1 && <nav aria-label="Page navigation example" style={{padding: '10px'}}>
                     <b>Page {currentPage} of {totalPages}</b>
                     <ul class="pagination">
                         <li class="page-item" onClick={()=>setPage(0)}>
@@ -232,9 +254,11 @@ export default function CollectionDetails(){
                         </t>
                         </li>
                     </ul>
-                    </nav>
+                    </nav>}
             </div>
             <div className="games d-flex justify-content-center" style={{width: '85%', height: '100%'}}>
+                {games.length === 0 ? <h3 style={{marginTop: '5%'}}>No games found, <Link to="/myGames">add some from your list!</Link>
+                </h3>:
                 <table className="table table-striped">
                     <thead>
                         <tr>
@@ -293,9 +317,10 @@ export default function CollectionDetails(){
                             );
                         })}
                     </tbody>
-                </table>
+                </table>}
             </div>
         </div>
+        {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeleteCollection} text={"Are you sure you want to delete this collection?"} />}
         </>
     );
 }
