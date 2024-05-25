@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
-import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import lombok.AllArgsConstructor;
 
 @Controller
@@ -88,6 +87,21 @@ public class PersonalVideogameController {
             return ResponseEntity.badRequest().body("Something went wrong");
         }
     }
+
+    @PostMapping("/personalVideogame/update/{game_id}/{user_id}")
+    public ResponseEntity<String> postMethodName(@PathVariable Integer game_id, @PathVariable Integer user_id, @RequestBody PersonalVideogameDto personalVideogame) {
+        try{
+            PersonalVideogame pv = pvService.findById(game_id, user_id);
+            if(pv == null){
+                return ResponseEntity.badRequest().body("Game not found");
+            }
+            pvService.updatePersonalVideogame(pv, personalVideogame);
+            return ResponseEntity.ok("Game updated successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Error updating game information");
+        }
+    }
+    
 
     
 }
