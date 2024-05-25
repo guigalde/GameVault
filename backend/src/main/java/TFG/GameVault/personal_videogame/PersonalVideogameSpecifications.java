@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import TFG.GameVault.collections.Collection;
+
 public class PersonalVideogameSpecifications {
     
     public static Specification<PersonalVideogame> markInInterval(Float minMark, Float maxMark){
@@ -100,6 +102,15 @@ public class PersonalVideogameSpecifications {
                 return cb.conjunction();
             }
             return cb.like(cb.lower(personalVideogame.get("videogame").get("name")), "%" + searchTerms.toLowerCase() + "%");
+        };
+    }
+
+    public static Specification<PersonalVideogame> isInCollection(Collection collection){
+        return (personalVideogame, cq, cb) ->{
+            if (collection == null) {
+                return cb.conjunction();
+            }
+            return cb.isMember(collection, personalVideogame.get("collections"));
         };
     }
 }

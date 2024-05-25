@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -56,8 +57,9 @@ public class PersonalVideogameController {
                 return ResponseEntity.badRequest().body(null);
             }
             Pageable pageable = PageRequest.of(page, 50, Direction.DESC, "timePlayed");
-            ResponseEntity<List<Object>> response = ResponseEntity.ok(pvService.applyFilters(user_id, filter, pageable));
-            return response;
+            Page<PersonalVideogame> videogames = pvService.applyFilters(user_id, filter, pageable);
+            List<Object> response = List.of(videogames.getContent().stream().map(pv -> pvService.toInfoDto(pv)).collect(java.util.stream.Collectors.toList()), videogames.getTotalPages());
+            return ResponseEntity.ok(response);
         }catch(Exception e){
             return ResponseEntity.badRequest().body(null);
         }

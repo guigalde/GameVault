@@ -1,5 +1,6 @@
 package TFG.GameVault.personal_videogame;
 
+import TFG.GameVault.collections.Collection;
 import TFG.GameVault.videogame.GamesFilter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +25,6 @@ public class PersonalVideogameFilter extends GamesFilter{
     private Boolean timePlayedSort;
 
     private Boolean markSort;
+
+    private Collection collection;
 }

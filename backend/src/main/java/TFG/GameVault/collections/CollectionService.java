@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.checkerframework.checker.units.qual.A;
-import org.hibernate.mapping.Join;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,14 +16,11 @@ import org.springframework.stereotype.Service;
 
 import TFG.GameVault.DTOs.CollectionBasicInfo;
 import TFG.GameVault.DTOs.CollectionDto;
-import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
-import TFG.GameVault.DTOs.PersonalVideogameDto;
+import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.personal_videogame.PersonalVideogame;
 import TFG.GameVault.personal_videogame.PersonalVideogameService;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserService;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -55,13 +50,13 @@ public class CollectionService {
         String lastUpdateString = lastUpdate.format(formatter);
 
         return new CollectionDto(collection.getId(), collection.getName(), collection.getDescription(), collection.getCreationDate(), collection.getLastUpdate(),
-             creationDateString, lastUpdateString,collection.getCollectionGames().stream().map(pvs::toBasicInfo).collect(Collectors.toList()));
+             creationDateString, lastUpdateString,collection.getCollectionGames().stream().map(pvs::toInfoDto).collect(Collectors.toList()));
     }
 
     public Collection toCollection(CollectionDto collectionDto, Integer user_id){
         User user = us.findById(user_id);
         List <PersonalVideogame> collectionGames = new ArrayList<>();
-        for(PersonalVideogameBasicInfo pvgDto : collectionDto.getCollectionGames()){
+        for(PersonalVideogameInfoDto pvgDto : collectionDto.getCollectionGames()){
             PersonalVideogame pvg = pvs.findGameById(pvgDto.getId());
             if(pvg != null){
                 collectionGames.add(pvg);
@@ -150,6 +145,23 @@ public class CollectionService {
         for(Collection collection : collections){
             collection.getCollectionGames().remove(pvg);
             cr.save(collection);
+        }
+    }
+
+    @Transactional
+
+    public void removeGameFromCollection(Integer collectionId, Integer gameId){
+        Collection collection = cr.findById(collectionId).orElse(null);
+        if(collection != null){
+            List<PersonalVideogame> games = collection.getCollectionGames();
+            Boolean resultOfRemove= games.removeIf(g -> g.getId() == gameId);
+            if(resultOfRemove){
+                cr.save(collection);
+            }else{
+                throw new IllegalArgumentException("Game not found in collection");
+            }
+        }else{
+            throw new IllegalArgumentException("Collection not found");
         }
     }
 
