@@ -1,8 +1,8 @@
 import { request, getUserInfo} from '../helpers/axios_helper';
 import { useState, useEffect } from 'react';
 import AddToMyGamesForm from './my_games/AddToMyGamesForm.js';
-import { IcomoonFreeBin } from './imported_icons/bin.js';
 import { useNavigate } from 'react-router-dom';
+import {Icon} from '@iconify-icon/react';
 
 export default function Wishlist(){
     const navigate = useNavigate();
@@ -209,7 +209,7 @@ export default function Wishlist(){
                                         ) : null}
                                     </td>
                                     <td className="column-wishlistAction-vg">
-                                        <IcomoonFreeBin style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation();removeGame(game.id)}} />
+                                        <Icon icon="icomoon-free:bin" style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation();removeGame(game.id)}} />
                                     </td>
                                 </tr>
                             );

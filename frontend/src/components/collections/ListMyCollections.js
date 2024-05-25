@@ -1,9 +1,11 @@
 import {getUserInfo, request} from '../../helpers/axios_helper.js'
 import { useState, useEffect } from 'react';
-import { IcomoonFreeBin } from '../imported_icons/bin.js';
 import CreateCollectionForm from './CreateCollectionForm.js';
+import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify-icon/react';
 
 export default function ListMyCollections() {
+    const navigate = useNavigate();
 
     const user= {
         id: getUserInfo().id,
@@ -136,13 +138,13 @@ export default function ListMyCollections() {
                         <tbody>
                             {collections.map((collection) => {
                                 return (
-                                    <tr key={collection.id}>
+                                    <tr key={collection.id} onClick={()=>navigate("/collection/"+collection.id)}>
                                         <td style={{width: '15%'}}>{collection.name}</td>
                                             <td style={{width: '15%'}}>{collection.creationDate}</td>
                                             <td style={{width: '15%'}}>{collection.lastUpdate}</td>
-                                            <td style={{width: '45%'}}>{collection.description.substring(0,99)+"..."}</td>
+                                            <td style={{width: '45%'}}>{collection.description.lenght>100?collection.description.substring(0,99)+"...":collection.description}</td>
                                             <td style={{width: '10%'}}>
-                                                <IcomoonFreeBin style={{cursor: 'pointer'}} onClick={()=>deleteCollection(collection.id)} />
+                                                <Icon icon="icomoon-free:bin" style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation() ;deleteCollection(collection.id)}} />
                                             </td>
                                         </tr>
                                 );

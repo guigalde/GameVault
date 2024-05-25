@@ -23,5 +23,5 @@ public class CollectionDto {
 
     String lastUpdateString;
 
-    List<PersonalVideogameBasicInfo> collectionGames;
+    List<PersonalVideogameInfoDto> collectionGames;
 }

@@ -1,30 +1,44 @@
-
-import { request, getUserInfo} from '../../helpers/axios_helper.js';
-import { useState, useEffect } from 'react';
-import {useNavigate } from 'react-router-dom';
-import AddToMyGamesForm from '../my_games/AddToMyGamesForm.js';
+import {useState, useEffect} from 'react';
+import { request, getUserInfo } from '../../helpers/axios_helper';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify-icon/react';
 
-export default function VideogameList(){
+
+export default function CollectionDetails(){
+
+    const { collectionId } = useParams();
+    const user = {
+        id: getUserInfo().id,
+        username: getUserInfo().username,
+        email: getUserInfo().email,
+        role: getUserInfo().role,
+    };
+
     const navigate = useNavigate();
 
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({
+        timePlayedSort: null,
+        markSort: null
+    });
     const [provisionalFilters, setProvisionalFilters] = useState({
         searchTerms: "",
         publisher: "",
         minReleaseDate: null,
         maxReleaseDate: null,
         genre: "",
-        platform: ""
-
+        platform: "",
+        minMark: null,
+        maxMark: null,
+        minTimePlayed: null,
+        maxTimePlayed: null,
+        completed: null,
+        timePlayedSort: null,
+        markSort: null
     });
-    const user = {
-        id: getUserInfo().id,
-        username: getUserInfo().sub,
-        email: getUserInfo().email,
-        role: getUserInfo().role
-    };
+
     const [page,setPage] = useState(0);
+
+    const [collection, setCollection] = useState({});
     const [games, setGames] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
 
@@ -39,20 +53,20 @@ export default function VideogameList(){
     const [showPlatforms, setShowPlatforms] = useState(false);
     const [showGenres, setShowGenres] = useState(false);
     const [showPublishers, setShowPublishers] = useState(false);
-
-    const [showForm, setShowForm] = useState(false);
-    const [gameId, setGameId] = useState(null);
-    const [gameName, setGameName] = useState(null);
     
 
-    async function retrieveGames(){
-        const response = await request("POST", "/api/videogames/"+page,
-        filters)
+    async function retrieveCollection(){
+        try{
+        const response = await request("POST", "/api/collections/"+user.id+ "/" +collectionId + "/"+ page, filters)
         if(response.status === 200){
-            setGames(response.data[0]);
+            setCollection(response.data[0]);
+            setGames(response.data[0].collectionGames);
             setTotalPages(response.data[1]);
         }else{
-            console.log("Error");
+            alert('Something went wrong: '+response.data);
+        }
+        }catch(error){
+            console.log(error);
         }
     }
 
@@ -78,23 +92,25 @@ export default function VideogameList(){
     
     }
 
-    async function addToWishlist(gameId){
-        request(
-            'POST',
-            'api/addToWishlist/'+user.id+'/'+gameId
-        ).then((response) => {
+    async function removeGame(gameId){
+        try{
+            const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null);
+            if(response.status === 200){
+                retrieveCollection();
+            }
             alert(response.data);
-        }).catch((error) => {
-            alert(error);
-        });
+        }
+        catch(error){
+            console.log(error);
+        }
     }
 
     function onClickRow(gameId){
-        navigate('/videogameDetails/'+gameId);
+        navigate('/personalVideogameDetails/'+gameId);
     }
 
     useEffect(() => {
-        retrieveGames();
+        retrieveCollection();
         retrieveGenres();
         retrievePlatforms();
         retrievePublishers();
@@ -108,8 +124,14 @@ export default function VideogameList(){
     const searchedPlatforms = platforms.filter(p => p.toLowerCase().includes(provisionalFilters.platform.toLowerCase()));
     const searchedPublishers = publishers.filter(p => p.toLowerCase().includes(provisionalFilters.publisher.toLowerCase()));
     return(
-        
-        <div style={{display: 'flex', flexDirection: 'row', height:'100%', width:'100%'}}>
+        <>
+        <div style={{display: 'flex', flexDirection: 'row', height:'15%', width:'100%'}}>
+            <h2 style={{ marginRight: '10%' }}>{collection.name}</h2>
+            <t style={{ marginRight: '10%' }}>{collection.creationDateString}</t>
+            <t style={{ marginRight: '10%' }}>{collection.lastUpdateString}</t>
+            <p style={{ marginRight: '10%' }}>{collection.description}</p>
+        </div>
+        <div style={{display: 'flex', flexDirection: 'row', height:'85%', width:'100%'}}>
             <div className="filters d-flex justify-content-center" style={{width: '15%', height: '100%', display:'felx', flexDirection:'column'}}>
                 <form style={{padding: '10px'}}>
                     <h3>Filters</h3>
@@ -117,6 +139,33 @@ export default function VideogameList(){
                         <label htmlFor="searchterms"><h6>Search</h6></label>
                         <input type="text" className="form-control" id="name" onChange={(e) => setProvisionalFilters({...provisionalFilters, searchTerms: e.target.value})}/>
                     </div>
+                    <div className="form-group">
+                        <h6>Mark</h6>
+                        <label htmlFor="minReleaseDate"> Lower limit</label>
+                        <input type="number" className="form-control" value={provisionalFilters.minMark} onChange={(e) => setProvisionalFilters({...provisionalFilters, minMark: e.target.value})}/>
+                        <label htmlFor="maxReleaseDate"> Upper limit</label>
+                        <input type="number" className="form-control" value={provisionalFilters.maxMark} onChange={(e) => setProvisionalFilters({...provisionalFilters, maxMark: e.target.value})}/>
+                    </div>
+                    <div className="form-group">
+                        <h6>Time played</h6>
+                        <label htmlFor="minReleaseDate"> Lower limit</label>
+                        <input type="number" className="form-control" value={provisionalFilters.minTimePlayed} onChange={(e) => setProvisionalFilters({...provisionalFilters, minTimePlayed: e.target.value})}/>
+                        <label htmlFor="maxReleaseDate"> Upper limit</label>
+                        <input type="number" className="form-control" value={provisionalFilters.maxTimePlayed} onChange={(e) => setProvisionalFilters({...provisionalFilters, maxTimePlayed: e.target.value})}/>
+                    </div>
+                    <div className="form-group">
+                        <h6>Completed</h6>
+                        <select className="form-control" id="completed" onChange={(e) => {
+                                    const completedValue = e.target.value === "" ? null : e.target.value === "true";
+                                    setProvisionalFilters({...provisionalFilters, completed: completedValue});
+                                }}>
+                            <option value={""}>---</option>
+                            <option value={true}>Yes</option>
+                            <option value={false}>No</option>
+                        </select>
+                    </div>
+
+                    <p></p>
                     <div className="form-group">
                         <h6>Release Date</h6>
                         <label htmlFor="minReleaseDate"> Lower limit</label>
@@ -160,7 +209,8 @@ export default function VideogameList(){
                     </div>
                     <p></p>
                     <button type="submit" className="btn btn-primary" onClick={(e) => {e.preventDefault(); setFilters(provisionalFilters);}} style={{ marginRight: '20px' }} >Apply filters</button>
-                    <button className="btn btn-danger" onClick={() => { setProvisionalFilters({searchTerms: "",publisher: "", minReleaseDate: null, maxReleaseDate: null, genre: "", platform: ""})}}>Delete filters</button>
+                    <button className="btn btn-danger" onClick={() => { setProvisionalFilters({searchTerms: "",publisher: "", minReleaseDate: null, maxReleaseDate: null, genre: "",
+                        platform: "", minMark: null, maxMark: null, minTimePlayed: null, maxTimePlayed: null, completed: null,timePlayedSort: null, makrSort: null})}}>Delete filters</button>
                 </form>
                 <p></p>
                 <nav aria-label="Page navigation example" style={{padding: '10px'}}>
@@ -189,31 +239,55 @@ export default function VideogameList(){
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Platforms</th>
-                            <th>Genres</th>
+                            <th>Platform</th>
+                            <th>Completed</th>
+                            <th>Time played
+                                {filters.timePlayedSort===null? 
+                                    <>
+                                    <span className="sort-arrow" onClick={() => setFilters({...filters, timePlayedSort:true, markSort: null})}>
+                                        ▲
+                                    </span>
+                                    <span className="sort-arrow" onClick={() => setFilters({...filters, timePlayedSort:false, markSort: null})}>
+                                        ▼
+                                    </span>
+                                    </>
+                                :
+                                    <span className="sort-arrow" onClick={() => setFilters({...filters, timePlayedSort: !filters.timePlayedSort, markSort: null})}>
+                                        {!filters.timePlayedSort ? '▲' : '▼'}
+                                    </span>
+                                }
+                            </th>
+                            <th>Mark
+                            {filters.markSort===null? 
+                                    <>
+                                    <span className="sort-arrow" onClick={() => setFilters({...filters, markSort:true, timePlayedSort: null})}>
+                                        ▲
+                                    </span>
+                                    <span className="sort-arrow" onClick={() => setFilters({...filters, markSort:false, timePlayedSort: null})}>
+                                        ▼
+                                    </span>
+                                    </>
+                                :
+                                    <span className="sort-arrow" onClick={() => setFilters({...filters, markSort: !filters.markSort, timePlayedSort: null})}>
+                                        {!filters.markSort ? '▲' : '▼'}
+                                    </span>
+                                }
+
+                            </th>
                             <th></th>
-                            <th>Wishlist</th>
                         </tr>
                     </thead>
                     <tbody>
                         {games.map((game) => {
                             return (
-                                    <tr key={game.id} onClick={()=>onClickRow(game.id)}>
-                                            <td className="column-name-vg">{game.name}</td>
-                                            <td className="column-platforms-vg">{game.platforms}</td>
-                                            <td className="column-genres-vg">{game.genres}</td>
-                                        
-                                        <td className="column-action-vg">
-                                            {user.username ? (
-                                                <button className="btn btn-primary btn-block mb-4" onClick={(e) => {e.stopPropagation();setShowForm(true); setGameId(game.id); setGameName(game.name)}} style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black' }}>
-                                                    <b>Add to my games</b>
-                                                </button>
-                                            ) : null}
-                                        </td>
-                                        <td className="column-wishlistAction-vg">
-                                            <div className="d-flex" style={{flexDirection:'column', alignItems:'center'}}>
-                                                <Icon icon="subway:add-1"  style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation();addToWishlist(game.id)}}/>
-                                            </div>
+                                <tr key={game.id} onClick={()=>onClickRow(game.id)}>
+                                <td className="column-name">{game.videogame.name}</td>
+                                        <td className="column-platform">{game.platform}</td>
+                                        <td className="column-completed">{game.completionTime === null ? <t>No</t> : <t>Yes</t>}</td>
+                                        <td className="column-time-played">{game.timePlayed}</td>
+                                        <td className="column-mark">{game.mark}</td>
+                                        <td>
+                                            <Icon icon="typcn:minus" onClick={(e)=>{e.stopPropagation();removeGame(game.id)}}/>
                                         </td>
                                     </tr>
                             );
@@ -221,7 +295,7 @@ export default function VideogameList(){
                     </tbody>
                 </table>
             </div>
-            {showForm && <AddToMyGamesForm gameId={gameId} setShowForm={setShowForm} gameName={gameName}/> }
         </div>
+        </>
     );
 }

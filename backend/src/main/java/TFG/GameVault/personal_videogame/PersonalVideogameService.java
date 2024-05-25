@@ -130,8 +130,7 @@ public class PersonalVideogameService {
     }
 
     @Transactional
-    public List<Object> applyFilters(Integer userId, PersonalVideogameFilter filter, Pageable page){
-        List<Object> res = new ArrayList<>();
+    public Page<PersonalVideogame> applyFilters(Integer userId, PersonalVideogameFilter filter, Pageable page){
         Specification<PersonalVideogame> spec = Specification.where(PersonalVideogameSpecifications.user(userId));
         if(filter != null){
             spec = spec.and(PersonalVideogameSpecifications.completed(filter.getCompleted()))
@@ -141,27 +140,22 @@ public class PersonalVideogameService {
                 .and(PersonalVideogameSpecifications.hasGenre(filter.getGenre()))
                 .and(PersonalVideogameSpecifications.hasPublisher(filter.getPublisher()))
                 .and(PersonalVideogameSpecifications.search(filter.getSearchTerms()))
-                .and(PersonalVideogameSpecifications.filterByDate(filter.getMinReleaseDate(), filter.getMaxReleaseDate()));
+                .and(PersonalVideogameSpecifications.filterByDate(filter.getMinReleaseDate(), filter.getMaxReleaseDate()))
+                .and(PersonalVideogameSpecifications.isInCollection(filter.getCollection()));
             
-            if(filter.getMarkSort()!=null &&filter.getMarkSort()==true){
+            if(page!= null && filter.getMarkSort()!=null && filter.getMarkSort()==true){
                 page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "mark");
-            }else if(filter.getMarkSort()!=null && filter.getMarkSort()==false){
+            }else if(page!= null && filter.getMarkSort()!=null && filter.getMarkSort()==false){
                 page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "mark");
-            }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==true){
+            }else if(page!= null && filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==true){
                 page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.ASC, "timePlayed");
-            }else if(filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==false){
+            }else if(page!= null && filter.getTimePlayedSort()!=null && filter.getTimePlayedSort()==false){
                 page = PageRequest.of(page.getPageNumber(), page.getPageSize(), Direction.DESC, "timePlayed");
             }
         }
         Page<PersonalVideogame>  personalVideogames = personalVideogameRepository.findAll(spec, page);
-        List<PersonalVideogameInfoDto> personalVideogameDtos = new ArrayList<>();
-        for (PersonalVideogame personalVideogame : personalVideogames) {
-            personalVideogameDtos.add(toInfoDto(personalVideogame));
-        }
-        res.add(personalVideogameDtos);
-        res.add(personalVideogames.getTotalPages());
 
-        return res;
+        return personalVideogames;
     }
 
     @Transactional
