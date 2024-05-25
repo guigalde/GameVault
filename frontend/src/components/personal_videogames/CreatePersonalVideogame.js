@@ -39,7 +39,7 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
             ).then((response) => {
                 alert(response.data);
                 setShowForm(false);
-                //navigate("/mygames");
+                navigate("/mygames");
             }).catch((error) => {
                 alert(error);
             });

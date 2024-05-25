@@ -2,7 +2,7 @@
 import { request, getUserInfo} from '../../helpers/axios_helper.js';
 import { useState, useEffect } from 'react';
 import {useNavigate } from 'react-router-dom';
-import AddToMyGamesForm from '../my_games/AddToMyGamesForm.js';
+import AddToMyGamesForm from '../personal_videogames/CreatePersonalVideogame.js';
 import { Icon } from '@iconify-icon/react';
 
 export default function VideogameList(){
