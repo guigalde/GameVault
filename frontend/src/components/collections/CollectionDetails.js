@@ -94,7 +94,7 @@ export default function CollectionDetails(){
 
     async function removeGame(gameId){
         try{
-            const response = await request("POST", "/collections/removeGame/"+collection.id+"/"+gameId, null);
+            const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null);
             if(response.status === 200){
                 retrieveCollection();
             }
