@@ -72,9 +72,9 @@ public class CollectionService {
     }
 
     @Transactional
-    public void deleteCollection(Integer id){
+    public void deleteCollection(Integer id, Integer userId){
         Collection collection = cr.findById(id).orElse(null);
-        if(collection != null){
+        if(collection != null && collection.getUser().getId() == userId){
             cr.delete(collection);
         }
     }

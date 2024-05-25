@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import CreateCollectionForm from './CreateCollectionForm.js';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify-icon/react';
+import ConfirmDelete from '../ConfirmDeleteModal.js';
 
 export default function ListMyCollections() {
     const navigate = useNavigate();
@@ -24,6 +25,10 @@ export default function ListMyCollections() {
     const [definitiveSearchTerm, setDefinitiveSearchTerm] = useState('');
     const [orderBy, setOrderBy] = useState('');
     const [showCreationForm, setShowCreationForm] = useState(false);
+    const [collectionToDelete, setCollectionToDelete] = useState(null);
+
+    const [showModal, setShowModal] = useState(false);
+
 
     async function getCollections() {
         const formData = new FormData();
@@ -38,14 +43,16 @@ export default function ListMyCollections() {
         }
     }
 
-    async function deleteCollection(collectionId){
-        const response = await request('DELETE', '/api/collections/delete/'+collectionId);
-        if(response.status === 200){
-            alert('Collection deleted successfully');
+    async function handleDeleteCollection(){
+        try{
+            const response = await request("DELETE", "/api/collections/delete/"+collectionToDelete+"/"+user.id, null);
+            alert(response.data);
             getCollections();
-        }else{
-            alert('Error deleting collection');
+        }catch(error){
+            console.log(error);
         }
+        setShowModal(false);
+        setCollectionToDelete(null);
     }
 
     useEffect(() => {
@@ -144,7 +151,7 @@ export default function ListMyCollections() {
                                             <td style={{width: '15%'}}>{collection.lastUpdate}</td>
                                             <td style={{width: '45%'}}>{collection.description.lenght>100?collection.description.substring(0,99)+"...":collection.description}</td>
                                             <td style={{width: '10%'}}>
-                                                <Icon icon="icomoon-free:bin" style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation() ;deleteCollection(collection.id)}} />
+                                                <Icon icon="icomoon-free:bin" style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation() ;setCollectionToDelete(collection.id); setShowModal(true) }} />
                                             </td>
                                         </tr>
                                 );
@@ -155,6 +162,8 @@ export default function ListMyCollections() {
         </div>
         }
         {showCreationForm ? <CreateCollectionForm setShowForm={setShowCreationForm} getCollections={getCollections}/> : null}
+        {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeleteCollection} text={"Are you sure you want to delete this collection?"} />}
+
         </div>
     );
 

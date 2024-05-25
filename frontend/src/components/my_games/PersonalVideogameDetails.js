@@ -145,7 +145,7 @@ export default function PersonalVideogameDetails() {
                 </div>
             </div>
             {showCollectionForm && <AddToCollectionDropdown collections={collections} personalVideogame={personalVideogame} setShowCollectionForm={setShowCollectionForm} />}
-            {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeletePersonalVideogame} name={videogame.name} place="my games" />}
+            {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeletePersonalVideogame} text={"Deleting"+ videogame.name +  "from My Games is permanent. Are you sure?"} />}
         </div>
     );
 }
