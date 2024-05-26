@@ -163,7 +163,7 @@ export default function VideogameList(){
                     <button className="btn btn-danger" onClick={() => { setProvisionalFilters({searchTerms: "",publisher: "", minReleaseDate: null, maxReleaseDate: null, genre: "", platform: ""})}}>Delete filters</button>
                 </form>
                 <p></p>
-                <nav aria-label="Page navigation example" style={{padding: '10px'}}>
+                {totalPages &&<nav aria-label="Page navigation example" style={{padding: '10px'}}>
                     <b>Page {currentPage} of {totalPages}</b>
                     <ul class="pagination">
                         <li class="page-item" onClick={()=>setPage(0)}>
@@ -182,7 +182,7 @@ export default function VideogameList(){
                         </t>
                         </li>
                     </ul>
-                    </nav>
+                    </nav>}
             </div>
             <div className="games d-flex justify-content-center" style={{width: '85%', height: '100%'}}>
                 <table className="table table-striped">

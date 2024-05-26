@@ -197,7 +197,7 @@ export default function MyGamesList(){
                         platform: "", minMark: null, maxMark: null, minTimePlayed: null, maxTimePlayed: null, completed: null,timePlayedSort: null, makrSort: null})}}>Delete filters</button>
                 </form>
                 <p></p>
-                <nav aria-label="Page navigation example" style={{padding: '10px'}}>
+                {totalPages> 1 && <nav aria-label="Page navigation example" style={{padding: '10px'}}>
                     <b>Page {currentPage} of {totalPages}</b>
                     <ul class="pagination">
                         <li class="page-item" onClick={()=>setPage(0)}>
@@ -216,7 +216,7 @@ export default function MyGamesList(){
                         </t>
                         </li>
                     </ul>
-                    </nav>
+                    </nav>}
             </div>
             <div className="games d-flex justify-content-center" style={{width: '85%', height: '100%'}}>
                 <table className="table table-striped">
