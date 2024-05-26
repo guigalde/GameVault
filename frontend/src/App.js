@@ -1,7 +1,7 @@
 import logo from './logo.png';
 import './App.css';
 import {Routes, Route} from 'react-router-dom';
-import Header from './components/navbar/Header';
+import Header from './components/Header';
 import { WelcomeContent } from './components/WelcomeContent';
 import LoginForm from './components/user_related/LoginForm';
 import RegisterForm from './components/user_related/RegisterForm';

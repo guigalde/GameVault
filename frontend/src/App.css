@@ -2,13 +2,20 @@
     font-size: 1.5em;
    padding: 20px;
 }
-.App-logo{
-    height: 80px;
-}
+.logo-container {
+    height: 100%;
+    width: 100%;
+  }
+
+.App-logo {
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+  }
 .App-header{
     display: flex;
     background-color: #DC80D5;
-    padding: 20px;
+    padding: 1.2vh;
     height: 10vh;
     color: #C8F4F9;
     align-items: left;
@@ -33,6 +40,7 @@
     background-color: #C8F4F9;
     padding: 20px;
 }
+
 .dropdown-item:hover {
     background-color: #83cccd !important;
     color: white !important;
@@ -229,5 +237,9 @@
 .scrollable-datalist {
     height: 50px; /* Adjust the height as needed */
     overflow-y: auto;
+}
+
+.btn{
+    margin-bottom: 0!important;
 }
   
