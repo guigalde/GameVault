@@ -1,6 +1,6 @@
 import {getUserInfo, request} from '../../helpers/axios_helper.js'
 import { useState, useEffect } from 'react';
-import CreateCollectionForm from './CreateCollectionForm.js';
+import CreateCollectionForm from './CollectionForm.js';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify-icon/react';
 import ConfirmDelete from '../ConfirmDeleteModal.js';
@@ -161,7 +161,7 @@ export default function ListMyCollections() {
                 </div>
         </div>
         }
-        {showCreationForm ? <CreateCollectionForm setShowForm={setShowCreationForm} getCollections={getCollections}/> : null}
+        {showCreationForm && <CreateCollectionForm setShowForm={setShowCreationForm} dataRetrieve={getCollections}/>}
         {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeleteCollection} text={"Are you sure you want to delete this collection?"} />}
 
         </div>
