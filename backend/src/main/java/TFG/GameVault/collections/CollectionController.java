@@ -61,13 +61,13 @@ public class CollectionController {
         }
     }
 
-    @DeleteMapping("/collections/delete/{collectionId}")
-    public ResponseEntity<?> deleteCollection(@PathVariable Integer collectionId){
+    @DeleteMapping("/collections/delete/{collectionId}/{userId}")
+    public ResponseEntity<?> deleteCollection(@PathVariable Integer collectionId, @PathVariable Integer userId){
         try{
-            cs.deleteCollection(collectionId);
+            cs.deleteCollection(collectionId, userId);
             return ResponseEntity.ok("Collection deleted successfully");
         }catch(Exception e){
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Error deleting collection");
         }
         
         
