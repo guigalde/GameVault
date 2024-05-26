@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { getUserInfo, request } from '../helpers/axios_helper';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 export default function Header({logoSrc, pageTitle}) {
 
@@ -10,6 +11,14 @@ export default function Header({logoSrc, pageTitle}) {
     email: getUserInfo().email,
     role: getUserInfo().role
   };
+
+  const location = useLocation();
+
+  const [videogamesTabStyle, setVideogamesTabStyle] = useState({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
+  const [myGamesTabStyle, setMyGamesTabStyle] = useState({borderRight: '1.5px solid black'});
+  const [wishlistTabStyle, setWishlistTabStyle] = useState({borderRight: '1.5px solid black'});
+  const [collectionsTabStyle, setCollectionsTabStyle] = useState({borderRight: '1.5px solid black'});
+   
 
   const navigate = useNavigate();
 
@@ -39,6 +48,30 @@ export default function Header({logoSrc, pageTitle}) {
         alert(response.data);
       }).catch((error) => {alert(error)});
   }
+
+  useEffect(() => {
+    if (location.pathname === "/videogames" || location.pathname === "/videogameDetails/*"){
+      setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setWishlistTabStyle({borderRight: '1.5px solid black'});
+      setCollectionsTabStyle({borderRight: '1.5px solid black'});
+    }else if (location.pathname === "/myGames" || location.pathname === "/personalVideogameDetails/*"){
+      setMyGamesTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
+      setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
+      setWishlistTabStyle({borderRight: '1.5px solid black'});
+      setCollectionsTabStyle({borderRight: '1.5px solid black'});
+    }else if (location.pathname === "/wishlist"){
+      setWishlistTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
+      setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setCollectionsTabStyle({borderRight: '1.5px solid black'});
+    }else if (location.pathname === "/collections" || location.pathname === "/collection/*"){
+      setCollectionsTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
+      setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setWishlistTabStyle({borderRight: '1.5px solid black'});
+    }
+  }, [location]);
   
     return (
       <nav className="d-flex justify-content-between align-items-center App-header">
@@ -48,24 +81,24 @@ export default function Header({logoSrc, pageTitle}) {
           </Link>
           <h1 className="App-title" style={{fontWeight:"600"}}>{pageTitle}</h1>
           <Link to="/videogames" className="link">
-            <div className="nav-item" style={{ borderLeft: '1.5px solid black', borderRight: '1.5px solid black' }}>
+            <div className="nav-item" style={videogamesTabStyle}>
               <b style={{ padding: '20px' }}>Videogames</b>
             </div>
           </Link>
           {user.id !== null &&
             <>
               <Link to="/myGames" className="link">
-                <div className="nav-item" style={{ borderRight: '1.5px solid black' }}>
+                <div className="nav-item" style={myGamesTabStyle}>
                   <b style={{ padding: '20px' }}>My Games</b>
                 </div>
               </Link>
               <Link to="/wishlist" className="link">
-                <div className="nav-item" style={{ borderRight: '1.5px solid black' }}>
+                <div className="nav-item" style={wishlistTabStyle}>
                   <b style={{ padding: '20px' }}>Wishlist</b>
                 </div>
               </Link>
               <Link to="/collections" className="link">
-                <div className="nav-item" style={{ borderRight: '1.5px solid black' }}>
+                <div className="nav-item" style={collectionsTabStyle}>
                   <b style={{ padding: '20px' }}>Collections</b>
                 </div>
               </Link>
