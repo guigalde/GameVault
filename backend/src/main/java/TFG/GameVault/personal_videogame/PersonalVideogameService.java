@@ -113,6 +113,7 @@ public class PersonalVideogameService {
 
     public PersonalVideogameDto toDto(PersonalVideogame personalVideogame){
         PersonalVideogameDto dto = new PersonalVideogameDto();
+        dto.setId(personalVideogame.getId());
         dto.setAcquiredOn(personalVideogame.getAcquiredOn());
         dto.setCompletedOn(personalVideogame.getCompletedOn());
         dto.setCompletionTime(personalVideogame.getCompletionTime());
@@ -179,6 +180,19 @@ public class PersonalVideogameService {
             });
             personalVideogameRepository.deleteById(game_id);
         }
+    }
+
+    @Transactional
+    public PersonalVideogame updatePersonalVideogame(PersonalVideogame pv, PersonalVideogameDto personalVideogame) {
+        pv.setAcquiredOn(personalVideogame.getAcquiredOn());
+        pv.setCompletedOn(personalVideogame.getCompletedOn());
+        pv.setCompletionTime(personalVideogame.getCompletionTime());
+        pv.setMark(personalVideogame.getMark());
+        pv.setNotes(personalVideogame.getNotes());
+        pv.setPlatform(personalVideogame.getPlatform());
+        pv.setTimePlayed(personalVideogame.getTimePlayed());
+        PersonalVideogame pv2 = personalVideogameRepository.save(pv);
+        return pv2;
     }
 
 }

@@ -7,12 +7,12 @@ import LoginForm from './components/user_related/LoginForm';
 import RegisterForm from './components/user_related/RegisterForm';
 import EditForm from './components/user_related/EditProfile';
 import VideogameList from './components/videogames/VideogameList';
-import MyGamesList from './components/my_games/MyGamesList';
+import PersonalVideogameList from './components/personal_videogames/PersonalVideogameList';
 import Wishlist from './components/Wishlist';
 import { getUserInfo } from './helpers/axios_helper';
 import ListMyCollections from './components/collections/ListMyCollections';
 import VideogameDetails from './components/videogames/VideogameDetails';
-import PersonalVideogameDetails from './components/my_games/PersonalVideogameDetails';
+import PersonalVideogameDetails from './components/personal_videogames/PersonalVideogameDetails';
 import CollectionDetails from './components/collections/CollectionDetails';
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
             <Route path="/" exact element={<WelcomeContent/>}/>
             <Route path="/editAccount" exact element={<EditForm/>}/>
             <Route path="/videogames" exact element={<VideogameList/>}/>
-            <Route path="/myGames" exact element={<MyGamesList/>}/>
+            <Route path="/myGames" exact element={<PersonalVideogameList/>}/>
             <Route path="/wishlist" exact element={<Wishlist/>}/>
             <Route path="/collections" exact element={<ListMyCollections/>}/>
             <Route path="/videogameDetails/:gameId" element={<VideogameDetails/>}/>

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify-icon/react';
 import { Link } from 'react-router-dom';
 import ConfirmDelete from "../ConfirmDeleteModal";
+import EditCollectionForm from './CollectionForm';
 
 
 export default function CollectionDetails(){
@@ -57,6 +58,7 @@ export default function CollectionDetails(){
     const [showPublishers, setShowPublishers] = useState(false);
 
     const [showModal, setShowModal] = useState(false);
+    const [showEditForm, setShowEditForm] = useState(false);
     
 
     async function retrieveCollection(){
@@ -101,6 +103,7 @@ export default function CollectionDetails(){
             const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null);
             if(response.status === 200){
                 retrieveCollection();
+            }else{
                 alert(response.data);
             }
             
@@ -151,6 +154,11 @@ export default function CollectionDetails(){
                         onClick={()=>{setShowModal(true)}}
                         style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
                     <b>Delete</b>
+            </button>
+            <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                        onClick={()=>{setShowEditForm(true)}}
+                        style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black', marginRight:'15px'}}>
+                    <b>Edit</b>
             </button>
         </div>
         <div style={{display: 'flex', flexDirection: 'row', height:'85%', width:'100%'}}>
@@ -308,7 +316,7 @@ export default function CollectionDetails(){
                                 <td className="column-name">{game.videogame.name}</td>
                                         <td className="column-platform">{game.platform}</td>
                                         <td className="column-completed">{game.completionTime === null ? <t>No</t> : <t>Yes</t>}</td>
-                                        <td className="column-time-played">{game.timePlayed}</td>
+                                        <td style={{width:'15%'}}>{game.timePlayed}</td>
                                         <td className="column-mark">{game.mark}</td>
                                         <td>
                                             <Icon icon="typcn:minus" onClick={(e)=>{e.stopPropagation();removeGame(game.id)}}/>
@@ -321,6 +329,7 @@ export default function CollectionDetails(){
             </div>
         </div>
         {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeleteCollection} text={"Are you sure you want to delete this collection?"} />}
+        {showEditForm && <EditCollectionForm setShowForm={setShowEditForm} dataRetrieve={retrieveCollection} collectionToEdit={collection}/>}
         </>
     );
 }

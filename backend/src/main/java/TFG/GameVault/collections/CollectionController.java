@@ -49,15 +49,14 @@ public class CollectionController {
     }
     
     @PostMapping("/collections/create/{userId}")
-    //Cambiar
-    public ResponseEntity<?> createCollection(@PathVariable Integer userId, @RequestBody CollectionDto collectionDto){
+    public ResponseEntity<String> createCollection(@PathVariable Integer userId, @RequestBody CollectionDto collectionDto){
         try{
             collectionDto.setCreationDate(LocalDate.now());
             collectionDto.setLastUpdate(LocalDate.now());
             cs.saveCollection(cs.toCollection(collectionDto, userId));
             return ResponseEntity.ok("Collection created successfully");
         }catch(Exception e){
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Error creating collection");
         }
     }
 
@@ -116,6 +115,24 @@ public class CollectionController {
             return ResponseEntity.ok("Game removed from collection successfully");
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Error removing game from collection");
+        }
+    }
+
+    @PostMapping("/collections/update/{userId}")
+    public ResponseEntity<String> updateCollection(@PathVariable Integer userId, @RequestBody CollectionDto collectionDto){
+        try{
+            Collection originalCollection = cs.findById(collectionDto.getId());
+            if(originalCollection.getUser().getId() != userId){
+                return ResponseEntity.badRequest().body("You can't update this collection");
+            }
+            originalCollection.setName(collectionDto.getName());
+            originalCollection.setDescription(collectionDto.getDescription());
+            originalCollection.setLastUpdate(LocalDate.now());
+            originalCollection.setCollectionGames(cs.toCollection(collectionDto, userId).getCollectionGames());
+            cs.saveCollection(originalCollection);
+            return ResponseEntity.ok("Collection updated successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Error updating collection");
         }
     }
     

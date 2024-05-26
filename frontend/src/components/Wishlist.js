@@ -1,6 +1,6 @@
 import { request, getUserInfo} from '../helpers/axios_helper';
 import { useState, useEffect } from 'react';
-import AddToMyGamesForm from './my_games/AddToMyGamesForm.js';
+import AddToMyGamesForm from './personal_videogames/PersonalVideogameForm.js';
 import { useNavigate } from 'react-router-dom';
 import {Icon} from '@iconify-icon/react';
 
@@ -217,7 +217,7 @@ export default function Wishlist(){
                     </tbody>
                 </table>
             </div>
-            {showForm && <AddToMyGamesForm gameId={gameId} setShowForm={setShowForm} gameName={gameName} isFromWishlist={true} retrieveGames={retrieveGames}/> }
+            {showForm && <AddToMyGamesForm gameId={gameId} setShowForm={setShowForm} gameName={gameName} isFromWishlist={true} dataRetrieve={retrieveGames}/> }
         </div>
     );
 }

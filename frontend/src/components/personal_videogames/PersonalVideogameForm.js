@@ -1,19 +1,22 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {request, getUserInfo} from '../../helpers/axios_helper';
 import {useNavigate} from 'react-router-dom';
 import { validateMyGame } from '../../helpers/mygame_validation';
 import FormError from '../FormError';
 
-export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromWishlist, retrieveGames}) {
+export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromWishlist, dataRetrieve, personalVideogameToEdit=null}) {
+
     const user = {
         id: getUserInfo().id,
         username: getUserInfo().sub,
         email: getUserInfo().email,
         role: getUserInfo().role
     };
+
     const [error, setError] = useState({});
     const [completed, setCompleted] = useState(false);
     const navigate = useNavigate();
+    const isEdit = useState(!personalVideogameToEdit);
     const [personalVideogame, setPersonalVideogame] = useState({
         videogameId: gameId,
         timePlayed : null,
@@ -27,41 +30,100 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
 
 
     
-
-    function handleAddToMyGamesSubmit(event){
+    function handleSubmit(){
         setError(validateMyGame(personalVideogame));
-        event.preventDefault();
         if(error.timePlayedError === "" && error.markError === "" && error.completionTimeError === "" && error.completedOnError === "" && error.acquiredOnError === "" && error.platformError === ""){
-            request(
-            'POST',
-            'api/addPersonalVideogame/'+user.id,
-            personalVideogame
-            ).then((response) => {
-                alert(response.data);
-                setShowForm(false);
-                //navigate("/mygames");
-            }).catch((error) => {
-                alert(error);
-            });
-            if(isFromWishlist===true){
-                request(
-                    'DELETE',
-                    'api/deleteFromWishlist/'+user.id+'/'+gameId
-                ).then((response) => {
-                    retrieveGames();
-                }).catch((error) => {
-                    alert(error);
-                });
+            if(isEdit){
+                handleEdit();
+            }else{
+                handleAddToMyGames();
             }
         }
 
     }
+    async function handleAddToMyGames(){ 
+        
+        await request(
+        'POST',
+        'api/addPersonalVideogame/'+user.id,
+        personalVideogame
+        ).then((response) => {
+            alert(response.data);
+            setShowForm(false);
+            navigate("/mygames");
+        }).catch((error) => {
+            alert(error);
+        });
+        if(isFromWishlist===true){
+            await request(
+                'DELETE',
+                'api/deleteFromWishlist/'+user.id+'/'+gameId
+            ).then((response) => {
+                dataRetrieve();
+            }).catch((error) => {
+                alert(error);
+            });
+        }
+
+    }
+
+    async function handleEdit(){
+        console.log(personalVideogame);
+        try{
+            const response = await request("POST", "/api/personalVideogame/update/"+personalVideogame.id+"/"+ user.id , personalVideogame);
+            if(response.status === 200){
+                setShowForm(false);
+                alert(response.data);
+                dataRetrieve();
+            }
+        }catch(error){
+            console.log(error);
+            alert("Failed to update personal videogame:", error);
+        }
+    }
+
+    useEffect(() => {
+        if(isEdit){
+
+            /*In the backend the DTO for the personal videogame has the acquiredOn and completedOn for recieving data from the frontend and 
+            completedOnString and acquiredOnString for sending it to the front to display, in the edit case which wasnt contemplated before 
+            I solve the problem as follows in the ifs*/
+            let formattedAcquiredOn = null;
+            if(personalVideogameToEdit.acquiredOn !== null){
+                let partsOfAcquiredOn = personalVideogameToEdit.acquiredOn.split("/");
+                formattedAcquiredOn = `${partsOfAcquiredOn[2]}-${partsOfAcquiredOn[1]}-${partsOfAcquiredOn[0]}`;
+            }
+
+            let formattedCompletedOn = null;
+            if(personalVideogameToEdit.completedOn !== null ){
+                let partsOfCompletedOn = personalVideogameToEdit.completedOn.split("/");
+                formattedCompletedOn = `${partsOfCompletedOn[2]}-${partsOfCompletedOn[1]}-${partsOfCompletedOn[0]}`;
+            }
+            
+            setPersonalVideogame({
+                id: personalVideogameToEdit.id,
+                videogameId: personalVideogameToEdit.videogame.id,
+                timePlayed: personalVideogameToEdit.timePlayed,
+                mark: personalVideogameToEdit.mark,
+                acquiredOn: formattedAcquiredOn,
+                completedOn: formattedCompletedOn,
+                completionTime: personalVideogameToEdit.completionTime,
+                platform: personalVideogameToEdit.platform,
+                notes: personalVideogameToEdit.notes
+            });
+            setCompleted(personalVideogameToEdit.completedOn !== null || personalVideogameToEdit.completionTime !== null);
+        }
+    }, [personalVideogameToEdit]);
 
     return (
         <div className='popup'>
             <div className='popup-inner'>
+                {isEdit ? 
+                <h2 className="text-center d-flex justify-content-center">Edit {gameName}</h2>
+                :
                 <h2 className="text-center d-flex justify-content-center">Add {gameName} to my games</h2>
-                <form onSubmit={handleAddToMyGamesSubmit}>
+                }
+                <form>
                     <div className="form-group">
                         <label>Time played:</label>
                         <FormError error={error.timePlayedError}/>
@@ -104,7 +166,7 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
                         <label>Notes:</label>
                         <textarea type= 'text-area' className="form-control" value={personalVideogame.notes} onChange={(e) => setPersonalVideogame({...personalVideogame,notes: e.target.value})}/>
                     </div>
-                    <button type="submit" className="btn btn-primary">Add to my games</button>
+                    <button type="submit" className="btn btn-primary" onClick={(e)=>{e.preventDefault();handleSubmit()}}>{isEdit?"Save changes":"Add to my games"}</button>
                     <button type="button" className="btn btn-danger" onClick={()=>setShowForm(false)}>Cancel</button>
                 </form>
             </div>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { request, getUserInfo } from "../../helpers/axios_helper";
 import AddToCollectionDropdown from "../collections/AddToCollectionDropdown";
 import ConfirmDelete from "../ConfirmDeleteModal";
+import PersonalVideogameForm from "./PersonalVideogameForm";
 
 export default function PersonalVideogameDetails() {
 
@@ -14,6 +15,9 @@ export default function PersonalVideogameDetails() {
     const [videogame, setVideogame] = useState({});
     const [collections, setCollections] = useState([]);
     const [showCollectionForm, setShowCollectionForm] = useState(false);
+    const [showEditForm, setShowEditForm] = useState(false);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+
 
     const user = {
         id: getUserInfo().id,
@@ -21,8 +25,6 @@ export default function PersonalVideogameDetails() {
         email: getUserInfo().email,
         role: getUserInfo().role,
     };
-
-    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
     getPersonalVideogameInfo(gameId);
@@ -36,7 +38,7 @@ export default function PersonalVideogameDetails() {
     }
     
 
-    async function getPersonalVideogameInfo(gameId) {
+    async function getPersonalVideogameInfo() {
         try {
             const response = await request('GET', `/api/personalVideogame/${gameId}/${user.id}`);
             if (response.status === 200) {
@@ -68,17 +70,22 @@ export default function PersonalVideogameDetails() {
             <div className="col-md-12 mb-5 d-flex align-items-center justify-content-left p-3">
                 <h1 className="text-left" style={{paddingLeft:'30px', paddingRight:'250px'}}>{videogame.name}</h1>
                 <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
-                        onClick={()=>{setShowCollectionForm(true);retrieveCollections();}}
-                        style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black', marginRight:'15px'}}>
-                    <b>Add to collection</b>
-                </button>
-                <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
                         onClick={()=>{navigate('/videogameDetails/'+videogame.id)}}
                         style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
                     <b>Videogame info</b>
                 </button>
                 <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
-                        onClick={()=>{setShowModal(true)}}
+                        onClick={()=>{setShowCollectionForm(true);retrieveCollections();}}
+                        style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black', marginRight:'15px'}}>
+                    <b>Add to collection</b>
+                </button>
+                <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                        onClick={()=>{setShowEditForm(true)}}
+                        style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black', marginRight:'15px'}}>
+                    <b>Edit</b>
+                </button>
+                <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                        onClick={()=>{setShowConfirmDelete(true)}}
                         style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
                     <b>Delete</b>
                 </button>
@@ -145,7 +152,9 @@ export default function PersonalVideogameDetails() {
                 </div>
             </div>
             {showCollectionForm && <AddToCollectionDropdown collections={collections} personalVideogame={personalVideogame} setShowCollectionForm={setShowCollectionForm} />}
-            {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeletePersonalVideogame} text={"Deleting"+ videogame.name +  "from My Games is permanent. Are you sure?"} />}
+            {showConfirmDelete && <ConfirmDelete setShowModal={setShowConfirmDelete} handleDelete={handleDeletePersonalVideogame} name={videogame.name} place="my games" />}
+            {showEditForm && <PersonalVideogameForm gameName={personalVideogame.videogame.name} personalVideogameToEdit={personalVideogame} setShowForm={setShowEditForm} 
+                dataRetrieve={getPersonalVideogameInfo}/>}
         </div>
     );
 }
