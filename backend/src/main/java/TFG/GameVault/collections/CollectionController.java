@@ -118,6 +118,23 @@ public class CollectionController {
             return ResponseEntity.badRequest().body("Error removing game from collection");
         }
     }
+
+    @PostMapping("/collections/update/{userId}")
+    public ResponseEntity<String> updateCollection(@PathVariable Integer userId, @RequestBody CollectionDto collectionDto){
+        try{
+            Collection collection = cs.findById(collectionDto.getId());
+            if(collection.getUser().getId() != userId){
+                return ResponseEntity.badRequest().body("You can't update this collection");
+            }
+            collection.setName(collectionDto.getName());
+            collection.setDescription(collectionDto.getDescription());
+            collection.setLastUpdate(LocalDate.now());
+            cs.saveCollection(collection);
+            return ResponseEntity.ok("Collection updated successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Error updating collection");
+        }
+    }
     
     
     
