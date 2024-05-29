@@ -38,30 +38,46 @@ public class UserController {
 
         @PostMapping("/login")
         public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {
-            UserDto userDto = us.login(credentialsDto);
-            userDto.setToken(userAuthenticationProvider.createToken(userDto));
-            return ResponseEntity.ok(userDto);
+            try{
+                UserDto userDto = us.login(credentialsDto);
+                userDto.setToken(userAuthenticationProvider.createToken(userDto));
+                return ResponseEntity.ok(userDto);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().build();
+            }
         }
 
         @PostMapping("/register")
         public ResponseEntity<UserDto> register(@RequestBody @Valid SignUpDto user) {
-            UserDto createdUser = us.register(user);
-            createdUser.setToken(userAuthenticationProvider.createToken(createdUser));
-            return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
+            try{
+                UserDto createdUser = us.register(user);
+                createdUser.setToken(userAuthenticationProvider.createToken(createdUser));
+                return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().build();
+            }
         }
 
         @PutMapping("/users/{id}")
         public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody @Valid UserDto userDto) {
-            UserDto updatedUser = us.updateUser(id, userDto);
-            updatedUser.setToken(userAuthenticationProvider.createToken(updatedUser));
-            return ResponseEntity.ok(updatedUser);
+            try{
+                UserDto updatedUser = us.updateUser(id, userDto);
+                updatedUser.setToken(userAuthenticationProvider.createToken(updatedUser));
+                return ResponseEntity.ok(updatedUser);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().build();
+            }
         }
 
         @DeleteMapping("/users/{id}")
         public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
-            us.deleteUser(id);
-            String message = "User successfully deleted";
-            return ResponseEntity.ok(message);
+            try{
+                us.deleteUser(id);
+                String message = "User successfully deleted";
+                return ResponseEntity.ok(message);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().build();
+            }
         }
 
         @GetMapping("/users/usernames")

@@ -32,8 +32,13 @@ export default function RegisterForm(){
                     password: password
                 }).then(
                 (response) => {
-                    setAuthHeader(response.data.token);
-                    navigate('/');
+                    if(response.status === 200){
+                        alert(response.data)
+                        setAuthHeader(response.data.token);
+                        navigate('/');
+                    }else{
+                        alert(response.data)
+                    }
                 }).catch(
                 (error) => {
                     setAuthHeader(null);

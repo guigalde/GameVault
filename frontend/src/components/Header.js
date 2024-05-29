@@ -15,7 +15,7 @@ export default function Header({logoSrc, pageTitle}) {
   const location = useLocation();
 
   const [videogamesTabStyle, setVideogamesTabStyle] = useState({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
-  const [myGamesTabStyle, setMyGamesTabStyle] = useState({borderRight: '1.5px solid black'});
+  const [myGamesTabStyle, setMyGamesTabStyle] = useState({borderRight: '1.5px solid black', width: '10vh'});
   const [wishlistTabStyle, setWishlistTabStyle] = useState({borderRight: '1.5px solid black'});
   const [collectionsTabStyle, setCollectionsTabStyle] = useState({borderRight: '1.5px solid black'});
    
@@ -36,7 +36,6 @@ export default function Header({logoSrc, pageTitle}) {
         alert(response.data);
         window.localStorage.removeItem("auth_token");
         navigate("/");
-        window.location.reload();
       }).catch((error) => {navigate("/error")});
   }
   function handleVideogameLoad() {
@@ -49,6 +48,7 @@ export default function Header({logoSrc, pageTitle}) {
       }).catch((error) => {navigate("/error")});
   }
 
+  //Reactive header colors
   useEffect(() => {
     if (location.pathname === "/videogames" || location.pathname === "/videogameDetails/*"){
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});

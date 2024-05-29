@@ -85,10 +85,13 @@ public class VideogameController {
         public ResponseEntity<String> addToWishlist(@PathVariable Integer userId, @PathVariable Integer gameId) {
             try{
                 PersonalVideogame pv = pvgService.findByUserAndVideogameId(gameId, userId);
-                if(pv != null) return ResponseEntity.badRequest().body("Game already in wishlist");
-                vgService.addToWishlist(userId, gameId);
-                String message = "Game successfully added to wishlist";
-                return ResponseEntity.ok(message);
+                if(pv == null) {
+                    return ResponseEntity.badRequest().body("Game already in wishlist");
+                }else{
+                    vgService.addToWishlist(userId, gameId);
+                    String message = "Game successfully added to wishlist";
+                    return ResponseEntity.ok(message);
+                }
             }catch(Exception e){
                 String message = "Error adding game to wishlist";
                 return ResponseEntity.badRequest().body(message);
