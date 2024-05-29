@@ -51,7 +51,7 @@ export default function Wishlist(){
                 setGames(response.data[0]);
                 setTotalPages(response.data[1]);
             }else{
-                console.log("Error");
+                navigate("/error")
             }
         }catch(error){
             navigate("/error")
