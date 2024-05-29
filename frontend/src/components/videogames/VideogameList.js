@@ -47,7 +47,7 @@ export default function VideogameList(){
 
     async function retrieveGames(){
         const response = await request("POST", "/api/videogames/"+page,
-        filters)
+        filters, navigate)
         if(response.status === 200){
             setGames(response.data[0]);
             setTotalPages(response.data[1]);
@@ -57,21 +57,21 @@ export default function VideogameList(){
     }
 
     async function retrieveGenres(){
-        const response = await request("GET", "/api/videogames/genres", null);
+        const response = await request("GET", "/api/videogames/genres", null, navigate);
         if(response.status === 200){
             setGenres(response.data);
         }
     }
 
     async function retrievePlatforms(){
-        const response = await request("GET", "/api/videogames/platforms", null);
+        const response = await request("GET", "/api/videogames/platforms", null, navigate);
         if(response.status === 200){
             setPlatforms(response.data);
         }
     }
 
     async function retrievePublishers(){
-        const response = await request("GET", "/api/videogames/publishers", null);
+        const response = await request("GET", "/api/videogames/publishers", null, navigate);
         if(response.status === 200){
             setPublishers(response.data);
         }
@@ -81,9 +81,13 @@ export default function VideogameList(){
     async function addToWishlist(gameId){
         request(
             'POST',
-            'api/addToWishlist/'+user.id+'/'+gameId
+            'api/addToWishlist/'+user.id+'/'+gameId, null, navigate
         ).then((response) => {
-            alert(response.data);
+            if(response.status === 200){
+                alert(response.data);
+            }else{
+                alert(response.data);
+            }
         }).catch((error) => {
             alert(error);
         });
@@ -163,7 +167,7 @@ export default function VideogameList(){
                     <button className="btn btn-danger" onClick={() => { setProvisionalFilters({searchTerms: "",publisher: "", minReleaseDate: null, maxReleaseDate: null, genre: "", platform: ""})}}>Delete filters</button>
                 </form>
                 <p></p>
-                <nav aria-label="Page navigation example" style={{padding: '10px'}}>
+                {totalPages &&<nav aria-label="Page navigation example" style={{padding: '10px'}}>
                     <b>Page {currentPage} of {totalPages}</b>
                     <ul class="pagination">
                         <li class="page-item" onClick={()=>setPage(0)}>
@@ -182,7 +186,7 @@ export default function VideogameList(){
                         </t>
                         </li>
                     </ul>
-                    </nav>
+                    </nav>}
             </div>
             <div className="games d-flex justify-content-center" style={{width: '85%', height: '100%'}}>
                 <table className="table table-striped">

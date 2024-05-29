@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import TFG.GameVault.API_Consumers.IGDB_consumer;
 import TFG.GameVault.DTOs.VideogameDto;
+import TFG.GameVault.personal_videogame.PersonalVideogame;
+import TFG.GameVault.personal_videogame.PersonalVideogameService;
 
 
 
@@ -32,6 +34,7 @@ public class VideogameController {
     
     private final VideogameService vgService;
     private final IGDB_consumer igdbConsumer;
+    private final PersonalVideogameService pvgService;
 
     @GetMapping("/populateVideogames")
     public ResponseEntity<String> populate() {
@@ -81,9 +84,14 @@ public class VideogameController {
         @PostMapping("/addToWishlist/{userId}/{gameId}")
         public ResponseEntity<String> addToWishlist(@PathVariable Integer userId, @PathVariable Integer gameId) {
             try{
-                vgService.addToWishlist(userId, gameId);
-                String message = "Game successfully added to wishlist";
-                return ResponseEntity.ok(message);
+                PersonalVideogame pv = pvgService.findByUserAndVideogameId(gameId, userId);
+                if(pv == null) {
+                    return ResponseEntity.badRequest().body("Game already in wishlist");
+                }else{
+                    vgService.addToWishlist(userId, gameId);
+                    String message = "Game successfully added to wishlist";
+                    return ResponseEntity.ok(message);
+                }
             }catch(Exception e){
                 String message = "Error adding game to wishlist";
                 return ResponseEntity.badRequest().body(message);

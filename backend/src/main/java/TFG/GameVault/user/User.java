@@ -2,8 +2,6 @@ package TFG.GameVault.user;
 
 import java.util.List;
 
-import org.checkerframework.common.aliasing.qual.Unique;
-
 import TFG.GameVault.collections.Collection;
 import TFG.GameVault.model.BaseEntity;
 import TFG.GameVault.personal_videogame.PersonalVideogame;
@@ -15,6 +13,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +31,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class User extends BaseEntity{
 
-    @Unique
     @NotBlank
     public String username;
 

@@ -31,7 +31,7 @@ export default function PersonalVideogameDetails() {
     }, [gameId]);
 
     async function retrieveCollections(){
-        const response = await request("GET", "/api/collections/"+user.id, null);
+        const response = await request("GET", "/api/collections/"+user.id, null, navigate);
         if(response.status === 200){
             setCollections(response.data);
         }
@@ -40,7 +40,7 @@ export default function PersonalVideogameDetails() {
 
     async function getPersonalVideogameInfo() {
         try {
-            const response = await request('GET', `/api/personalVideogame/${gameId}/${user.id}`);
+            const response = await request('GET', `/api/personalVideogame/${gameId}/${user.id}`, null, navigate);
             if (response.status === 200) {
                 const data = response.data;
                 const image = data.videogame.image? 'https:' + data.videogame.image.replace("t_thumb", "t_original") : "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg";
@@ -55,7 +55,7 @@ export default function PersonalVideogameDetails() {
     }
 
     async function handleDeletePersonalVideogame(){
-        const response = await request("DELETE", "/api/deletePersonalVideogame/"+gameId+"/"+user.id);
+        const response = await request("DELETE", "/api/deletePersonalVideogame/"+gameId+"/"+user.id, null, navigate);
         if(response.status === 200){
             alert(response.data);
             navigate('/myGames');

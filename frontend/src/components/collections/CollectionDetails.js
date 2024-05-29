@@ -63,7 +63,7 @@ export default function CollectionDetails(){
 
     async function retrieveCollection(){
         try{
-        const response = await request("POST", "/api/collections/"+user.id+ "/" +collectionId + "/"+ page, filters)
+        const response = await request("POST", "/api/collections/"+user.id+ "/" +collectionId + "/"+ page, filters, navigate)
         if(response.status === 200){
             setCollection(response.data[0]);
             setGames(response.data[0].collectionGames);
@@ -72,35 +72,47 @@ export default function CollectionDetails(){
             alert('Something went wrong: '+response.data);
         }
         }catch(error){
-            console.log(error);
+                navigate("/error");
         }
     }
 
     async function retrieveGenres(){
-        const response = await request("GET", "/api/videogames/genres", null);
-        if(response.status === 200){
-            setGenres(response.data);
+        try{   
+            const response = await request("GET", "/api/videogames/genres", null, navigate);
+            if(response.status === 200){
+                setGenres(response.data);
+            }
+        }catch(error){
+            navigate("/error");
         }
     }
 
     async function retrievePlatforms(){
-        const response = await request("GET", "/api/videogames/platforms", null);
-        if(response.status === 200){
-            setPlatforms(response.data);
+        try{
+            const response = await request("GET", "/api/videogames/platforms", null, navigate);
+            if(response.status === 200){
+                setPlatforms(response.data);
+            }
+        }catch(error){
+            navigate("/error");
         }
     }
 
     async function retrievePublishers(){
-        const response = await request("GET", "/api/videogames/publishers", null);
-        if(response.status === 200){
-            setPublishers(response.data);
+        try{
+            const response = await request("GET", "/api/videogames/publishers", null, navigate);
+            if(response.status === 200){
+                setPublishers(response.data);
+            }
+        }catch(error){
+            navigate("/error");
         }
     
     }
 
     async function removeGame(gameId){
         try{
-            const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null);
+            const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null, navigate);
             if(response.status === 200){
                 retrieveCollection();
             }else{
@@ -109,7 +121,7 @@ export default function CollectionDetails(){
             
         }
         catch(error){
-            console.log(error);
+            navigate("/error");
         }
     }
 
@@ -119,13 +131,13 @@ export default function CollectionDetails(){
 
     async function handleDeleteCollection(){
         try{
-            const response = await request("DELETE", "/api/collections/delete/"+collection.id+"/"+user.id, null);
+            const response = await request("DELETE", "/api/collections/delete/"+collection.id+"/"+user.id, null, navigate);
             alert(response.data);
             if(response.status === 200){
                 navigate('/myCollections');
             }
         }catch(error){
-            console.log(error);
+            navigate("/error");
         }
     }
 

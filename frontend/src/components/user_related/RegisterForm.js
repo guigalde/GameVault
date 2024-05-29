@@ -30,13 +30,20 @@ export default function RegisterForm(){
                     username: username,
                     email: email,
                     password: password
-                }).then(
+                }, navigate).then(
                 (response) => {
-                    setAuthHeader(response.data.token);
-                    navigate('/');
+                    if(response.status === 200){
+                        alert(response.data)
+                        setAuthHeader(response.data.token);
+                        navigate('/');
+                    }else{
+                        alert(response.data)
+                        navigate('/error')
+                    }
                 }).catch(
                 (error) => {
                     setAuthHeader(null);
+                    navigate('/error');
             }
         );}
     }

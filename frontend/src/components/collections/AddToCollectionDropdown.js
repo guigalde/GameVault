@@ -1,9 +1,11 @@
 import {useState} from 'react';
 import {request} from '../../helpers/axios_helper';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddToCollectionDropdown({collections, personalVideogame, setShowCollectionForm}){
     
     const [searchCollection, setSearchCollection] = useState('');
+    const navigate = useNavigate();
 
 
     async function handleAddToCollection(e){
@@ -13,12 +15,16 @@ export default function AddToCollectionDropdown({collections, personalVideogame,
             alert("Collection not found");
             return;
         }
-        const response = await request("POST", "/api/collections/addGame/"+matchingCollection.id+"/"+personalVideogame.id, null);
-        if(response.status === 200){
-            alert(response.data);
-            setShowCollectionForm(false);
-        }else{
-            alert(response.data);
+        try{
+            const response = await request("POST", "/api/collections/addGame/"+matchingCollection.id+"/"+personalVideogame.id, null, navigate);
+            if(response.status === 200){
+                alert(response.data);
+                setShowCollectionForm(false);
+            }else{
+                alert(response.data);
+            }
+        }catch(error){
+            navigate("/error")
         }
     }
     return (

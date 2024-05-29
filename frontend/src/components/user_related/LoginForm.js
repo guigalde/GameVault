@@ -15,12 +15,17 @@ export default function  LoginForm() {
             {
                 username: username,
                 password: password
-            }).then(
+            }, navigate).then(
             (response) => {
+              if(response.status === 200){
                 setAuthHeader(response.data.token);
                 setSuccessLogin(true);
                 navigate('/');
-                window.location.reload();
+              }else{
+                alert(response.data)
+                navigate('/error')
+              }
+
             }).catch(
             (error) => {
                 setAuthHeader(null); 
@@ -36,7 +41,6 @@ export default function  LoginForm() {
         onLogin(e, loginUser.username, loginUser.password);
         if (successLogin === true) {
           navigate('/');
-          window.location.reload();
       }
     };
 
