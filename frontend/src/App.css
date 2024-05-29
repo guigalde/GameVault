@@ -1,0 +1,245 @@
+.App-title{
+    font-size: 1.5em;
+   padding: 20px;
+}
+.logo-container {
+    height: 100%;
+    width: 100%;
+  }
+
+.App-logo {
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+  }
+.App-header{
+    display: flex;
+    background-color: #DC80D5;
+    padding: 1.2vh;
+    height: 10vh;
+    color: #C8F4F9;
+    align-items: left;
+}
+
+.SignInHeader{
+    border-radius: 10px;
+    border-color: rgba(0, 0, 0, 1);
+    border-style: solid;
+    border-width: 2px;
+    background-color: #83cccd;
+    color: #000;
+    text-align: center;
+    align-items: center;
+    margin: auto 0;
+    padding: 10px 20px 9px;
+    font: 400 32px Inter, sans-serif;
+    cursor: 'pointer';
+}
+.AppContent{
+    min-height: 90vh;
+    background-color: #C8F4F9;
+    padding: 20px;
+}
+
+.dropdown-item:hover {
+    background-color: #83cccd !important;
+    color: white !important;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    height: 10vh;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+   
+.nav-link {
+    color: black !important;
+    text-decoration: none;
+    margin: 30px;
+}
+   
+.nav-item:hover {
+    background-color: #EEB5EB;
+}
+
+/* Popup Overlay */
+.popup {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+/* Popup Inner Container */
+.popup-inner {
+    background-color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 25%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin:auto;
+}
+
+/* Heading */
+.popup-inner h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.form-collections{
+    width: 65%;
+}
+/* Form Groups */
+.popup-inner .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.popup-inner .form-group.d-flex {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-inner .form-group label {
+    margin-bottom: 5px;
+    text-align: center;
+}
+.popup-inner input,
+.popup-inner textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.popup-inner input[type="number"],
+.popup-inner input[type="date"] {
+    max-width: 50%;
+}
+
+/* Text Areas */
+.popup-inner textarea {
+    max-width: 500px; /* Adjust this value as needed */
+    height: 100px; /* Adjust the height as needed */
+}
+
+/* Buttons */
+.popup-inner button[type="submit"],
+.popup-inner button[type="button"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.popup-inner button[type="submit"]:hover,
+.popup-inner button[type="button"]:hover {
+    background-color: #45a049;
+}
+
+.popup-inner button[type="button"] {
+    background-color: #f44336;
+}
+
+.popup-inner button[type="button"]:hover {
+    background-color: #da190b;
+}
+
+.popup-inner button[type="submit"]:disabled,
+.popup-inner button[type="button"]:disabled {
+    background-color: #bfbfbf;
+    color: #ffffff;
+    cursor: not-allowed;
+}
+
+.sort-arrow {
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.column-name {
+    width: 40%;
+}
+
+.column-platform {
+    width: 10%;
+}
+
+.column-completed {
+    width: 10%;
+}
+
+.column-time-played {
+    width: 10%;
+}
+
+.column-mark {
+    width: 10%;
+}
+.column-button{
+    width: 20%;
+}
+
+.column-name-vg {
+    width: 30%; 
+}
+
+.column-platforms-vg {
+    width: 30%; 
+}
+
+.column-genres-vg {
+    width: 20%;
+}
+
+.column-toCollection-vg {
+    width: 15%;
+}
+
+.column-wishlistAction-vg{
+    width: 5%;
+}
+
+.link{
+    text-decoration: none;
+    color: black;
+}
+.scrollable-datalist {
+    height: 50px; /* Adjust the height as needed */
+    overflow-y: auto;
+}
+
+.btn{
+    margin-bottom: 0!important;
+}
+  
