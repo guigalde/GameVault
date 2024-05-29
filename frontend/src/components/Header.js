@@ -37,7 +37,7 @@ export default function Header({logoSrc, pageTitle}) {
         window.localStorage.removeItem("auth_token");
         navigate("/");
         window.location.reload();
-      }).catch((error) => {alert(error)});
+      }).catch((error) => {navigate("/error")});
   }
   function handleVideogameLoad() {
     alert("This procedure may take a few minutes. Please wait.");
@@ -46,7 +46,7 @@ export default function Header({logoSrc, pageTitle}) {
       '/api/populateVideogames'
       ).then((response) => {
         alert(response.data);
-      }).catch((error) => {alert(error)});
+      }).catch((error) => {navigate("/error")});
   }
 
   useEffect(() => {

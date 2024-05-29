@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {request, getUserInfo} from '../../helpers/axios_helper';
 import FormError from '../FormError';
+import {useNavigate} from 'react-router-dom';
 
 
 export default function CreateCollectionForm({setShowForm, dataRetrieve, collectionToEdit}) {
@@ -17,6 +18,7 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
         description: "",
         collectionGames: []
     });
+    const navigate = useNavigate();
 
     const [games, setGames] = useState([]);
     const [selectedGames, setSelectedGames] = useState([]);
@@ -28,11 +30,15 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
     const [readyToSend, setReadyToSend] = useState(false);
 
     async function retrieveMyGames(){
-        const response = await request("GET", "/api/myGamesNames/"+user.id)
-        if(response.status === 200){
-            setGames(response.data);
-        }else{
-            console.log("Error");
+        try{
+            const response = await request("GET", "/api/myGamesNames/"+user.id)
+            if(response.status === 200){
+                setGames(response.data);
+            }else{
+                console.log("Error");
+            }
+        }catch(error){
+            navigate("/error")
         }
     }
 
@@ -48,8 +54,7 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
                 }
             })
             .catch(error => {
-                console.log(error);
-                alert('Error creating collection');
+                navigate("/error");
             });
         setReadyToSend(false);
         setCollectionToSend(null);
@@ -69,7 +74,7 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
         }
         catch(error){
             console.log(error);
-            alert("Something went wrong updating the collection");
+            navigate("/error");
         }
         setReadyToSend(false);
         setCollectionToSend(null);

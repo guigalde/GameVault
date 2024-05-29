@@ -45,47 +45,67 @@ export default function Wishlist(){
     
 
     async function retrieveGames(){
-        const response = await request("POST", "/api/wishlist/"+ page + "/" + user.id, filters)
-        if(response.status === 200){
-            setGames(response.data[0]);
-            setTotalPages(response.data[1]);
-        }else{
-            console.log("Error");
+        try{
+            const response = await request("POST", "/api/wishlist/"+ page + "/" + user.id, filters)
+            if(response.status === 200){
+                setGames(response.data[0]);
+                setTotalPages(response.data[1]);
+            }else{
+                console.log("Error");
+            }
+        }catch(error){
+            navigate("/error")
         }
     }
 
     async function retrieveGenres(){
-        const response = await request("GET", "/api/videogames/genres", null);
-        if(response.status === 200){
-            setGenres(response.data);
+        try{
+            const response = await request("GET", "/api/videogames/genres", null);
+            if(response.status === 200){
+                setGenres(response.data);
+            }
+        }catch(error){
+            navigate("/error")
         }
     }
 
     async function retrievePlatforms(){
-        const response = await request("GET", "/api/videogames/platforms", null);
-        if(response.status === 200){
-            setPlatforms(response.data);
+        try{
+            const response = await request("GET", "/api/videogames/platforms", null);
+            if(response.status === 200){
+                setPlatforms(response.data);
+            }
+        }catch(error){
+            navigate("/error")
         }
     }
 
     async function retrievePublishers(){
-        const response = await request("GET", "/api/videogames/publishers", null);
-        if(response.status === 200){
-            setPublishers(response.data);
+        try{
+            const response = await request("GET", "/api/videogames/publishers", null);
+            if(response.status === 200){
+                setPublishers(response.data);
+            }
+        }catch(error){
+            navigate("/error")
         }
     
     }
 
     async function removeGame(gameId){
-        request(
-            'DELETE',
-            'api/deleteFromWishlist/'+user.id+'/'+gameId
-        ).then((response) => {
-            alert(response.data);
-            retrieveGames();
-        }).catch((error) => {
-            alert(error);
-        });
+        try{
+            request(
+                'DELETE',
+                'api/deleteFromWishlist/'+user.id+'/'+gameId
+            ).then((response) => {
+                alert(response.data);
+                retrieveGames();
+            }).catch((error) => {
+                alert(error);
+            });
+        }catch(error){
+            navigate("/error")
+        }
     }
 
     function onClickRow(gameId){

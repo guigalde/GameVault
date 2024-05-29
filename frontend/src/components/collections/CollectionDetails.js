@@ -72,28 +72,40 @@ export default function CollectionDetails(){
             alert('Something went wrong: '+response.data);
         }
         }catch(error){
-            console.log(error);
+                navigate("/error");
         }
     }
 
     async function retrieveGenres(){
-        const response = await request("GET", "/api/videogames/genres", null);
-        if(response.status === 200){
-            setGenres(response.data);
+        try{   
+            const response = await request("GET", "/api/videogames/genres", null);
+            if(response.status === 200){
+                setGenres(response.data);
+            }
+        }catch(error){
+            navigate("/error");
         }
     }
 
     async function retrievePlatforms(){
-        const response = await request("GET", "/api/videogames/platforms", null);
-        if(response.status === 200){
-            setPlatforms(response.data);
+        try{
+            const response = await request("GET", "/api/videogames/platforms", null);
+            if(response.status === 200){
+                setPlatforms(response.data);
+            }
+        }catch(error){
+            navigate("/error");
         }
     }
 
     async function retrievePublishers(){
-        const response = await request("GET", "/api/videogames/publishers", null);
-        if(response.status === 200){
-            setPublishers(response.data);
+        try{
+            const response = await request("GET", "/api/videogames/publishers", null);
+            if(response.status === 200){
+                setPublishers(response.data);
+            }
+        }catch(error){
+            navigate("/error");
         }
     
     }
@@ -109,7 +121,7 @@ export default function CollectionDetails(){
             
         }
         catch(error){
-            console.log(error);
+            navigate("/error");
         }
     }
 
@@ -125,7 +137,7 @@ export default function CollectionDetails(){
                 navigate('/myCollections');
             }
         }catch(error){
-            console.log(error);
+            navigate("/error");
         }
     }
 

@@ -31,15 +31,19 @@ export default function ListMyCollections() {
 
 
     async function getCollections() {
-        const formData = new FormData();
-        formData.append('searchTerm', definitiveSearchTerm);
-        formData.append('orderBy', orderBy);
-        const response = await request('POST', '/api/collections/'+user.id + '/'+ page, formData)
-        if (response.status === 200) {
-            setCollections(response.data[0]);
-            setTotalPages(response.data[1]);
-        }else{
-            alert('Error getting collections');
+        try {
+            const formData = new FormData();
+            formData.append('searchTerm', definitiveSearchTerm);
+            formData.append('orderBy', orderBy);
+            const response = await request('POST', '/api/collections/'+user.id + '/'+ page, formData)
+            if (response.status === 200) {
+                setCollections(response.data[0]);
+                setTotalPages(response.data[1]);
+            }else{
+                alert('Error getting collections');
+            }
+        }catch(error){
+            navigate("/error")
         }
     }
 
@@ -49,7 +53,7 @@ export default function ListMyCollections() {
             alert(response.data);
             getCollections();
         }catch(error){
-            console.log(error);
+            navigate("/error");
         }
         setShowModal(false);
         setCollectionToDelete(null);
