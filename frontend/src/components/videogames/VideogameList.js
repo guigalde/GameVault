@@ -83,7 +83,11 @@ export default function VideogameList(){
             'POST',
             'api/addToWishlist/'+user.id+'/'+gameId
         ).then((response) => {
-            alert(response.data);
+            if(response.status === 200){
+                alert(response.data);
+            }else{
+                alert(response.data);
+            }
         }).catch((error) => {
             alert(error);
         });

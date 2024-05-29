@@ -195,4 +195,9 @@ public class PersonalVideogameService {
         return pv2;
     }
 
+    @Transactional
+    public PersonalVideogame findByUserAndVideogameId(Integer gameId, Integer userId){
+        return personalVideogameRepository.findByUserIdAndVideogameId(userId, gameId);
+    }
+
 }
