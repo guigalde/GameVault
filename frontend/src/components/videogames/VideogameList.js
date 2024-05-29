@@ -47,7 +47,7 @@ export default function VideogameList(){
 
     async function retrieveGames(){
         const response = await request("POST", "/api/videogames/"+page,
-        filters)
+        filters, navigate)
         if(response.status === 200){
             setGames(response.data[0]);
             setTotalPages(response.data[1]);
@@ -57,21 +57,21 @@ export default function VideogameList(){
     }
 
     async function retrieveGenres(){
-        const response = await request("GET", "/api/videogames/genres", null);
+        const response = await request("GET", "/api/videogames/genres", null, navigate);
         if(response.status === 200){
             setGenres(response.data);
         }
     }
 
     async function retrievePlatforms(){
-        const response = await request("GET", "/api/videogames/platforms", null);
+        const response = await request("GET", "/api/videogames/platforms", null, navigate);
         if(response.status === 200){
             setPlatforms(response.data);
         }
     }
 
     async function retrievePublishers(){
-        const response = await request("GET", "/api/videogames/publishers", null);
+        const response = await request("GET", "/api/videogames/publishers", null, navigate);
         if(response.status === 200){
             setPublishers(response.data);
         }
@@ -81,7 +81,7 @@ export default function VideogameList(){
     async function addToWishlist(gameId){
         request(
             'POST',
-            'api/addToWishlist/'+user.id+'/'+gameId
+            'api/addToWishlist/'+user.id+'/'+gameId, null, navigate
         ).then((response) => {
             if(response.status === 200){
                 alert(response.data);

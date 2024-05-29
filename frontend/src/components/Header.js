@@ -31,7 +31,7 @@ export default function Header({logoSrc, pageTitle}) {
   function handleDeleteAccount() {
     request(
       'DELETE',
-      'api/users/' + user.id
+      'api/users/' + user.id, null, navigate
       ).then((response) => {
         alert(response.data);
         window.localStorage.removeItem("auth_token");
@@ -42,7 +42,7 @@ export default function Header({logoSrc, pageTitle}) {
     alert("This procedure may take a few minutes. Please wait.");
     request(
       'GET',
-      '/api/populateVideogames'
+      '/api/populateVideogames', null, navigate
       ).then((response) => {
         alert(response.data);
       }).catch((error) => {navigate("/error")});

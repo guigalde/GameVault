@@ -31,7 +31,7 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
 
     async function retrieveMyGames(){
         try{
-            const response = await request("GET", "/api/myGamesNames/"+user.id)
+            const response = await request("GET", "/api/myGamesNames/"+user.id, null, navigate)
             if(response.status === 200){
                 setGames(response.data);
             }else{
@@ -43,7 +43,7 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
     }
 
     function handleCreateCollection(data) {
-        request('POST', '/api/collections/create/'+user.id, data)
+        request('POST', '/api/collections/create/'+user.id, data, navigate)
             .then(response => {
                 if(response.status === 200) {
                     alert(response.data);
@@ -63,7 +63,7 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
     async function handleEditCollection(data) {
         console.log(data);
         try{
-            const response = await request("POST", "/api/collections/update/"+user.id, data);
+            const response = await request("POST", "/api/collections/update/"+user.id, data, navigate);
             if(response.status === 200){
                 setShowForm(false);
                 dataRetrieve();

@@ -35,7 +35,7 @@ export default function ListMyCollections() {
             const formData = new FormData();
             formData.append('searchTerm', definitiveSearchTerm);
             formData.append('orderBy', orderBy);
-            const response = await request('POST', '/api/collections/'+user.id + '/'+ page, formData)
+            const response = await request('POST', '/api/collections/'+user.id + '/'+ page, formData, navigate)
             if (response.status === 200) {
                 setCollections(response.data[0]);
                 setTotalPages(response.data[1]);
@@ -49,7 +49,7 @@ export default function ListMyCollections() {
 
     async function handleDeleteCollection(){
         try{
-            const response = await request("DELETE", "/api/collections/delete/"+collectionToDelete+"/"+user.id, null);
+            const response = await request("DELETE", "/api/collections/delete/"+collectionToDelete+"/"+user.id, null, navigate);
             alert(response.data);
             getCollections();
         }catch(error){

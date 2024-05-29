@@ -30,7 +30,7 @@ export default function RegisterForm(){
                     username: username,
                     email: email,
                     password: password
-                }).then(
+                }, navigate).then(
                 (response) => {
                     if(response.status === 200){
                         alert(response.data)
@@ -38,10 +38,12 @@ export default function RegisterForm(){
                         navigate('/');
                     }else{
                         alert(response.data)
+                        navigate('/error')
                     }
                 }).catch(
                 (error) => {
                     setAuthHeader(null);
+                    navigate('/error');
             }
         );}
     }

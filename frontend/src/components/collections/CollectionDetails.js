@@ -63,7 +63,7 @@ export default function CollectionDetails(){
 
     async function retrieveCollection(){
         try{
-        const response = await request("POST", "/api/collections/"+user.id+ "/" +collectionId + "/"+ page, filters)
+        const response = await request("POST", "/api/collections/"+user.id+ "/" +collectionId + "/"+ page, filters, navigate)
         if(response.status === 200){
             setCollection(response.data[0]);
             setGames(response.data[0].collectionGames);
@@ -78,7 +78,7 @@ export default function CollectionDetails(){
 
     async function retrieveGenres(){
         try{   
-            const response = await request("GET", "/api/videogames/genres", null);
+            const response = await request("GET", "/api/videogames/genres", null, navigate);
             if(response.status === 200){
                 setGenres(response.data);
             }
@@ -89,7 +89,7 @@ export default function CollectionDetails(){
 
     async function retrievePlatforms(){
         try{
-            const response = await request("GET", "/api/videogames/platforms", null);
+            const response = await request("GET", "/api/videogames/platforms", null, navigate);
             if(response.status === 200){
                 setPlatforms(response.data);
             }
@@ -100,7 +100,7 @@ export default function CollectionDetails(){
 
     async function retrievePublishers(){
         try{
-            const response = await request("GET", "/api/videogames/publishers", null);
+            const response = await request("GET", "/api/videogames/publishers", null, navigate);
             if(response.status === 200){
                 setPublishers(response.data);
             }
@@ -112,7 +112,7 @@ export default function CollectionDetails(){
 
     async function removeGame(gameId){
         try{
-            const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null);
+            const response = await request("POST", "/api/collections/removeGame/"+collection.id+"/"+gameId, null, navigate);
             if(response.status === 200){
                 retrieveCollection();
             }else{
@@ -131,7 +131,7 @@ export default function CollectionDetails(){
 
     async function handleDeleteCollection(){
         try{
-            const response = await request("DELETE", "/api/collections/delete/"+collection.id+"/"+user.id, null);
+            const response = await request("DELETE", "/api/collections/delete/"+collection.id+"/"+user.id, null, navigate);
             alert(response.data);
             if(response.status === 200){
                 navigate('/myCollections');

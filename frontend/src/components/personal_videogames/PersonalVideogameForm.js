@@ -46,22 +46,23 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
         await request(
         'POST',
         'api/addPersonalVideogame/'+user.id,
-        personalVideogame
+        personalVideogame, navigate
         ).then((response) => {
             alert(response.data);
             setShowForm(false);
             navigate("/mygames");
         }).catch((error) => {
-            alert(error);
+            navigate('/error');        
         });
         if(isFromWishlist===true){
             await request(
                 'DELETE',
-                'api/deleteFromWishlist/'+user.id+'/'+gameId
+                'api/deleteFromWishlist/'+user.id+'/'+gameId, null , navigate
             ).then((response) => {
                 dataRetrieve();
             }).catch((error) => {
                 alert(error);
+                navigate('/error');
             });
         }
 
@@ -70,7 +71,7 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
     async function handleEdit(){
         console.log(personalVideogame);
         try{
-            const response = await request("POST", "/api/personalVideogame/update/"+personalVideogame.id+"/"+ user.id , personalVideogame);
+            const response = await request("POST", "/api/personalVideogame/update/"+personalVideogame.id+"/"+ user.id , personalVideogame, navigate);
             if(response.status === 200){
                 setShowForm(false);
                 alert(response.data);

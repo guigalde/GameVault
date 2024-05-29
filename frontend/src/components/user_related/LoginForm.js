@@ -15,7 +15,7 @@ export default function  LoginForm() {
             {
                 username: username,
                 password: password
-            }).then(
+            }, navigate).then(
             (response) => {
               if(response.status === 200){
                 setAuthHeader(response.data.token);
@@ -23,6 +23,7 @@ export default function  LoginForm() {
                 navigate('/');
               }else{
                 alert(response.data)
+                navigate('/error')
               }
 
             }).catch(

@@ -54,7 +54,7 @@ export default function MyGamesList(){
 
     async function retrieveMyGames(){
         try{
-        const response = await request("POST", "/api/listMyGames/"+user.id+ "/" +page, filters)
+        const response = await request("POST", "/api/listMyGames/"+user.id+ "/" +page, filters, navigate)
         if(response.status === 200){
             setGames(response.data[0]);
             setTotalPages(response.data[1]);
@@ -67,21 +67,21 @@ export default function MyGamesList(){
     }
 
     async function retrieveGenres(){
-        const response = await request("GET", "/api/videogames/genres", null);
+        const response = await request("GET", "/api/videogames/genres", null, navigate);
         if(response.status === 200){
             setGenres(response.data);
         }
     }
 
     async function retrievePlatforms(){
-        const response = await request("GET", "/api/videogames/platforms", null);
+        const response = await request("GET", "/api/videogames/platforms", null, navigate);
         if(response.status === 200){
             setPlatforms(response.data);
         }
     }
 
     async function retrievePublishers(){
-        const response = await request("GET", "/api/videogames/publishers", null);
+        const response = await request("GET", "/api/videogames/publishers", null, navigate);
         if(response.status === 200){
             setPublishers(response.data);
         }
@@ -89,14 +89,14 @@ export default function MyGamesList(){
     }
 
     async function retrieveCollections(){
-        const response = await request("GET", "/api/collections/"+user.id, null);
+        const response = await request("GET", "/api/collections/"+user.id, null, navigate);
         if(response.status === 200){
             setCollections(response.data);
         }
     }
 
     function onClickRow(gameId){
-        navigate('/personalVideogameDetails/'+gameId);
+        navigate('/personalVideogameDetails/'+gameId, null , navigate);
     }
 
     useEffect(() => {

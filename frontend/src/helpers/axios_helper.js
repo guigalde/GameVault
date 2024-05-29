@@ -24,7 +24,7 @@ export const setAuthHeader = (token) => {
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
-export const request = (method, url, data) => {
+export const request = (method, url, data, navigate) => {
     let headers = {};
     if (!(data instanceof FormData)) {
         headers['Content-Type'] = 'application/json; charset=UTF-8';
@@ -33,11 +33,19 @@ export const request = (method, url, data) => {
     if (getAuthToken() !== null && getAuthToken() !== "null") {
         headers = {'Authorization': `Bearer ${getAuthToken()}`};
     }
-
+    
     return axios({
         method: method,
         url: url,
         headers: headers,
-        data: data});
+        data: data
+    })
+   .then(response => {
+        return response;
+    })
+   .catch(error => {
+        console.error(error);
+        navigate('/error');
+    });
 };
 

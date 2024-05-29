@@ -1,10 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { request } from "../../helpers/axios_helper";
+import { useNavigate } from "react-router-dom";
 export default function VideogameDetails() {
 
     const { gameId } = useParams();
     const [videogame, setVideogame] = useState({});
+    const navigate = useNavigate();
 
     useEffect(() => {
         getVideogameInfo(gameId);
@@ -12,7 +14,7 @@ export default function VideogameDetails() {
 
     async function getVideogameInfo(gameId) {
         try {
-            const response = await request('GET', `/api/videogame/${gameId}`);
+            const response = await request('GET', `/api/videogame/${gameId}`, null, navigate);
             if (response.status === 200) {
                 const data = response.data;
                 const image = data.image? 'https:' + data.image.replace("t_thumb", "t_original") : "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg";
@@ -22,9 +24,11 @@ export default function VideogameDetails() {
                 });
             } else {
                 alert('Error getting videogame info');
+                navigate('/error');
             }
         } catch (error) {
             alert("Failed to load videogame:", error);
+            navigate('/error');
         }
     }
 

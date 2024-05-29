@@ -46,7 +46,7 @@ export default function Wishlist(){
 
     async function retrieveGames(){
         try{
-            const response = await request("POST", "/api/wishlist/"+ page + "/" + user.id, filters)
+            const response = await request("POST", "/api/wishlist/"+ page + "/" + user.id, filters, navigate)
             if(response.status === 200){
                 setGames(response.data[0]);
                 setTotalPages(response.data[1]);
@@ -60,7 +60,7 @@ export default function Wishlist(){
 
     async function retrieveGenres(){
         try{
-            const response = await request("GET", "/api/videogames/genres", null);
+            const response = await request("GET", "/api/videogames/genres", null, navigate);
             if(response.status === 200){
                 setGenres(response.data);
             }
@@ -71,7 +71,7 @@ export default function Wishlist(){
 
     async function retrievePlatforms(){
         try{
-            const response = await request("GET", "/api/videogames/platforms", null);
+            const response = await request("GET", "/api/videogames/platforms", null, navigate);
             if(response.status === 200){
                 setPlatforms(response.data);
             }
@@ -82,7 +82,7 @@ export default function Wishlist(){
 
     async function retrievePublishers(){
         try{
-            const response = await request("GET", "/api/videogames/publishers", null);
+            const response = await request("GET", "/api/videogames/publishers", null, navigate);
             if(response.status === 200){
                 setPublishers(response.data);
             }
@@ -96,7 +96,7 @@ export default function Wishlist(){
         try{
             request(
                 'DELETE',
-                'api/deleteFromWishlist/'+user.id+'/'+gameId
+                'api/deleteFromWishlist/'+user.id+'/'+gameId, null, navigate
             ).then((response) => {
                 alert(response.data);
                 retrieveGames();

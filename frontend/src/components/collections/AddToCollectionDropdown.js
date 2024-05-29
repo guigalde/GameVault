@@ -16,7 +16,7 @@ export default function AddToCollectionDropdown({collections, personalVideogame,
             return;
         }
         try{
-            const response = await request("POST", "/api/collections/addGame/"+matchingCollection.id+"/"+personalVideogame.id, null);
+            const response = await request("POST", "/api/collections/addGame/"+matchingCollection.id+"/"+personalVideogame.id, null, navigate);
             if(response.status === 200){
                 alert(response.data);
                 setShowCollectionForm(false);

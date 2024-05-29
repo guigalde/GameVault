@@ -37,13 +37,14 @@ export default function EditForm(){
                     email: email,
                     password: password,
                     role: user.role
-                }).then(
+                }, navigate).then(
                 (response) => {
                     setAuthHeader(response.data.token);
                     navigate('/');
                 }).catch(
                 (error) => {
                     setAuthHeader(null);
+                    navigate('/error');
                 }
                 
             );
