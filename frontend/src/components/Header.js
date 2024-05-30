@@ -52,23 +52,23 @@ export default function Header({logoSrc, pageTitle}) {
   useEffect(() => {
     if (location.pathname === "/videogames" || location.pathname === "/videogameDetails/*"){
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
-      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', width: '10vh'});
       setWishlistTabStyle({borderRight: '1.5px solid black'});
       setCollectionsTabStyle({borderRight: '1.5px solid black'});
     }else if (location.pathname === "/myGames" || location.pathname === "/personalVideogameDetails/*"){
-      setMyGamesTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB', width: '10vh'});
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
       setWishlistTabStyle({borderRight: '1.5px solid black'});
       setCollectionsTabStyle({borderRight: '1.5px solid black'});
     }else if (location.pathname === "/wishlist"){
       setWishlistTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
-      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', width: '10vh'});
       setCollectionsTabStyle({borderRight: '1.5px solid black'});
     }else if (location.pathname === "/collections" || location.pathname === "/collection/*"){
       setCollectionsTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
-      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', width: '10vh'});
       setWishlistTabStyle({borderRight: '1.5px solid black'});
     }
   }, [location]);
