@@ -101,6 +101,20 @@ public class PersonalVideogameController {
         }
     }
     
+    @PostMapping("/personalVideogame/syncWithSteam/{userId}")
+    public ResponseEntity<?> syncWithSteam(@RequestBody String steamId, @PathVariable Integer userId){ 
+        if(steamId == null || userId == null){
+            return ResponseEntity.badRequest().body("Steam ID or user ID not provided");
+        }else{
+            try{
+                pvService.getGamesBySteamData(userId, steamId);
+                return ResponseEntity.ok("Collection synced with steam successfully");
+            }catch(Exception e){
+                return ResponseEntity.badRequest().body("Error syncing with Steam");
+            }
+        }
+    }
+    
 
     
 }

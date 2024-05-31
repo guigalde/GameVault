@@ -159,4 +159,8 @@ public class VideogameService {
             videogameRepository.save(game);
         }
     }
+
+    public Videogame getGameByName(String name) {
+        return videogameRepository.findByName(name).get();
+    }
 }
