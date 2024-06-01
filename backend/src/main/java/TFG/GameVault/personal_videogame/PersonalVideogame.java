@@ -57,4 +57,6 @@ public class PersonalVideogame extends BaseEntity{
 
     @Transient
     Boolean completed = completionTime != null;
+
+    Integer steamId;
 }

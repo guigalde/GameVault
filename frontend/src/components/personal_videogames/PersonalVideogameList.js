@@ -96,7 +96,7 @@ export default function MyGamesList(){
     }
 
     function onClickRow(gameId){
-        navigate('/personalVideogameDetails/'+gameId, null , navigate);
+        navigate('/personalVideogameDetails/'+gameId);
     }
 
     useEffect(() => {

@@ -3,30 +3,33 @@ package TFG.GameVault.personal_videogame;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import TFG.GameVault.API_Consumers.IGDB_consumer;
 import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
 import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.DTOs.VideogameDto;
+import TFG.GameVault.collections.Collection;
 import TFG.GameVault.collections.CollectionRepository;
-import TFG.GameVault.collections.CollectionService;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserService;
 import TFG.GameVault.videogame.Videogame;
 import TFG.GameVault.videogame.VideogameService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import TFG.GameVault.API_Consumers.Steam_consumer;
 
 @Service
 @AllArgsConstructor
@@ -43,6 +46,13 @@ public class PersonalVideogameService {
 
     @Autowired
     private final CollectionRepository collectionRepository;
+
+    @Autowired
+    private final IGDB_consumer igdbConsumer;
+
+    @Autowired
+    private final Steam_consumer steamConsumer;
+
 
     @Transactional
     public PersonalVideogame savePersonalVideogame(PersonalVideogame personalVideogame){
@@ -199,6 +209,92 @@ public class PersonalVideogameService {
     public PersonalVideogame findByUserAndVideogameId(Integer gameId, Integer userId){
         PersonalVideogame pv = personalVideogameRepository.findByUserIdAndVideogameId(gameId, userId);
         return pv;
+    }
+
+    
+    public List<PersonalVideogame> getGamesBySteamData(Integer userId, String steamId) {
+        List<Map<String,?>> games = new ArrayList<>();
+        try {
+            games = steamConsumer.getGames(steamId);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
+        List<PersonalVideogame> gamesToAdd = new ArrayList<>();
+        Set<String> existingGameNames = new HashSet<>();
+        Set<PersonalVideogame> existingGames = new HashSet<>();
+
+        List<PersonalVideogame> personalGames = personalVideogameRepository.findAllByUser_Id(userId);
+        for (PersonalVideogame pg : personalGames) {
+            if (pg.getVideogame()!= null && pg.getVideogame().getName()!= null) {
+                existingGameNames.add(pg.getVideogame().getName());
+                existingGames.add(pg);
+            }
+        }
+
+        Collection collection = new Collection();
+        if(collectionRepository.findByName("Steam")==null){
+            collection.setName("Steam");
+            collection.setUser(userService.findById(userId));
+            collection.setCreationDate(LocalDate.now());
+            collection.setLastUpdate(LocalDate.now());
+            collectionRepository.save(collection);
+        }else{
+            collection = collectionRepository.findByName("Steam");
+            collection.setLastUpdate(LocalDate.now());
+        }
+        
+
+        for (Map<String,?> game : games) {
+            String name = (String) game.get("name");
+
+            if (!existingGameNames.contains(name)) { 
+                Videogame vg = igdbConsumer.searchGame(name);
+                if (vg == null) {
+                    continue;
+                } else {
+                    Videogame existingVideogame = videogameService.getGameByName(vg.getName());
+                    if (existingVideogame != null) {
+                        vg = existingVideogame;
+                    } else {
+                        vg = videogameService.saveGame(vg);
+                    }
+                    PersonalVideogame pg = new PersonalVideogame();
+                    pg.setUser(userService.findById(userId));
+                    pg.setVideogame(vg);
+                    pg.setPlatform("Steam");
+                    float playtimeHours = ((Integer) game.get("playtime")).floatValue() / 60f;
+                    pg.setTimePlayed(playtimeHours);
+                    gamesToAdd.add(pg);
+                    existingGameNames.add(name);
+                }
+            }else{
+                for (PersonalVideogame pg : existingGames) {
+                    if (pg.getVideogame().getName().equals(name)) {
+                        float playtimeHours = ((Integer) game.get("playtime")).floatValue() / 60f;
+                        pg.setTimePlayed(playtimeHours);
+                        gamesToAdd.add(pg);
+                    }
+                }
+            }
+        }
+
+        List<PersonalVideogame> gamesToRemove = new ArrayList<>();
+        for (PersonalVideogame pv : gamesToAdd) {
+            try {
+                personalVideogameRepository.save(pv);
+            } catch (Exception e) {
+                System.out.println(e);
+                gamesToRemove.add(pv);
+            }
+        }
+        gamesToAdd.removeAll(gamesToRemove);
+
+        collection.setCollectionGames(gamesToAdd);
+        collectionRepository.save(collection);
+
+        return gamesToAdd;
     }
 
 }

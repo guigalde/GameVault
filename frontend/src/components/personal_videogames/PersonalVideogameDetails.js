@@ -152,7 +152,8 @@ export default function PersonalVideogameDetails() {
                 </div>
             </div>
             {showCollectionForm && <AddToCollectionDropdown collections={collections} personalVideogame={personalVideogame} setShowCollectionForm={setShowCollectionForm} />}
-            {showConfirmDelete && <ConfirmDelete setShowModal={setShowConfirmDelete} handleDelete={handleDeletePersonalVideogame} name={videogame.name} place="my games" />}
+            {showConfirmDelete && <ConfirmDelete setShowModal={setShowConfirmDelete} handleDelete={handleDeletePersonalVideogame} text={"Are you sure you want to delete " + videogame.name
+            } />}
             {showEditForm && <PersonalVideogameForm gameName={personalVideogame.videogame.name} personalVideogameToEdit={personalVideogame} setShowForm={setShowEditForm} 
                 dataRetrieve={getPersonalVideogameInfo}/>}
         </div>

@@ -131,8 +131,9 @@ export default function Header({logoSrc, pageTitle}) {
                   <Link to="/editAccount" style={{ textDecoration: 'none' }}>
                     <b className="dropdown-item">Edit profile</b>
                   </Link>
-                  <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={handleDeleteAccount}>Delete account</b>
-                  <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={onLogOutClick}>Log out</b>
+                  <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={()=>handleDeleteAccount}>Delete account</b>
+                  <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={()=>onLogOutClick}>Log out</b>
+                  <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={()=>navigate("/syncWithSteam")}>Sync with Steam</b>
                 </div>
               </div>
             </>
