@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -161,6 +162,10 @@ public class VideogameService {
     }
 
     public Videogame getGameByName(String name) {
-        return videogameRepository.findByName(name).get();
+        return videogameRepository.findByName(name).orElse(null);
+    }
+
+    public List<Videogame> findAll() {
+        return videogameRepository.findAll();
     }
 }

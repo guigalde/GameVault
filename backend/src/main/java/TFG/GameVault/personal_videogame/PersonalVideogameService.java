@@ -3,8 +3,10 @@ package TFG.GameVault.personal_videogame;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -209,41 +211,89 @@ public class PersonalVideogameService {
         return pv;
     }
 
+    
     public List<PersonalVideogame> getGamesBySteamData(Integer userId, String steamId) {
-        List<Map<String, ?>> games = steamConsumer.getGames(steamId);
-        List<PersonalVideogame> personalGames = personalVideogameRepository.findAllByUser_Id(userId);
+        List<Map<String,?>> games = new ArrayList<>();
+        try {
+            games = steamConsumer.getGames(steamId);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+
         List<PersonalVideogame> gamesToAdd = new ArrayList<>();
+        Set<String> existingGameNames = new HashSet<>();
+        Set<PersonalVideogame> existingGames = new HashSet<>();
+
+        List<PersonalVideogame> personalGames = personalVideogameRepository.findAllByUser_Id(userId);
+        for (PersonalVideogame pg : personalGames) {
+            if (pg.getVideogame()!= null && pg.getVideogame().getName()!= null) {
+                existingGameNames.add(pg.getVideogame().getName());
+                existingGames.add(pg);
+            }
+        }
+
         Collection collection = new Collection();
-        collection.setName("Steam");
-        collection.setUser(userService.findById(userId));
-        for(Map<String, ?> game : games){
+        if(collectionRepository.findByName("Steam")==null){
+            collection.setName("Steam");
+            collection.setUser(userService.findById(userId));
+            collection.setCreationDate(LocalDate.now());
+            collection.setLastUpdate(LocalDate.now());
+            collectionRepository.save(collection);
+        }else{
+            collection = collectionRepository.findByName("Steam");
+            collection.setLastUpdate(LocalDate.now());
+        }
+        
+
+        for (Map<String,?> game : games) {
             String name = (String) game.get("name");
-            PersonalVideogame personalGame = personalGames.stream().filter(pg -> pg.getVideogame().getName().equals(name)).findFirst().orElse(null);
-            if(personalGame == null){
-                Videogame vg = videogameService.getGameByName(name);
-                if(vg != null){
+
+            if (!existingGameNames.contains(name)) { 
+                Videogame vg = igdbConsumer.searchGame(name);
+                if (vg == null) {
+                    continue;
+                } else {
+                    Videogame existingVideogame = videogameService.getGameByName(vg.getName());
+                    if (existingVideogame != null) {
+                        vg = existingVideogame;
+                    } else {
+                        vg = videogameService.saveGame(vg);
+                    }
                     PersonalVideogame pg = new PersonalVideogame();
                     pg.setUser(userService.findById(userId));
                     pg.setVideogame(vg);
                     pg.setPlatform("Steam");
-                    pg.setTimePlayed((Float) game.get("playtime"));
+                    float playtimeHours = ((Integer) game.get("playtime")).floatValue() / 60f;
+                    pg.setTimePlayed(playtimeHours);
                     gamesToAdd.add(pg);
-                }else{
-                    vg = igdbConsumer.searchGame(name);
-                    vg = videogameService.saveGame(vg);
-                    PersonalVideogame pg = new PersonalVideogame();
-                    pg.setUser(userService.findById(userId));
-                    pg.setVideogame(vg);
-                    pg.setPlatform("Steam");
-                    pg.setTimePlayed((Float) game.get("playtime"));
-                    gamesToAdd.add(pg);
+                    existingGameNames.add(name);
                 }
             }else{
-                personalGame.setTimePlayed((Float) game.get("playtime"));
-                gamesToAdd.add(personalGame);
+                for (PersonalVideogame pg : existingGames) {
+                    if (pg.getVideogame().getName().equals(name)) {
+                        float playtimeHours = ((Integer) game.get("playtime")).floatValue() / 60f;
+                        pg.setTimePlayed(playtimeHours);
+                        gamesToAdd.add(pg);
+                    }
+                }
             }
-
         }
+
+        List<PersonalVideogame> gamesToRemove = new ArrayList<>();
+        for (PersonalVideogame pv : gamesToAdd) {
+            try {
+                personalVideogameRepository.save(pv);
+            } catch (Exception e) {
+                System.out.println(e);
+                gamesToRemove.add(pv);
+            }
+        }
+        gamesToAdd.removeAll(gamesToRemove);
+
+        collection.setCollectionGames(gamesToAdd);
+        collectionRepository.save(collection);
+
         return gamesToAdd;
     }
 

@@ -143,11 +143,12 @@ public class IGDB_consumer {
 
             return game;
         }catch(Exception e){
-            throw new RuntimeException("Error getting game: " + gameObject.getString("name"));
+            return null;
         }
      }
 
      public Videogame searchGame(String gameName){
+        System.out.println("Searching for: "+gameName);
         HttpResponse<JsonNode> authentication = getAuthentication();
         String access_token = authentication.getBody().getObject().get("access_token").toString();
 
@@ -158,9 +159,13 @@ public class IGDB_consumer {
             .header("Accept", "application/json")
             .body("fields name, genres, platforms, summary, first_release_date, involved_companies, cover; search \""+gameName+"\"; limit 10;")
             .asJson();
-            return getVideogameInfo(games1.getBody().getArray().getJSONObject(0), access_token);
+            if(games1.getBody().getArray().length() == 0){
+                return null;
+            }else{
+                return getVideogameInfo(games1.getBody().getArray().getJSONObject(0), access_token);
+            }
         }catch(UnirestException e){
-            throw new RuntimeException("Error getting games from IGDB");
+            return null;
         }
 
      }

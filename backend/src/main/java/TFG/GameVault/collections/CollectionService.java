@@ -49,7 +49,7 @@ public class CollectionService {
         String creationDateString = creationDate.format(formatter);
         String lastUpdateString = lastUpdate.format(formatter);
 
-        return new CollectionDto(collection.getId(), collection.getName(), collection.getDescription(), collection.getCreationDate(), collection.getLastUpdate(),
+        return new CollectionDto(collection.getId(), collection.getName(), collection.getDescription()==null? "": collection.getDescription(), collection.getCreationDate(), collection.getLastUpdate(),
              creationDateString, lastUpdateString,collection.getCollectionGames().stream().map(pvs::toInfoDto).collect(Collectors.toList()));
     }
 

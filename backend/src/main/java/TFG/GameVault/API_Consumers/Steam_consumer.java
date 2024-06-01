@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 
 @Component
@@ -20,10 +21,10 @@ public class Steam_consumer {
     @Value("${steam.api.key}")
     String apiKey;
 
-    public List<Map<String,?>> getGames(String steamId){
+    public List<Map<String,?>> getGames(String steamId) throws UnirestException{
         String url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key="+apiKey+"&steamid="+steamId+"&format=json&include_appinfo=true";
         try{
-            HttpResponse<JsonNode> response = Unirest.post(url).asJson();
+            HttpResponse<JsonNode> response = Unirest.get(url).asJson();
             JSONArray games = response.getBody().getObject().getJSONObject("response").getJSONArray("games");
             List<Map<String,?>> gamesMap = new ArrayList<>();
             for(int i = 0; i<games.length(); i++){
@@ -34,8 +35,9 @@ public class Steam_consumer {
                 gamesMap.add(gameMap);
             }
             return gamesMap;
-        }catch(Exception e){
-            throw new RuntimeException("Error getting games from Steam");
+        }catch(UnirestException e){
+            System.out.println(e);
+            throw e;
         }
     }
     

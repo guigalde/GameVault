@@ -101,17 +101,19 @@ public class PersonalVideogameController {
         }
     }
     
-    @PostMapping("/personalVideogame/syncWithSteam/{userId}")
-    public ResponseEntity<?> syncWithSteam(@RequestBody String steamId, @PathVariable Integer userId){ 
-        if(steamId == null || userId == null){
+    @PostMapping("/personalVideogame/syncWithSteam/{user_id}/{steamId}")
+    public ResponseEntity<?> syncWithSteam(@PathVariable Integer user_id, @PathVariable String steamId){ 
+        if(steamId == null || user_id == null){
             return ResponseEntity.badRequest().body("Steam ID or user ID not provided");
         }else{
-            try{
-                pvService.getGamesBySteamData(userId, steamId);
-                return ResponseEntity.ok("Collection synced with steam successfully");
-            }catch(Exception e){
-                return ResponseEntity.badRequest().body("Error syncing with Steam");
-            }
+            
+                List<PersonalVideogame> steamGames = pvService.getGamesBySteamData(user_id, steamId);
+                if (steamGames.size()>0) {
+                    return ResponseEntity.ok("Collection synced with steam successfully");
+                }else{
+                    return ResponseEntity.badRequest().body("Problem retrieving steam games");
+                }
+            
         }
     }
     
