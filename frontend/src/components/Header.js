@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { getUserInfo, request } from '../helpers/axios_helper';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import SearchVideogameDropdown from './videogames/SearchedVideogamesDropdown';
 
 export default function Header({logoSrc, pageTitle}) {
 
@@ -18,6 +19,10 @@ export default function Header({logoSrc, pageTitle}) {
   const [myGamesTabStyle, setMyGamesTabStyle] = useState({borderRight: '1.5px solid black', width: '10vh'});
   const [wishlistTabStyle, setWishlistTabStyle] = useState({borderRight: '1.5px solid black'});
   const [collectionsTabStyle, setCollectionsTabStyle] = useState({borderRight: '1.5px solid black'});
+
+  const [gameNameSearch, setGameNameSearch] = useState("");
+  const [showGameToAddForm, setShowGameToAddForm] = useState(false);
+  const [videogames, setVideogames] = useState([]);
    
 
   const navigate = useNavigate();
@@ -46,6 +51,27 @@ export default function Header({logoSrc, pageTitle}) {
       ).then((response) => {
         alert(response.data);
       }).catch((error) => {navigate("/error")});
+  }
+
+  function handleSearchGames(){
+    try{
+      alert("This procedure may take a few minutes. Please wait.");
+      request(
+        'POST',
+        '/api/videogame/findInIGDB', gameNameSearch, navigate)
+        .then((response) => {
+          if(response.status===200 && response.data.length === 0){
+            alert("No games found with that name");
+          }else if(response.status === 200){
+            setVideogames(response.data);
+            setShowGameToAddForm(true);
+          }else{
+            alert("Error: " + response.data);
+          }}).catch((error) => {navigate("/error"); console.log(error);});
+    }catch(error){
+      navigate("/error");
+      console.log(error);
+    }
   }
 
   //Reactive header colors
@@ -120,6 +146,12 @@ export default function Header({logoSrc, pageTitle}) {
             </Link>
           ) : (
             <>
+              <input type="text" placeholder='Not finding a game? Try this!' onChange={(e) => setGameNameSearch(e.target.value)} style={{width:'30%'}}></input>
+              <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                            onClick={()=>{handleSearchGames()}}
+                            style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black',margin:'3%', marginRight:'10%'}}>
+                        <b>Search in IGDB</b>
+              </button>
               {user.role === "ADMIN" &&
                 <button className="btn btn-primary btn-block" onClick={handleVideogameLoad} style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginRight:"3%" }}><b>Load database</b></button>
               }
@@ -139,6 +171,10 @@ export default function Header({logoSrc, pageTitle}) {
             </>
           )}
         </div>
+        {showGameToAddForm ? 
+                <SearchVideogameDropdown videogames={videogames}  setShowForm={setShowGameToAddForm}/>
+           :null}
       </nav>
+      
     );
   }
