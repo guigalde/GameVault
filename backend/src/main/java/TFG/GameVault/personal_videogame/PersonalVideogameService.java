@@ -266,6 +266,7 @@ public class PersonalVideogameService {
                     pg.setPlatform("Steam");
                     float playtimeHours = ((Integer) game.get("playtime")).floatValue() / 60f;
                     pg.setTimePlayed(playtimeHours);
+                    pg.setSteamId((Integer) game.get("appid"));
                     gamesToAdd.add(pg);
                     existingGameNames.add(name);
                 }
@@ -273,6 +274,7 @@ public class PersonalVideogameService {
                 for (PersonalVideogame pg : existingGames) {
                     if (pg.getVideogame().getName().equals(name)) {
                         float playtimeHours = ((Integer) game.get("playtime")).floatValue() / 60f;
+                        pg.setSteamId((Integer) game.get("appid"));
                         pg.setTimePlayed(playtimeHours);
                         gamesToAdd.add(pg);
                     }
