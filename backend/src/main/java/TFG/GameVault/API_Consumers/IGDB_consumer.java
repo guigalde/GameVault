@@ -148,7 +148,6 @@ public class IGDB_consumer {
      }
 
      public Videogame searchGame(String gameName){
-        System.out.println("Searching for: "+gameName);
         HttpResponse<JsonNode> authentication = getAuthentication();
         String access_token = authentication.getBody().getObject().get("access_token").toString();
 
@@ -168,6 +167,33 @@ public class IGDB_consumer {
             return null;
         }
 
+     }
+
+     public List<Videogame> searchMultipleVideogames(String gameName){
+        HttpResponse<JsonNode> authentication = getAuthentication();
+        String access_token = authentication.getBody().getObject().get("access_token").toString();
+        List<Videogame> res = new ArrayList<>();
+        try{
+            HttpResponse<JsonNode> games1 = Unirest.post("https://api.igdb.com/v4/games")
+            .header("Client-ID", userId)
+            .header("Authorization", "Bearer "+access_token)
+            .header("Accept", "application/json")
+            .body("fields name, genres, platforms, summary, first_release_date, involved_companies, cover; search \""+gameName+"\"; limit 10;")
+            .asJson();
+            JSONArray gamesArray = games1.getBody().getArray();
+            for(int i = 0; i<gamesArray.length(); i++){
+                try{
+                    Videogame game = getVideogameInfo(gamesArray.getJSONObject(i), access_token);
+                    res.add(game);
+                }catch(Exception e){
+                    continue;
+                }
+            }
+        }catch(UnirestException e){
+            throw new RuntimeException("Error getting games from IGDB");
+        }
+        
+        return res;
      }
 
      

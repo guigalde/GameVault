@@ -75,6 +75,31 @@ public class VideogameService {
         return dto;
     }
 
+    public Videogame transformToEntity(VideogameDto dto){
+        Videogame videogame = new Videogame();
+
+        videogame.setId(dto.getId());
+        videogame.setName(dto.getName());
+        videogame.setDescription(dto.getDescription());
+        videogame.setImage(dto.getImage());
+
+        videogame.setPlatforms(dto.getPlatforms());
+        videogame.setGenres(dto.getGenres());
+
+        videogame.setDeveloper(dto.getDeveloper());
+        videogame.setPublisher(dto.getPublisher());
+
+        String dateString = dto.getReleaseDate();
+        
+        if(dateString!=null){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate date = LocalDate.parse(dateString, formatter);
+            videogame.setReleaseDate(date);
+        }
+        
+        return videogame;
+    }
+
     @Transactional
     public Set<String> getGenres(){
         return videogameRepository.getGenres().stream()

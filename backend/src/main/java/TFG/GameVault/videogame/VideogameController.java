@@ -1,5 +1,6 @@
 package TFG.GameVault.videogame;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -117,5 +118,38 @@ public class VideogameController {
     public ResponseEntity<VideogameDto> getGame(@PathVariable Integer id){
         return ResponseEntity.ok(vgService.transformToDTO(vgService.getGame(id)));
     }
+
+    @PostMapping("/videogame/findInIGDB")
+    public ResponseEntity<List<VideogameDto>> findInIGDB(@RequestBody String gameName) {
+        try{
+            List<Videogame> games = igdbConsumer.searchMultipleVideogames(gameName);
+            List<Videogame> currentGames = vgService.findAll();
+            List<Videogame> gamesToRemove = new ArrayList<>();
+            games.removeIf(g -> g==null);
+            for(Videogame game: games){
+                currentGames.stream().forEach(g -> {
+                    if(g.getName().equals(game.getName())){
+                        gamesToRemove.add(game);
+                    }
+                });
+            }
+            games.removeAll(gamesToRemove);
+            return ResponseEntity.ok(games.stream().map(vgService::transformToDTO).toList());
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(null);
+        }        
+
+    }
+
+    @PostMapping("/videogame/addGame")
+    public ResponseEntity<String> addGame(@RequestBody VideogameDto game) {
+        try{
+            vgService.saveGame(vgService.transformToEntity(game));
+            return ResponseEntity.ok("Game added successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Error adding game");
+        }
+    }
+    
     
 }
