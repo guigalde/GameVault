@@ -22,4 +22,6 @@ public class PersonalVideogameInfoDto {
     String platform;
 
     String notes;
+
+    Integer steamId;
 }

@@ -52,5 +52,7 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     public List<Collection> collections;
+
+    public String steamGamesNewsIds;
     
 }

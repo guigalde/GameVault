@@ -4,9 +4,12 @@ package TFG.GameVault.user;
 import org.springframework.web.bind.annotation.RestController;
 
 import TFG.GameVault.DTOs.CredentialsDto;
+import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
+import TFG.GameVault.DTOs.PersonalVideogameInfoDto;
 import TFG.GameVault.DTOs.SignUpDto;
 import TFG.GameVault.DTOs.UserDto;
 import TFG.GameVault.config.UserAuthenticationProvider;
+import io.micrometer.core.ipc.http.HttpSender.Response;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -89,5 +92,17 @@ public class UserController {
         public ResponseEntity<List<String>> findEmails() {
             return ResponseEntity.ok(us.findEmails());
         }
+
+        @PostMapping("/user/gameNews/{userId}")
+        public ResponseEntity<String> postMethodName(@RequestBody List<PersonalVideogameInfoDto> games, @PathVariable Integer userId) {
+            try{
+                List<Integer> gameIds = games.stream().map(game -> game.getSteamId()).toList();
+                us.setGamesNews(userId, gameIds);
+                return ResponseEntity.ok().body("Games news set successfully");
+            }catch(Exception e){
+                return ResponseEntity.badRequest().body("Error setting games news");
+            }
+        }
+        
     
 }

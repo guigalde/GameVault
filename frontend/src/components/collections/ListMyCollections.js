@@ -151,8 +151,8 @@ export default function ListMyCollections() {
                                 return (
                                     <tr key={collection.id} onClick={()=>navigate("/collection/"+collection.id)}>
                                         <td style={{width: '15%'}}>{collection.name}</td>
-                                            <td style={{width: '15%'}}>{collection.creationDate}</td>
-                                            <td style={{width: '15%'}}>{collection.lastUpdate}</td>
+                                            <td style={{width: '15%'}}>{collection.creationDateString}</td>
+                                            <td style={{width: '15%'}}>{collection.lastUpdateString}</td>
                                             <td style={{width: '45%'}}>{collection.description.lenght>100?collection.description.substring(0,99)+"...":collection.description}</td>
                                             <td style={{width: '10%'}}>
                                                 <Icon icon="icomoon-free:bin" style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation() ;setCollectionToDelete(collection.id); setShowModal(true) }} />
