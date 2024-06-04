@@ -41,11 +41,11 @@ export const request = (method, url, data, navigate) => {
         data: data
     })
    .then(response => {
-        return response;
+        if(response === undefined){
+            navigate("/error")
+        }else{
+            return response;
+        }
     })
-   .catch(error => {
-        console.error(error);
-        navigate('/error');
-    });
 };
 

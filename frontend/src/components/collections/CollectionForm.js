@@ -85,6 +85,9 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
         if(collection.name === '') {
             setError('Name is required');
             return;
+        }else if(collection.name === "Steam"){
+            setError('Name cannot be Steam');
+            return;
         }
         setCollectionToSend({
                 id: collection.id,

@@ -14,6 +14,8 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import TFG.GameVault.DTOs.VideogameNewsDto;
+
 
 @Component
 public class Steam_consumer {
@@ -35,6 +37,29 @@ public class Steam_consumer {
                 gamesMap.add(gameMap);
             }
             return gamesMap;
+        }catch(UnirestException e){
+            System.out.println(e);
+            throw e;
+        }
+    }
+
+    public List<VideogameNewsDto> getNews(String appId) throws  UnirestException{
+        String url = "https://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid="+appId+"&maxlength=4294967295&count=3&format=json";
+        try{
+            List<VideogameNewsDto> newsList = new ArrayList<>();
+            HttpResponse<JsonNode> response = Unirest.get(url).asJson();
+            JSONArray news = response.getBody().getObject().getJSONObject("appnews").getJSONArray("newsitems");
+            if(news.length() == 0){
+                return null;
+            }
+            for(int i=0; i<news.length(); i++){
+                VideogameNewsDto newsDto = new VideogameNewsDto();
+                newsDto.setNewsTitle(news.getJSONObject(i).get("title").toString());
+                newsDto.setNewsContent(news.getJSONObject(i).get("contents").toString());
+                newsDto.setNewsUrl(news.getJSONObject(i).get("url").toString());
+                newsList.add(newsDto);
+            }
+            return newsList;
         }catch(UnirestException e){
             System.out.println(e);
             throw e;

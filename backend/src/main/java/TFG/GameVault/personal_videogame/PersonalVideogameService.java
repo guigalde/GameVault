@@ -312,4 +312,9 @@ public void deletePersonalVideogame(Integer game_id, Integer user_id) {
         return gamesToAdd;
     }
 
+    @Transactional
+    public PersonalVideogame frindByUserIdAndSteamId(Integer userId, Integer steamId){
+        return personalVideogameRepository.findByUserIdAndSteamId(userId, steamId);
+    }
+
 }

@@ -16,6 +16,7 @@ export default function ListMyCollections() {
     };
 
     const [collections, setCollections] = useState([]);
+    const [steamCollection, setSteamCollection] = useState({});
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const currentPage = page + 1;
@@ -37,7 +38,12 @@ export default function ListMyCollections() {
             formData.append('orderBy', orderBy);
             const response = await request('POST', '/api/collections/'+user.id + '/'+ page, formData, navigate)
             if (response.status === 200) {
-                setCollections(response.data[0]);
+                const sortedCollections = response.data[0].sort((a, b) => {
+                    if (a.name.toLowerCase() === "steam") return -1;
+                    if (b.name.toLowerCase() === "steam") return 1;
+                    return 0;
+                  });
+                setCollections(sortedCollections);
                 setTotalPages(response.data[1]);
             }else{
                 alert('Error getting collections');
@@ -149,7 +155,18 @@ export default function ListMyCollections() {
                         <tbody>
                             {collections.map((collection) => {
                                 return (
-                                    <tr key={collection.id} onClick={()=>navigate("/collection/"+collection.id)}>
+                                    collection.name.toLowerCase() === "steam" ? 
+                                    <tr key={collection.id} onClick={()=>navigate("/collection/"+collection.id)} style={{borderColor:"black"}}>
+                                        <td style={{width: '15%'}}>{collection.name}</td>
+                                            <td style={{width: '15%'}}>{collection.creationDateString}</td>
+                                            <td style={{width: '15%'}}>{collection.lastUpdateString}</td>
+                                            <td style={{width: '45%'}}>{collection.description.lenght>100?collection.description.substring(0,99)+"...":collection.description}</td>
+                                            <td style={{width: '10%'}}>
+                                                <Icon icon="icomoon-free:bin" style={{cursor: 'pointer'}} onClick={(e)=>{e.stopPropagation() ;setCollectionToDelete(collection.id); setShowModal(true) }} />
+                                            </td>
+                                        </tr>
+                                        :
+                                        <tr key={collection.id} onClick={()=>navigate("/collection/"+collection.id)}>
                                         <td style={{width: '15%'}}>{collection.name}</td>
                                             <td style={{width: '15%'}}>{collection.creationDateString}</td>
                                             <td style={{width: '15%'}}>{collection.lastUpdateString}</td>

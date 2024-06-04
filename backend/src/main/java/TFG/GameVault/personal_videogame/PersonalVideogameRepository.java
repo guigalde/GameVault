@@ -17,4 +17,7 @@ public interface PersonalVideogameRepository extends JpaRepository<PersonalVideo
 
     @Query("SELECT pv FROM PersonalVideogame pv WHERE pv.user.id = :userId AND pv.videogame.id = :videogameId")
     PersonalVideogame findByUserIdAndVideogameId(@Param("userId") Integer userId, @Param("videogameId") Integer videogameId);
+
+    @Query("SELECT pv FROM PersonalVideogame pv WHERE pv.user.id = :userId AND pv.steamId = :steamId")
+    PersonalVideogame findByUserIdAndSteamId(@Param("userId") Integer userId, @Param("steamId") Integer steamId);
 }

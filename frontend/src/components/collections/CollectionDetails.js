@@ -184,6 +184,20 @@ export default function CollectionDetails(){
         }
     }
 
+    async function clearNewsPreferences(){  
+        try{
+            const response = await request("GET", "/api/user/clearNewsPreferences/"+ user.id, null, navigate);
+            if(response.status === 200){
+                alert(response.data);
+            }else{
+                alert(response.data);
+                navigate("/error");
+            }
+        }catch(error){
+            navigate("/error");
+        }
+    }
+
     useEffect(() => {
         retrieveCollection();
         retrieveGenres();
@@ -227,11 +241,18 @@ export default function CollectionDetails(){
                     <b>Edit</b>
             </button>
             :
+            <>
             <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
                         onClick={()=>{setSelectGamesNews(true)}}
                         style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black', marginRight:'15px'}}>
                     <b>Set news preferences</b>
             </button>
+            <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                        onClick={()=>{clearNewsPreferences()}}
+                        style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
+                    <b>Clear news preferences</b>
+            </button>
+            </>
             }
         </div>
         <div style={{display: 'flex', flexDirection: 'row', height:'85%', width:'100%'}}>
