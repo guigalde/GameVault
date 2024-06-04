@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import TFG.GameVault.DTOs.VideogameDto;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserRepository;
+import TFG.GameVault.user.UserService;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -28,7 +29,7 @@ public class VideogameService {
     private final VideogameRepository videogameRepository;
 
     @Autowired
-    private final UserRepository ur;
+    private final UserService us;
 
     @Transactional
     public Videogame saveGame(Videogame videogame){
@@ -176,7 +177,7 @@ public class VideogameService {
     }
 
     public void addToWishlist(Integer userId, Integer gameId) {
-        User user = ur.findById(userId).get();
+        User user = us.findById(userId);
         Videogame game = videogameRepository.findById(gameId).get();
         if(!game.getUsersWhishlited().contains(user)){
             List<User> users = game.getUsersWhishlited();
