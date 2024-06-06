@@ -3,10 +3,12 @@ package TFG.GameVault.personal_videogame;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -107,6 +109,7 @@ public class PersonalVideogameService {
         dto.setPlatform(personalVideogame.getPlatform());
         dto.setTimePlayed(personalVideogame.getTimePlayed());
         dto.setVideogame(videogameDto);
+        dto.setSteamId(personalVideogame.getSteamId());
         
         if(acquiredOn!=null){
             String acquiredOnString = acquiredOn.format(formatter);
@@ -181,16 +184,26 @@ public class PersonalVideogameService {
     }
     
     @Transactional
-    public void deletePersonalVideogame(Integer game_id, Integer user_id) {
-        PersonalVideogame personalVideogame = personalVideogameRepository.findById(game_id).orElse(null);
-        if(personalVideogame.getUser().getId() == user_id && personalVideogame != null){
-            collectionRepository.findAllByUser_Id(user_id).forEach(collection -> {
-                collection.getCollectionGames().remove(personalVideogame);
-                collectionRepository.save(collection);
-            });
-            personalVideogameRepository.deleteById(game_id);
+public void deletePersonalVideogame(Integer game_id, Integer user_id) {
+    PersonalVideogame personalVideogame = personalVideogameRepository.findById(game_id).orElse(null);
+    String userNewsIdsStr = personalVideogame.getUser().getSteamGamesNewsIds();
+    List<Integer> userNewsIds = Arrays.stream(userNewsIdsStr.split(","))
+                                      .map(Integer::parseInt)
+                                      .collect(Collectors.toList());
+    if(personalVideogame.getUser().getId() == user_id && personalVideogame!= null){
+        collectionRepository.findAllByUser_Id(user_id).forEach(collection -> {
+            collection.getCollectionGames().remove(personalVideogame);
+            collectionRepository.save(collection);
+        });
+        if(personalVideogame.getSteamId()!=null && userNewsIds.contains(personalVideogame.getSteamId())){
+            userNewsIds.remove(Integer.valueOf(personalVideogame.getSteamId()));
+            User user = personalVideogame.getUser();
+            user.setSteamGamesNewsIds(userNewsIds.stream().map(Object::toString).reduce("", (acc, id) -> acc + id + ","));
+            userService.saveUser(user);
         }
+        personalVideogameRepository.deleteById(game_id);
     }
+}
 
     @Transactional
     public PersonalVideogame updatePersonalVideogame(PersonalVideogame pv, PersonalVideogameDto personalVideogame) {
@@ -297,6 +310,11 @@ public class PersonalVideogameService {
         collectionRepository.save(collection);
 
         return gamesToAdd;
+    }
+
+    @Transactional
+    public PersonalVideogame frindByUserIdAndSteamId(Integer userId, Integer steamId){
+        return personalVideogameRepository.findByUserIdAndSteamId(userId, steamId);
     }
 
 }

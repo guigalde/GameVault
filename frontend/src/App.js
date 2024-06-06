@@ -16,7 +16,6 @@ import PersonalVideogameDetails from './components/personal_videogames/PersonalV
 import CollectionDetails from './components/collections/CollectionDetails';
 import ErrorPage from './components/ErrorPage';
 import SyncWithSteam from './components/user_related/SyncWithSteam';
-import {ErrorBoundary} from 'react-error-boundary';
 import React from 'react';
 
 export default function App() {

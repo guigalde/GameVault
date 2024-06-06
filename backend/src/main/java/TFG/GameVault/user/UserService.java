@@ -64,7 +64,7 @@ public class UserService {
     public User fromRegisterToUser(SignUpDto signup){
 
         Optional<Role> role = rr.findById(2);
-        User user = new User(signup.getUsername(), passwordEncoder.encode(CharBuffer.wrap(signup.getPassword())), signup.getEmail(), role.get(), null, null, null);
+        User user = new User(signup.getUsername(), passwordEncoder.encode(CharBuffer.wrap(signup.getPassword())), signup.getEmail(), role.get(), null, null, null, null);
         return user;
     }
 
@@ -114,5 +114,13 @@ public class UserService {
 
     public User findById(Integer user_id) {
         return ur.findById(user_id).orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
+    }
+
+    @Transactional
+    public void setGamesNews(Integer userId, List<Integer> gameIds) {
+        User user = findById(userId);
+        String ids = gameIds.stream().map(Object::toString).reduce("", (acc, id) -> acc + id + ",");
+        user.setSteamGamesNewsIds(ids);
+        ur.save(user);
     }
 }

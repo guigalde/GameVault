@@ -59,8 +59,35 @@ export default function CollectionDetails(){
 
     const [showModal, setShowModal] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
-    
 
+    //Const related to the news preferences
+    const [canEdit, setCanEdit] = useState(false);
+    const [selectGamesNews, setSelectGamesNews] = useState(false);
+    const [gamesAvailableForNews, setGamesAvailableForNews] = useState([]);
+    const [selectedGames, setSelectedGames] = useState([]);
+    const [searchGame, setSearchGame] = useState('');
+    const [gameNames, setGameNames] = useState('');
+
+    function handleInputChange(e){
+        const value = e.target.value;
+        const matchingGame = games.find(game => game.videogame.name === value);
+        if (matchingGame) {
+            if(selectedGames.includes(matchingGame)){
+                alert("Game already added");
+                return;
+            }
+            setSelectedGames([...selectedGames, matchingGame]);
+            if(gameNames === ''){
+                setGameNames(matchingGame.videogame.name);
+            }else{
+                setGameNames(gameNames+", "+matchingGame.videogame.name);
+            }
+        } else {
+            setSearchGame(value);
+        }
+    };
+    
+    
     async function retrieveCollection(){
         try{
         const response = await request("POST", "/api/collections/"+user.id+ "/" +collectionId + "/"+ page, filters, navigate)
@@ -141,6 +168,36 @@ export default function CollectionDetails(){
         }
     }
 
+    async function handleSetNewsPreferences(e){
+        e.preventDefault();
+        try{
+            const response = await request("POST", "/api/user/gameNews/"+ user.id, selectedGames, navigate);
+            if(response.status === 200){
+                setSelectGamesNews(false);
+                alert(response.data);
+            }else{
+                alert(response.data);
+                navigate("/error");
+            }
+        }catch(error){
+            navigate("/error");
+        }
+    }
+
+    async function clearNewsPreferences(){  
+        try{
+            const response = await request("GET", "/api/user/clearNewsPreferences/"+ user.id, null, navigate);
+            if(response.status === 200){
+                alert(response.data);
+            }else{
+                alert(response.data);
+                navigate("/error");
+            }
+        }catch(error){
+            navigate("/error");
+        }
+    }
+
     useEffect(() => {
         retrieveCollection();
         retrieveGenres();
@@ -152,6 +209,17 @@ export default function CollectionDetails(){
         setPage(0);
     }, [filters]);
 
+    useEffect(() => {
+        if(collection.name === "Steam"){
+            setCanEdit(false);
+        }else{
+            setCanEdit(true);
+        }},[collection])
+    
+        useEffect(() => {
+            setGamesAvailableForNews(games.filter(game => game.steamId !== null));
+        }, [games]);
+
     const searchedGenres = genres.filter(g => g.toLowerCase().includes(provisionalFilters.genre.toLowerCase()));
     const searchedPlatforms = platforms.filter(p => p.toLowerCase().includes(provisionalFilters.platform.toLowerCase()));
     const searchedPublishers = publishers.filter(p => p.toLowerCase().includes(provisionalFilters.publisher.toLowerCase()));
@@ -159,19 +227,33 @@ export default function CollectionDetails(){
         <>
         <div style={{display: 'flex', flexDirection: 'row', height:'15%', width:'100%'}}>
             <h2 style={{ marginRight: '10%' }}>{collection.name}</h2>
-            <t style={{ marginRight: '10%' }}>{collection.creationDateString}</t>
-            <t style={{ marginRight: '10%' }}>{collection.lastUpdateString}</t>
+            <t style={{ marginRight: '10%' }}>Creation date: {collection.creationDateString}</t>
+            <t style={{ marginRight: '10%' }}>Last updated: {collection.lastUpdateString}</t>
             <p style={{ marginRight: '10%' }}>{collection.description}</p>
             <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
                         onClick={()=>{setShowModal(true)}}
                         style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
                     <b>Delete</b>
             </button>
-            <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+            {canEdit ? <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
                         onClick={()=>{setShowEditForm(true)}}
                         style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black', marginRight:'15px'}}>
                     <b>Edit</b>
             </button>
+            :
+            <>
+            <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                        onClick={()=>{setSelectGamesNews(true)}}
+                        style={{ color: 'black', backgroundColor: '#DC80D5', borderColor: 'black', marginRight:'15px'}}>
+                    <b>Set news preferences</b>
+            </button>
+            <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                        onClick={()=>{clearNewsPreferences()}}
+                        style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginLeft:'15px', marginRight:'15px'}}>
+                    <b>Clear news preferences</b>
+            </button>
+            </>
+            }
         </div>
         <div style={{display: 'flex', flexDirection: 'row', height:'85%', width:'100%'}}>
             <div className="filters d-flex justify-content-center" style={{width: '15%', height: '100%', display:'felx', flexDirection:'column'}}>
@@ -318,7 +400,7 @@ export default function CollectionDetails(){
                                 }
 
                             </th>
-                            <th></th>
+                            <th>Remove from collection</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -342,6 +424,29 @@ export default function CollectionDetails(){
         </div>
         {showModal && <ConfirmDelete setShowModal={setShowModal} handleDelete={handleDeleteCollection} text={"Are you sure you want to delete this collection?"} />}
         {showEditForm && <EditCollectionForm setShowForm={setShowEditForm} dataRetrieve={retrieveCollection} collectionToEdit={collection}/>}
+        {selectGamesNews && 
+        <div className='popup'>
+            <div className='popup-inner'>
+                <h2 className="text-center d-flex justify-content-center" style={{alignItems: "center"}}>Configure Steam game news</h2>
+                <p>This option allows you to select what games you want to have news of in the main screen. 
+                    Note that this will only work with the games added automatically. Any videogame you add to this collection without using the Sync With Steam option will not be available to get news of.</p>
+                <form className = "form-collections"onSubmit={handleSetNewsPreferences}>
+                    <div className="form-group">
+                            <p>{gameNames}</p>
+                            <datalist id="games" className="scrollable-datalist">
+                                {gamesAvailableForNews.map(game => 
+                                    <option key={game.id} value={game.videogame.name} />)}
+                            </datalist>
+                            <input type="text" list="games" className="form-control" value={searchGame} onChange={(e)=>handleInputChange(e)}/>
+                        </div>
+                    <div style={{display: "flex", justifyContent: "center",alignItems: "center"}}>
+                        <button type="submit" className="btn btn-primary">Add</button>
+                        <button type="button" className="btn btn-danger" onClick={()=>setSelectGamesNews(false)}>Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        }
         </>
     );
 }
