@@ -440,7 +440,7 @@ export default function CollectionDetails(){
                             <input type="text" list="games" className="form-control" value={searchGame} onChange={(e)=>handleInputChange(e)}/>
                         </div>
                     <div style={{display: "flex", justifyContent: "center",alignItems: "center"}}>
-                        <button type="submit" className="btn btn-primary">Add</button>
+                        <button type="submit" className="btn btn-primary">Confirm</button>
                         <button type="button" className="btn btn-danger" onClick={()=>setSelectGamesNews(false)}>Cancel</button>
                     </div>
                 </form>
