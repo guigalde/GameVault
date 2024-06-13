@@ -76,7 +76,7 @@ public class UserController {
         }
 
         @PutMapping("/users/{id}")
-        public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody @Valid UserDto userDto) {
+        public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody @Valid SignUpDto userDto) {
             try{
                 UserDto updatedUser = us.updateUser(id, userDto);
                 updatedUser.setToken(userAuthenticationProvider.createToken(updatedUser));

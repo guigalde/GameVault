@@ -132,7 +132,7 @@ export default function PersonalVideogameDetails() {
                             <p></p>
                             <p></p>
                             {personalVideogame.completionTime?
-                            <p style={{fontSize: '1.5rem', color: '#333'}}>Completed on: {personalVideogame.completionTime}</p>
+                            <p style={{fontSize: '1.5rem', color: '#333'}}>Completed on: {personalVideogame.completionTime} h</p>
                             :<p style={{fontSize: '1.5rem', fontWeight:'lighter'}}>No completion time specified</p>}
                             
                             

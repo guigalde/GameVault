@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { request, setAuthHeader, getUserInfo } from '../../helpers/axios_helper';
 import classNames from 'classnames';
 import {useNavigate, Link} from 'react-router-dom';
@@ -7,12 +7,12 @@ import FormError from '../FormError';
 
 
 export default function EditForm(){
-    const user = {
+    const [user, setUser] = useState({
         id: getUserInfo().id,
         username: getUserInfo().sub,
         email: getUserInfo().email,
         role: getUserInfo().role
-    };
+    });
     const navigate = useNavigate();
     const [editUser, setEditUser] = useState({
         username: "",
@@ -55,6 +55,16 @@ export default function EditForm(){
         onEdit( editUser.username, editUser.email, editUser.password);
     };
 
+    useEffect(() => {
+        if(!(user.username === "" || user.email === "")){
+            setEditUser({
+                username: user.username,
+                email: user.email,
+                password: ""
+            });
+        }
+    }, [user]);
+
     return (
         <div className={classNames("tab-pane", "fade", "show active")} id="pills-register">
             <h1 className="text-center">Register</h1>
@@ -63,14 +73,14 @@ export default function EditForm(){
                 <div className="form-outline mb-4">
                     <label className="form-label" htmlFor="username"><b>Username</b></label>
                     <FormError error={errors.usernameError}/>
-                    <input type="text" id="registerUsername" name="username" className="form-control col-md-6" onChange={handleChange}/>
+                    <input type="text" id="registerUsername" name="username" className="form-control col-md-6" value = {editUser.username} onChange={handleChange}/>
 
                 </div>
 
                 <div className="form-outline mb-4">
                     <label className="form-label" htmlFor="email"><b>Email</b></label>
                     <FormError error={errors.emailError}/>
-                    <input type="text" id="email" name="email" className="form-control col-md-6" onChange={handleChange}/>
+                    <input type="text" id="email" name="email" className="form-control col-md-6" value = {editUser.email} onChange={handleChange}/>
                 </div>
 
                 <div className="form-outline mb-4">

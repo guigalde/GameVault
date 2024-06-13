@@ -18,6 +18,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+
 import TFG.GameVault.API_Consumers.IGDB_consumer;
 import TFG.GameVault.DTOs.PersonalVideogameBasicInfo;
 import TFG.GameVault.DTOs.PersonalVideogameDto;
@@ -187,9 +190,12 @@ public class PersonalVideogameService {
 public void deletePersonalVideogame(Integer game_id, Integer user_id) {
     PersonalVideogame personalVideogame = personalVideogameRepository.findById(game_id).orElse(null);
     String userNewsIdsStr = personalVideogame.getUser().getSteamGamesNewsIds();
-    List<Integer> userNewsIds = Arrays.stream(userNewsIdsStr.split(","))
-                                      .map(Integer::parseInt)
-                                      .collect(Collectors.toList());
+    List<Integer> userNewsIds = new ArrayList<>();
+    if(userNewsIdsStr != null){
+        userNewsIds = Arrays.stream(userNewsIdsStr.split(","))
+                                        .map(Integer::parseInt)
+                                        .collect(Collectors.toList());
+    }
     if(personalVideogame.getUser().getId() == user_id && personalVideogame!= null){
         collectionRepository.findAllByUser_Id(user_id).forEach(collection -> {
             collection.getCollectionGames().remove(personalVideogame);
@@ -233,7 +239,7 @@ public void deletePersonalVideogame(Integer game_id, Integer user_id) {
             System.out.println(e);
             return null;
         }
-
+        HttpResponse<JsonNode> authentication = igdbConsumer.getAuthentication();
         List<PersonalVideogame> gamesToAdd = new ArrayList<>();
         Set<String> existingGameNames = new HashSet<>();
         Set<PersonalVideogame> existingGames = new HashSet<>();
@@ -263,7 +269,7 @@ public void deletePersonalVideogame(Integer game_id, Integer user_id) {
             String name = (String) game.get("name");
 
             if (!existingGameNames.contains(name)) { 
-                Videogame vg = igdbConsumer.searchGame(name);
+                Videogame vg = igdbConsumer.searchGame(name, authentication);
                 if (vg == null) {
                     continue;
                 } else {
@@ -271,7 +277,12 @@ public void deletePersonalVideogame(Integer game_id, Integer user_id) {
                     if (existingVideogame != null) {
                         vg = existingVideogame;
                     } else {
-                        vg = videogameService.saveGame(vg);
+                        try {
+                            vg = videogameService.saveGame(vg);
+                        } catch (Exception e) {
+                            System.out.println(e);
+                            continue;
+                        }
                     }
                     PersonalVideogame pg = new PersonalVideogame();
                     pg.setUser(userService.findById(userId));

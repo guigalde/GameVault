@@ -161,7 +161,7 @@ export default function CollectionDetails(){
             const response = await request("DELETE", "/api/collections/delete/"+collection.id+"/"+user.id, null, navigate);
             alert(response.data);
             if(response.status === 200){
-                navigate('/myCollections');
+                navigate('/collections');
             }
         }catch(error){
             navigate("/error");

@@ -147,8 +147,7 @@ public class IGDB_consumer {
         }
      }
 
-     public Videogame searchGame(String gameName){
-        HttpResponse<JsonNode> authentication = getAuthentication();
+     public Videogame searchGame(String gameName, HttpResponse<JsonNode> authentication){
         String access_token = authentication.getBody().getObject().get("access_token").toString();
 
         try{

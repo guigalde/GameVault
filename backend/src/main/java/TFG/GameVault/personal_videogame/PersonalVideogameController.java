@@ -79,12 +79,10 @@ public class PersonalVideogameController {
 
     @DeleteMapping("/deletePersonalVideogame/{game_id}/{user_id}")
     public ResponseEntity<String> deletePersonalVideogame(@PathVariable Integer game_id, @PathVariable Integer user_id){
-        try{
+        
             pvService.deletePersonalVideogame(game_id, user_id);
             return ResponseEntity.ok("Game deleted successfully");
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body("Something went wrong");
-        }
+        
     }
 
     @PostMapping("/personalVideogame/update/{game_id}/{user_id}")

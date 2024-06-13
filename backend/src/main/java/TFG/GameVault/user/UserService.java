@@ -24,7 +24,7 @@ public class UserService {
     private UserRepository ur;
     @Autowired
     private RoleRepository rr;
-
+    @Autowired
     public final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
@@ -79,10 +79,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(Integer id, UserDto userDto){
+    public UserDto updateUser(Integer id, SignUpDto userDto){
         User user = ur.findById(id).orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(CharBuffer.wrap(userDto.getPassword())));
         ur.save(user);
         return toUserDto(user);
     }

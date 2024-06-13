@@ -24,7 +24,8 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
     const [selectedGames, setSelectedGames] = useState([]);
     const [searchGame, setSearchGame] = useState('');
     const [gameNames, setGameNames] = useState('');
-    const [error, setError] = useState('');
+    const [nameError, setNameError] = useState('');
+    const [descriptionError, setDescriptionError] = useState('');
     //Added to use useEffect on this and avoid the asyncronous state update problems
     const [collectionToSend, setCollectionToSend] = useState(null);
     const [readyToSend, setReadyToSend] = useState(false);
@@ -82,20 +83,37 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
 
     function handleSubmit(e){
         e.preventDefault();
+        let errors = false;
         if(collection.name === '') {
-            setError('Name is required');
-            return;
+            errors = true;
+            setNameError('Name is required');
         }else if(collection.name === "Steam"){
-            setError('Name cannot be Steam');
-            return;
+            errors = true;
+            setNameError('Name cannot be Steam');
+        }else if(collection.name.length >= 60){
+            errors = true;
+            setNameError('Name is too long');
+        }else{
+            setNameError('');
         }
-        setCollectionToSend({
-                id: collection.id,
-                name: collection.name,
-                description: collection.description,
-                collectionGames: selectedGames
-          });
-        setReadyToSend(true);
+        
+        if(collection.description.length >= 600){
+            errors = true;
+            setDescriptionError('Description is too long');
+        }else{
+            setDescriptionError('');
+        }
+
+        if(!errors){
+
+            setCollectionToSend({
+                    id: collection.id,
+                    name: collection.name,
+                    description: collection.description,
+                    collectionGames: selectedGames
+            });
+            setReadyToSend(true);
+        }
         //The sending method is executed in a useEffect to avoid asyncronous state update problems
     }
 
@@ -152,11 +170,12 @@ export default function CreateCollectionForm({setShowForm, dataRetrieve, collect
                 <form className = "form-collections">
                     <div className="form-group">
                         <label>Name:</label>
-                        <FormError error={error}/>
+                        <FormError error={nameError}/>
                         <input type="text" className="form-control" value={collection.name} onChange={(e) => setCollection({...collection,name: e.target.value})}/>
                     </div>
                     <div className="form-group">
                         <label>Description:</label>
+                        <FormError error={descriptionError}/>
                         <textarea type= 'text-area' className="form-control" value={collection.description} onChange={(e) => setCollection({...collection,description: e.target.value})}/>
                     </div>
                     <div className="form-group">
