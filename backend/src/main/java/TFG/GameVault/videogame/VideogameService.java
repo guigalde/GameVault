@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import TFG.GameVault.DTOs.VideogameDto;
 import TFG.GameVault.user.User;
 import TFG.GameVault.user.UserRepository;
+import TFG.GameVault.user.UserService;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -27,7 +29,7 @@ public class VideogameService {
     private final VideogameRepository videogameRepository;
 
     @Autowired
-    private final UserRepository ur;
+    private final UserService us;
 
     @Transactional
     public Videogame saveGame(Videogame videogame){
@@ -72,6 +74,31 @@ public class VideogameService {
         }
         
         return dto;
+    }
+
+    public Videogame transformToEntity(VideogameDto dto){
+        Videogame videogame = new Videogame();
+
+        videogame.setId(dto.getId());
+        videogame.setName(dto.getName());
+        videogame.setDescription(dto.getDescription());
+        videogame.setImage(dto.getImage());
+
+        videogame.setPlatforms(dto.getPlatforms());
+        videogame.setGenres(dto.getGenres());
+
+        videogame.setDeveloper(dto.getDeveloper());
+        videogame.setPublisher(dto.getPublisher());
+
+        String dateString = dto.getReleaseDate();
+        
+        if(dateString!=null){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate date = LocalDate.parse(dateString, formatter);
+            videogame.setReleaseDate(date);
+        }
+        
+        return videogame;
     }
 
     @Transactional
@@ -150,7 +177,7 @@ public class VideogameService {
     }
 
     public void addToWishlist(Integer userId, Integer gameId) {
-        User user = ur.findById(userId).get();
+        User user = us.findById(userId);
         Videogame game = videogameRepository.findById(gameId).get();
         if(!game.getUsersWhishlited().contains(user)){
             List<User> users = game.getUsersWhishlited();
@@ -158,5 +185,13 @@ public class VideogameService {
             game.setUsersWhishlited(users);
             videogameRepository.save(game);
         }
+    }
+
+    public Videogame getGameByName(String name) {
+        return videogameRepository.findByName(name).orElse(null);
+    }
+
+    public List<Videogame> findAll() {
+        return videogameRepository.findAll();
     }
 }

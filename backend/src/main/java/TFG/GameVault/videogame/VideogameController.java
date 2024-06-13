@@ -1,5 +1,6 @@
 package TFG.GameVault.videogame;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -85,8 +86,8 @@ public class VideogameController {
         public ResponseEntity<String> addToWishlist(@PathVariable Integer userId, @PathVariable Integer gameId) {
             try{
                 PersonalVideogame pv = pvgService.findByUserAndVideogameId(gameId, userId);
-                if(pv == null) {
-                    return ResponseEntity.badRequest().body("Game already in wishlist");
+                if(pv != null) {
+                    return ResponseEntity.badRequest().body("Game already in library");
                 }else{
                     vgService.addToWishlist(userId, gameId);
                     String message = "Game successfully added to wishlist";
@@ -94,6 +95,7 @@ public class VideogameController {
                 }
             }catch(Exception e){
                 String message = "Error adding game to wishlist";
+                System.out.println(e.getMessage());
                 return ResponseEntity.badRequest().body(message);
             }
         }
@@ -117,5 +119,38 @@ public class VideogameController {
     public ResponseEntity<VideogameDto> getGame(@PathVariable Integer id){
         return ResponseEntity.ok(vgService.transformToDTO(vgService.getGame(id)));
     }
+
+    @PostMapping("/videogame/findInIGDB")
+    public ResponseEntity<List<VideogameDto>> findInIGDB(@RequestBody String gameName) {
+        try{
+            List<Videogame> games = igdbConsumer.searchMultipleVideogames(gameName);
+            List<Videogame> currentGames = vgService.findAll();
+            List<Videogame> gamesToRemove = new ArrayList<>();
+            games.removeIf(g -> g==null);
+            for(Videogame game: games){
+                currentGames.stream().forEach(g -> {
+                    if(g.getName().equals(game.getName())){
+                        gamesToRemove.add(game);
+                    }
+                });
+            }
+            games.removeAll(gamesToRemove);
+            return ResponseEntity.ok(games.stream().map(vgService::transformToDTO).toList());
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(null);
+        }        
+
+    }
+
+    @PostMapping("/videogame/addGame")
+    public ResponseEntity<String> addGame(@RequestBody VideogameDto game) {
+        try{
+            vgService.saveGame(vgService.transformToEntity(game));
+            return ResponseEntity.ok("Game added successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Error adding game");
+        }
+    }
+    
     
 }

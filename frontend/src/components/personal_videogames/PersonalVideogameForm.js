@@ -16,7 +16,7 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
     const [error, setError] = useState({});
     const [completed, setCompleted] = useState(false);
     const navigate = useNavigate();
-    const isEdit = useState(!personalVideogameToEdit);
+    const [isEdit, setIsEdit] = useState(false);
     const [personalVideogame, setPersonalVideogame] = useState({
         videogameId: gameId,
         timePlayed : null,
@@ -84,7 +84,7 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
     }
 
     useEffect(() => {
-        if(isEdit){
+        if(personalVideogameToEdit != null){
 
             /*In the backend the DTO for the personal videogame has the acquiredOn and completedOn for recieving data from the frontend and 
             completedOnString and acquiredOnString for sending it to the front to display, in the edit case which wasnt contemplated before 
@@ -113,6 +113,7 @@ export default function AddToMyGamesForm({gameName, gameId, setShowForm, isFromW
                 notes: personalVideogameToEdit.notes
             });
             setCompleted(personalVideogameToEdit.completedOn !== null || personalVideogameToEdit.completionTime !== null);
+            setIsEdit(true);
         }
     }, [personalVideogameToEdit]);
 

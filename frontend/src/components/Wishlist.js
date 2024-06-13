@@ -210,8 +210,8 @@ export default function Wishlist(){
                             <th>Name</th>
                             <th>Platforms</th>
                             <th>Genres</th>
-                            <th></th>
-                            <th></th>
+                            <th>My games</th>
+                            <th>Remove</th>
                         </tr>
                     </thead>
                     <tbody>

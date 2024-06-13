@@ -2,11 +2,14 @@ import  { useState} from 'react';
 import classNames from 'classnames';
 import { request, setAuthHeader } from '../../helpers/axios_helper';
 import { Link, useNavigate} from 'react-router-dom';
+import Error from '../FormError';
 
 export default function  LoginForm() {
     const [loginUser, setLoginUser] = useState({ username: "", password: "" });
     const navigate = useNavigate();
     const [successLogin, setSuccessLogin] = useState(false);
+    const [errors, setErrors] = useState('');
+
     function onLogin(e, username, password){
         e.preventDefault();
         request(
@@ -15,15 +18,13 @@ export default function  LoginForm() {
             {
                 username: username,
                 password: password
-            }, navigate).then(
+            }).then(
             (response) => {
               if(response.status === 200){
                 setAuthHeader(response.data.token);
                 setSuccessLogin(true);
-                navigate('/');
               }else{
-                alert(response.data)
-                navigate('/error')
+                setSuccessLogin(false);
               }
 
             }).catch(
@@ -41,6 +42,8 @@ export default function  LoginForm() {
         onLogin(e, loginUser.username, loginUser.password);
         if (successLogin === true) {
           navigate('/');
+      }else{
+        setErrors("Invalid username or password");
       }
     };
 
@@ -59,7 +62,8 @@ export default function  LoginForm() {
              <label className="form-label" htmlFor="loginPassword"><b>Password</b></label>
              <input type="password" id="loginPassword" name="password" className="form-control col-md-6" onChange={handleChange}/>
            </div>
-     
+           <Error error={errors}/>
+            <br></br>
            <div className="d-flex flex-column align-items-center">
              <button type="submit" className="btn btn-primary btn-block mb-4"style={{ color: 'black', backgroundColor: '#3CACAE', borderColor: 'black' }}><b>Sign in</b></button>
              <Link to="/register" className="text-center">

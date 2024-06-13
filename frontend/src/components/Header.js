@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { getUserInfo, request } from '../helpers/axios_helper';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import SearchVideogameDropdown from './videogames/SearchedVideogamesDropdown';
 
 export default function Header({logoSrc, pageTitle}) {
 
@@ -18,6 +19,10 @@ export default function Header({logoSrc, pageTitle}) {
   const [myGamesTabStyle, setMyGamesTabStyle] = useState({borderRight: '1.5px solid black', width: '10vh'});
   const [wishlistTabStyle, setWishlistTabStyle] = useState({borderRight: '1.5px solid black'});
   const [collectionsTabStyle, setCollectionsTabStyle] = useState({borderRight: '1.5px solid black'});
+
+  const [gameNameSearch, setGameNameSearch] = useState("");
+  const [showGameToAddForm, setShowGameToAddForm] = useState(false);
+  const [videogames, setVideogames] = useState([]);
    
 
   const navigate = useNavigate();
@@ -25,7 +30,6 @@ export default function Header({logoSrc, pageTitle}) {
   function onLogOutClick(){
     window.localStorage.removeItem("auth_token");
     navigate("/");
-    window.location.reload();
   }
 
   function handleDeleteAccount() {
@@ -48,27 +52,48 @@ export default function Header({logoSrc, pageTitle}) {
       }).catch((error) => {navigate("/error")});
   }
 
+  function handleSearchGames(){
+    try{
+      alert("This procedure may take a few minutes. Please wait.");
+      request(
+        'POST',
+        '/api/videogame/findInIGDB', gameNameSearch, navigate)
+        .then((response) => {
+          if(response.status===200 && response.data.length === 0){
+            alert("No games found with that name");
+          }else if(response.status === 200){
+            setVideogames(response.data);
+            setShowGameToAddForm(true);
+          }else{
+            alert("Error: " + response.data);
+          }}).catch((error) => {navigate("/error"); console.log(error);});
+    }catch(error){
+      navigate("/error");
+      console.log(error);
+    }
+  }
+
   //Reactive header colors
   useEffect(() => {
     if (location.pathname === "/videogames" || location.pathname === "/videogameDetails/*"){
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
-      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', width: '10vh'});
       setWishlistTabStyle({borderRight: '1.5px solid black'});
       setCollectionsTabStyle({borderRight: '1.5px solid black'});
     }else if (location.pathname === "/myGames" || location.pathname === "/personalVideogameDetails/*"){
-      setMyGamesTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB', width: '10vh'});
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
       setWishlistTabStyle({borderRight: '1.5px solid black'});
       setCollectionsTabStyle({borderRight: '1.5px solid black'});
     }else if (location.pathname === "/wishlist"){
       setWishlistTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
-      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', width: '10vh'});
       setCollectionsTabStyle({borderRight: '1.5px solid black'});
     }else if (location.pathname === "/collections" || location.pathname === "/collection/*"){
       setCollectionsTabStyle({borderRight: '1.5px solid black', backgroundColor: '#EEB5EB'});
       setVideogamesTabStyle({borderLeft: '1.5px solid black', borderRight: '1.5px solid black'});
-      setMyGamesTabStyle({borderRight: '1.5px solid black'});
+      setMyGamesTabStyle({borderRight: '1.5px solid black', width: '10vh'});
       setWishlistTabStyle({borderRight: '1.5px solid black'});
     }
   }, [location]);
@@ -120,6 +145,12 @@ export default function Header({logoSrc, pageTitle}) {
             </Link>
           ) : (
             <>
+              <input type="text" placeholder='Not finding a game? Try this!' onChange={(e) => setGameNameSearch(e.target.value)} style={{width:'30%'}}></input>
+              <button className="btn btn-primary btn-block mb-4 ml-auto mr-auto"
+                            onClick={()=>{handleSearchGames()}}
+                            style={{ color: 'white', backgroundColor: '#3CACAE', borderColor: 'black',margin:'3%', marginRight:'10%'}}>
+                        <b>Search in IGDB</b>
+              </button>
               {user.role === "ADMIN" &&
                 <button className="btn btn-primary btn-block" onClick={handleVideogameLoad} style={{ color: 'white', backgroundColor: '#AE3C7A', borderColor: 'black', marginRight:"3%" }}><b>Load database</b></button>
               }
@@ -133,11 +164,16 @@ export default function Header({logoSrc, pageTitle}) {
                   </Link>
                   <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={handleDeleteAccount}>Delete account</b>
                   <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={onLogOutClick}>Log out</b>
+                  <b className="dropdown-item" style={{cursor: 'pointer'}} onClick={()=>navigate("/syncWithSteam")}>Sync with Steam</b>
                 </div>
               </div>
             </>
           )}
         </div>
+        {showGameToAddForm ? 
+                <SearchVideogameDropdown videogames={videogames}  setShowForm={setShowGameToAddForm}/>
+           :null}
       </nav>
+      
     );
   }

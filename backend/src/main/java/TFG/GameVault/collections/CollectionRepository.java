@@ -14,4 +14,6 @@ public interface CollectionRepository extends JpaRepository<Collection, Integer>
     public List<Collection> findAllByUser(User user);
 
     public List<Collection> findAllByUser_Id(Integer userId);
+
+    public Collection findByName(String name);
 }

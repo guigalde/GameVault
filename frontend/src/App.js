@@ -15,7 +15,7 @@ import VideogameDetails from './components/videogames/VideogameDetails';
 import PersonalVideogameDetails from './components/personal_videogames/PersonalVideogameDetails';
 import CollectionDetails from './components/collections/CollectionDetails';
 import ErrorPage from './components/ErrorPage';
-import {ErrorBoundary} from 'react-error-boundary';
+import SyncWithSteam from './components/user_related/SyncWithSteam';
 import React from 'react';
 
 export default function App() {
@@ -25,7 +25,6 @@ export default function App() {
     window.localStorage.removeItem('auth_token');
   }
   return (
-      <ErrorBoundary FallbackComponent={ErrorPage}>
         <div className="App">
           <Header 
             pageTitle= "GameVault" 
@@ -33,21 +32,23 @@ export default function App() {
           />
           <div className="AppContent" style={{height:'100%', width:'100%'}}>
             <Routes>
-              <Route path="/login" exact element={<LoginForm/>}/>          
-              <Route path="/register" exact element={<RegisterForm/>}/>
-              <Route path="/" exact element={<WelcomeContent/>}/>
-              <Route path="/editAccount" exact element={<EditForm/>}/>
-              <Route path="/videogames" exact element={<VideogameList/>}/>
-              <Route path="/myGames" exact element={<PersonalVideogameList/>}/>
-              <Route path="/wishlist" exact element={<Wishlist/>}/>
-              <Route path="/collections" exact element={<ListMyCollections/>}/>
-              <Route path="/videogameDetails/:gameId" element={<VideogameDetails/>}/>
-              <Route path="/personalVideogameDetails/:gameId" element={<PersonalVideogameDetails/>}/>
-              <Route path="/collection/:collectionId" element={<CollectionDetails/>}/>
-              <Route path="/error" element={<ErrorPage/>}/>
+                <Route path="/login" exact element={<LoginForm/>}/>          
+                <Route path="/register" exact element={<RegisterForm/>}/>
+                <Route path="/" exact element={<WelcomeContent/>}/>
+                <Route path="/editAccount" exact element={<EditForm/>}/>
+                <Route path="/videogames" exact element={<VideogameList/>}/>
+                <Route path="/myGames" exact element={<PersonalVideogameList/>}/>
+                <Route path="/wishlist" exact element={<Wishlist/>}/>
+                <Route path="/collections" exact element={<ListMyCollections/>}/>
+                <Route path="/videogameDetails/:gameId" element={<VideogameDetails/>}/>
+                <Route path="/personalVideogameDetails/:gameId" element={<PersonalVideogameDetails/>}/>
+                <Route path="/collection/:collectionId" element={<CollectionDetails/>}/>
+                <Route path= "/syncWithSteam" element={<SyncWithSteam/>}/>
+                <Route path="/error" element={<ErrorPage/>}/>
             </Routes>
+            
           </div>
         </div>
-      </ErrorBoundary>
+    
         );
 }

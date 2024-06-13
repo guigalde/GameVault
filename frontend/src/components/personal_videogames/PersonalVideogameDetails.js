@@ -132,7 +132,7 @@ export default function PersonalVideogameDetails() {
                             <p></p>
                             <p></p>
                             {personalVideogame.completionTime?
-                            <p style={{fontSize: '1.5rem', color: '#333'}}>Completed on: {personalVideogame.completionTime}</p>
+                            <p style={{fontSize: '1.5rem', color: '#333'}}>Completed on: {personalVideogame.completionTime} h</p>
                             :<p style={{fontSize: '1.5rem', fontWeight:'lighter'}}>No completion time specified</p>}
                             
                             
@@ -152,7 +152,8 @@ export default function PersonalVideogameDetails() {
                 </div>
             </div>
             {showCollectionForm && <AddToCollectionDropdown collections={collections} personalVideogame={personalVideogame} setShowCollectionForm={setShowCollectionForm} />}
-            {showConfirmDelete && <ConfirmDelete setShowModal={setShowConfirmDelete} handleDelete={handleDeletePersonalVideogame} name={videogame.name} place="my games" />}
+            {showConfirmDelete && <ConfirmDelete setShowModal={setShowConfirmDelete} handleDelete={handleDeletePersonalVideogame} text={"Are you sure you want to delete " + videogame.name
+            } />}
             {showEditForm && <PersonalVideogameForm gameName={personalVideogame.videogame.name} personalVideogameToEdit={personalVideogame} setShowForm={setShowEditForm} 
                 dataRetrieve={getPersonalVideogameInfo}/>}
         </div>

@@ -79,12 +79,10 @@ public class PersonalVideogameController {
 
     @DeleteMapping("/deletePersonalVideogame/{game_id}/{user_id}")
     public ResponseEntity<String> deletePersonalVideogame(@PathVariable Integer game_id, @PathVariable Integer user_id){
-        try{
+        
             pvService.deletePersonalVideogame(game_id, user_id);
             return ResponseEntity.ok("Game deleted successfully");
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body("Something went wrong");
-        }
+        
     }
 
     @PostMapping("/personalVideogame/update/{game_id}/{user_id}")
@@ -98,6 +96,22 @@ public class PersonalVideogameController {
             return ResponseEntity.ok("Game updated successfully");
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Error updating game information");
+        }
+    }
+    
+    @PostMapping("/personalVideogame/syncWithSteam/{user_id}/{steamId}")
+    public ResponseEntity<?> syncWithSteam(@PathVariable Integer user_id, @PathVariable String steamId){ 
+        if(steamId == null || user_id == null){
+            return ResponseEntity.badRequest().body("Steam ID or user ID not provided");
+        }else{
+            
+                List<PersonalVideogame> steamGames = pvService.getGamesBySteamData(user_id, steamId);
+                if (steamGames.size()>0) {
+                    return ResponseEntity.ok("Collection synced with steam successfully");
+                }else{
+                    return ResponseEntity.badRequest().body("Problem retrieving steam games");
+                }
+            
         }
     }
     

@@ -22,7 +22,6 @@ public class WebSecurityConfig {
   @Autowired
   UserService userService;
 
-  private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
   private final UserAuthenticationProvider userAuthProvider;
 
   @Bean
@@ -30,6 +29,7 @@ public class WebSecurityConfig {
 
       http.addFilterBefore(new JwtAuthFilter(userAuthProvider), BasicAuthenticationFilter.class)
               .csrf(csrf -> csrf.disable())
+              .requiresChannel(channel -> channel.anyRequest().requiresSecure())
               .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
               .authorizeHttpRequests((requests) -> requests
               .requestMatchers("/api/**").permitAll()

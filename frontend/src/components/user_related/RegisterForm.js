@@ -32,8 +32,8 @@ export default function RegisterForm(){
                     password: password
                 }, navigate).then(
                 (response) => {
-                    if(response.status === 200){
-                        alert(response.data)
+                    if(response.status === 201){
+                        alert("Successfully registered!")
                         setAuthHeader(response.data.token);
                         navigate('/');
                     }else{
