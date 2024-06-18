@@ -1,0 +1,27 @@
+version: 'latest'
+volumes:
+  data:
+services:
+  backend:
+    image: gamevault/backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      spring.datasource.url: jdbc:mariadb://db:3306/gamevaultdb?useUnicode=true&characterEncoding=UTF-8
+  frontend:
+    image: gamevault/frontend
+    ports:
+      - "3000:3000"
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: guille2001
+      MYSQL_DATABASE: gamevaultdb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: guille2001
+    volumes:
+      - data:/var/lib/mysql
+    ports:
+      - "3306:3306"
