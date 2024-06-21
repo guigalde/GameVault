@@ -25,6 +25,7 @@ export default function  LoginForm() {
                 setSuccessLogin(true);
               }else{
                 setSuccessLogin(false);
+                setErrors("Invalid username or password");
               }
 
             }).catch(
@@ -42,9 +43,7 @@ export default function  LoginForm() {
         onLogin(e, loginUser.username, loginUser.password);
         if (successLogin === true) {
           navigate('/');
-      }else{
-        setErrors("Invalid username or password");
-      }
+        }
     };
 
 
